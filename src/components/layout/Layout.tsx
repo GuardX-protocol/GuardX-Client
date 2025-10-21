@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
+import UnsupportedNetworkBanner from '@/components/ui/UnsupportedNetworkBanner';
 import { Toaster } from 'react-hot-toast';
 
 const Layout: React.FC = () => {
@@ -11,13 +12,14 @@ const Layout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Header
         onMobileMenuToggle={handleMobileMenuToggle}
         isMobileMenuOpen={isMobileMenuOpen}
       />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <UnsupportedNetworkBanner />
         <Outlet />
       </main>
 
@@ -26,13 +28,16 @@ const Layout: React.FC = () => {
         toastOptions={{
           duration: 4000,
           style: {
-            background: '#363636',
+            background: '#1f2937',
             color: '#fff',
+            borderRadius: '12px',
+            padding: '16px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
           },
           success: {
             duration: 3000,
             iconTheme: {
-              primary: '#22c55e',
+              primary: '#10b981',
               secondary: '#fff',
             },
           },

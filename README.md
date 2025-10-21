@@ -1,19 +1,39 @@
 # GuardX Frontend
 
-A modern DeFi crash protection platform built with React and Web3 technologies.
+A production-ready, multi-chain DeFi crash protection platform built with React and Web3 technologies.
 
 ## Overview
 
-GuardX is a decentralized finance application that provides advanced portfolio protection and risk management tools. The platform enables users to deposit assets, manage protection policies, monitor portfolio performance, and conduct security audits through an intuitive web interface.
+GuardX is a decentralized finance application that provides advanced portfolio protection and risk management tools across multiple blockchain networks. The platform enables users to deposit assets, manage protection policies, monitor portfolio performance, and conduct security audits through an intuitive web interface.
 
-## Features
+## 🌐 Multi-Chain Support
 
-- **Dashboard**: Real-time portfolio overview with key metrics and activity tracking
-- **Asset Deposit**: Secure deposit interface for managing digital assets
+GuardX supports multiple EVM-compatible networks:
+
+### Testnets
+- ✅ **Arbitrum Sepolia** (Chain ID: 421614) - Fully deployed
+- 🔄 **Base Sepolia** (Chain ID: 84532) - Ready to deploy
+- 🔄 **Sepolia** (Chain ID: 11155111) - Ready to deploy
+- 🔄 **Mumbai** (Chain ID: 80001) - Ready to deploy
+- 🔄 **Optimism Sepolia** (Chain ID: 11155420) - Ready to deploy
+
+### Mainnets (Production Ready)
+- 🔄 **Ethereum** (Chain ID: 1)
+- 🔄 **Polygon** (Chain ID: 137)
+- 🔄 **Arbitrum** (Chain ID: 42161)
+- 🔄 **Optimism** (Chain ID: 10)
+- 🔄 **Base** (Chain ID: 8453)
+
+## ✨ Features
+
+- **Multi-Chain Dashboard**: Real-time portfolio overview across all supported networks
+- **Asset Deposit**: Secure deposit interface for managing digital assets on any chain
 - **Protection Policies**: Configure and manage crash protection strategies
+- **Network Switching**: Seamless switching between supported networks
 - **Audit Tools**: Security audit capabilities for smart contracts and transactions
 - **Web3 Integration**: Seamless wallet connectivity with MetaMask, WalletConnect, and other providers
-- **Real-time Updates**: Live data synchronization using WebSocket connections
+- **Real-time Price Feeds**: Live price data via Pyth Network
+- **Cross-Chain Support**: Manage assets across multiple chains from a single interface
 
 ## Technology Stack
 
@@ -25,7 +45,9 @@ GuardX is a decentralized finance application that provides advanced portfolio p
 ### Web3 & Blockchain
 - Wagmi 1.4 - React hooks for Ethereum
 - Viem 1.19 - TypeScript interface for Ethereum
-- Support for Mainnet, Sepolia, and Hardhat networks
+- Multi-chain support for 10+ EVM networks
+- Pyth Network integration for real-time price feeds
+- 1inch & Uniswap V3 DEX integration
 
 ### State Management & Data Fetching
 - Zustand 4.4 - Lightweight state management
@@ -119,19 +141,39 @@ src/
 
 ## Configuration
 
-### Wallet Connect
+### Environment Setup
 
-To enable WalletConnect functionality, set the following environment variable:
+1. Copy the example environment file:
+```bash
+cp .env.example .env
+```
+
+2. Configure WalletConnect (optional but recommended):
 ```
 VITE_WALLETCONNECT_PROJECT_ID=your_project_id
 ```
 
-### Network Support
+Get your project ID from [WalletConnect Cloud](https://cloud.walletconnect.com/)
 
-The application supports the following networks:
+### Network Configuration
+
+The application is configured for **Base Sepolia Testnet**:
+- Chain ID: 84532
+- Network: base-sepolia
+- Contract addresses are automatically loaded from `deployment-base-sepolia-1761029713650.json`
+
+Additional supported networks:
 - Ethereum Mainnet
 - Sepolia Testnet
 - Hardhat Local Network
+
+### Smart Contract Integration
+
+All deployed contract addresses and ABIs are configured in:
+- `src/config/contracts.ts` - Contract addresses
+- `src/config/abis/` - Contract ABIs
+
+See `INTEGRATION.md` for detailed contract integration documentation.
 
 ## Testing
 

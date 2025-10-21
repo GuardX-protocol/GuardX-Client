@@ -1,35 +1,45 @@
 import { createConfig, configureChains } from 'wagmi';
-import { mainnet, sepolia, hardhat } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { InjectedConnector } from 'wagmi/connectors/injected';
+import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from './chains';
 
+// Get WalletConnect project ID from environment
+const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '4243717e79313e7a8086903a599003a6';
+
+// Configure chains with public provider
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, sepolia, hardhat],
+  SUPPORTED_CHAINS,
   [publicProvider()]
 );
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
   connectors: [
-    new MetaMaskConnector({ chains }),
+    new MetaMaskConnector({
+      chains,
+      options: {
+        shimDisconnect: true,
+      }
+    }),
     new WalletConnectConnector({
       chains,
       options: {
-        projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '',
+        projectId: WALLETCONNECT_PROJECT_ID,
         metadata: {
-          name: 'GuardX DeFi Platform',
-          description: 'Advanced DeFi crash protection platform',
+          name: 'GuardX',
+          description: 'Multi-Chain DeFi Crash Protection Platform',
           url: 'https://guardx.finance',
           icons: ['https://guardx.finance/logo.png'],
         },
+        showQrModal: true,
       },
     }),
     new InjectedConnector({
       chains,
       options: {
-        name: 'Injected',
+        name: 'Browser Wallet',
         shimDisconnect: true,
       },
     }),
@@ -38,4 +48,4 @@ export const wagmiConfig = createConfig({
   webSocketPublicClient,
 });
 
-export { chains };
+export { chains, DEFAULT_CHAIN };
