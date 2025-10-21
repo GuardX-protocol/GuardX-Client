@@ -7,7 +7,7 @@ import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance';
 import { useTokenApproval } from '@/hooks/useTokenApproval';
 import { useWaitForTransaction, useAccount } from 'wagmi';
 import { CONTRACTS } from '@/config/contracts';
-import { usePythPrice } from '@/hooks/usePythPrice';
+import { usePythContractPrice } from '@/hooks/usePythContractPrices';
 import toast from 'react-hot-toast';
 import { parseUnits } from 'viem';
 
@@ -68,7 +68,7 @@ const EnhancedDepositForm: React.FC = () => {
     },
   });
 
-  const { priceData } = usePythPrice(selectedToken?.pythPriceId);
+  const { priceData } = usePythContractPrice(selectedToken?.symbol || '');
 
   // Check if approval is needed
   useEffect(() => {

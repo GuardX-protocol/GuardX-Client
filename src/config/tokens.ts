@@ -80,6 +80,6 @@ export const parseTokenAmount = (amount: string, decimals: number): bigint => {
 export const STABLECOINS: TokenConfig[] = [];
 export const TOKEN_LIST: TokenConfig[] = [];
 
-// Note: Use usePythPriceFeeds hook for dynamic price feed IDs
-// Note: Use usePythCurrentPrices hook for current prices
+// Note: Use PYTH_PRICE_FEED_IDS from pythPriceFeeds.ts for price feed IDs
+// Note: Use usePythContractPrices hook for current prices from Pyth contract
 // Note: Use useTokenList hook for dynamic token list

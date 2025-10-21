@@ -1,21 +1,23 @@
 import React, { useState, useMemo } from 'react';
-import { DollarSign, RefreshCw, Search, TrendingUp } from 'lucide-react';
+import { DollarSign, RefreshCw, Search, Network } from 'lucide-react';
 import { useTokenList } from '@/hooks/useTokenList';
-import { useLivePrices } from '@/hooks/useLivePrices';
+import { usePythContractPrices } from '@/hooks/usePythContractPrices';
+import { useNetwork } from 'wagmi';
 import { isStablecoin } from '@/config/tokens';
 import TokenListItem from '@/components/prices/TokenListItem';
 import TokenPriceChart from '@/components/prices/TokenPriceChart';
 import { TokenInfo } from '@uniswap/token-lists';
 
 /**
- * Prices page - fetches live prices from PythPriceMonitor contract
- * No hardcoded values
+ * Prices page - fetches live prices directly from Pyth contract
+ * Dynamically uses the correct Pyth contract based on selected network
  */
 const Prices: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
   const [category, setCategory] = useState<'all' | 'trending' | 'stablecoins' | 'defi'>('all');
-  
+
+  const { chain } = useNetwork();
   const { tokens, isLoading: isLoadingTokens } = useTokenList();
 
   const filteredTokens = useMemo(() => {
@@ -24,11 +26,11 @@ const Prices: React.FC = () => {
     if (category === 'stablecoins') {
       filtered = filtered.filter(t => isStablecoin(t.symbol));
     } else if (category === 'defi') {
-      filtered = filtered.filter(t => 
+      filtered = filtered.filter(t =>
         ['UNI', 'AAVE', 'COMP', 'MKR', 'CRV', 'SUSHI', 'SNX', 'LDO', 'BAL', 'YFI'].includes(t.symbol)
       );
     } else if (category === 'trending') {
-      filtered = filtered.filter(t => 
+      filtered = filtered.filter(t =>
         ['ETH', 'WETH', 'BTC', 'WBTC', 'UNI', 'LINK', 'AAVE', 'MATIC', 'ARB', 'OP'].includes(t.symbol)
       );
     }
@@ -44,7 +46,7 @@ const Prices: React.FC = () => {
     return filtered.sort((a, b) => a.symbol.localeCompare(b.symbol));
   }, [tokens, searchQuery, category]);
 
-  const { priceMap, isLoading: isLoadingPrices, refetch } = useLivePrices(filteredTokens);
+  const { priceMap, isLoading: isLoadingPrices, refetch } = usePythContractPrices(filteredTokens);
 
   const handleRefresh = () => {
     refetch();
@@ -59,7 +61,9 @@ const Prices: React.FC = () => {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Live Prices</h1>
-            <p className="text-sm text-gray-500">Real-time prices from PythPriceMonitor contract</p>
+            <p className="text-sm text-gray-500">
+              Real-time prices from Pyth contract on {chain?.name || 'selected network'}
+            </p>
           </div>
         </div>
         <button
@@ -74,12 +78,13 @@ const Prices: React.FC = () => {
       <div className="card bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200">
         <div className="flex items-start gap-3">
           <div className="p-2 bg-white rounded-lg">
-            <TrendingUp className="h-5 w-5 text-primary-600" />
+            <Network className="h-5 w-5 text-primary-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Live Blockchain Prices</h3>
+            <h3 className="font-semibold text-gray-900 mb-1">Multi-Chain Price Feeds</h3>
             <p className="text-sm text-gray-600">
-              All prices fetched directly from PythPriceMonitor smart contract. Click any token to view detailed charts.
+              Prices fetched directly from Pyth oracle contract on {chain?.name || 'the selected network'}.
+              Switch networks to see prices from different chains. Click any token to view detailed charts.
             </p>
           </div>
         </div>
@@ -103,11 +108,10 @@ const Prices: React.FC = () => {
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
-                  category === cat
+                className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${category === cat
                     ? 'bg-primary-600 text-white'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                }`}
+                  }`}
               >
                 {cat}
               </button>
@@ -141,10 +145,10 @@ const Prices: React.FC = () => {
                   token={token}
                   onClick={() => setSelectedToken(token)}
                   priceData={price ? {
-                    price: BigInt(Math.floor(price.price * 1e8)),
-                    confidence: BigInt(price.confidence),
-                    expo: -8,
-                    publishTime: BigInt(price.timestamp),
+                    price: price.price,
+                    confidence: price.confidence,
+                    expo: price.expo,
+                    publishTime: price.timestamp,
                     formattedPrice: price.formattedPrice,
                   } : undefined}
                   isLoading={isLoadingPrices}

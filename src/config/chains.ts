@@ -1,9 +1,9 @@
 import { Chain } from 'wagmi';
-import { 
-  mainnet, 
-  polygon, 
-  arbitrum, 
-  optimism, 
+import {
+  mainnet,
+  polygon,
+  arbitrum,
+  optimism,
   base,
   sepolia,
   polygonMumbai,
@@ -12,9 +12,6 @@ import {
   baseSepolia,
 } from 'wagmi/chains';
 
-/**
- * Supported production chains
- */
 export const PRODUCTION_CHAINS: Chain[] = [
   mainnet,
   polygon,
@@ -23,9 +20,6 @@ export const PRODUCTION_CHAINS: Chain[] = [
   base,
 ];
 
-/**
- * Supported testnet chains
- */
 export const TESTNET_CHAINS: Chain[] = [
   sepolia,
   polygonMumbai,
@@ -37,17 +31,17 @@ export const TESTNET_CHAINS: Chain[] = [
 /**
  * All supported chains based on environment
  */
-export const SUPPORTED_CHAINS: Chain[] = 
-  import.meta.env.MODE === 'production' 
-    ? PRODUCTION_CHAINS 
+export const SUPPORTED_CHAINS: Chain[] =
+  import.meta.env.MODE === 'production'
+    ? PRODUCTION_CHAINS
     : [...TESTNET_CHAINS, ...PRODUCTION_CHAINS];
 
 /**
  * Default chain based on environment
  */
-export const DEFAULT_CHAIN: Chain = 
-  import.meta.env.MODE === 'production' 
-    ? base 
+export const DEFAULT_CHAIN: Chain =
+  import.meta.env.MODE === 'production'
+    ? base
     : arbitrumSepolia;
 
 /**

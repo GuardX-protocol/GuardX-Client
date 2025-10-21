@@ -23,7 +23,6 @@ const Onboarding: React.FC = () => {
         <p className="text-lg text-gray-600">Let's set up your automated crash protection</p>
       </div>
 
-      {/* Progress Steps */}
       <div className="card">
         <div className="space-y-4">
           {steps.map((step, index) => (
@@ -40,9 +39,8 @@ const Onboarding: React.FC = () => {
                 )}
               </div>
               <div className="ml-4 flex-1">
-                <h3 className={`text-sm font-medium ${
-                  step.current ? 'text-primary-600' : step.completed ? 'text-success-600' : 'text-gray-500'
-                }`}>
+                <h3 className={`text-sm font-medium ${step.current ? 'text-primary-600' : step.completed ? 'text-success-600' : 'text-gray-500'
+                  }`}>
                   {step.title}
                 </h3>
               </div>
@@ -63,13 +61,13 @@ const Onboarding: React.FC = () => {
               {isConnected ? 'Step 2: Deposit Assets' : 'Step 1: Connect Your Wallet'}
             </h2>
           </div>
-          
+
           {!isConnected ? (
             <>
               <p className="text-gray-600 mb-6">
                 To get started with GuardX, connect your wallet to access crash protection features.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <h3 className="font-medium text-blue-900 mb-2">What you'll get:</h3>
@@ -84,9 +82,9 @@ const Onboarding: React.FC = () => {
                 <Button className="w-full" onClick={() => setIsWalletModalOpen(true)}>
                   Connect Wallet to Continue
                 </Button>
-                <WalletModal 
-                  isOpen={isWalletModalOpen} 
-                  onClose={() => setIsWalletModalOpen(false)} 
+                <WalletModal
+                  isOpen={isWalletModalOpen}
+                  onClose={() => setIsWalletModalOpen(false)}
                 />
               </div>
             </>
@@ -95,7 +93,7 @@ const Onboarding: React.FC = () => {
               <p className="text-gray-600 mb-6">
                 Great! Your wallet is connected. Now deposit assets to start protecting your portfolio.
               </p>
-              
+
               <div className="space-y-4">
                 <div className="p-4 bg-success-50 rounded-lg border border-success-200">
                   <h3 className="font-medium text-success-900 mb-2">Next Steps:</h3>

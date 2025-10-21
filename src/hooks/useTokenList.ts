@@ -54,8 +54,14 @@ export const useTokenList = (filterByChain?: number) => {
               );
             }
             
-            // Deduplicate by symbol
+            // Deduplicate by symbol and validate addresses
             for (const token of tokenList) {
+              // Validate Ethereum address format (0x + 40 hex chars)
+              if (!token.address || 
+                  !token.address.match(/^0x[a-fA-F0-9]{40}$/)) {
+                continue; // Skip invalid addresses (like Solana addresses)
+              }
+              
               const symbolKey = token.symbol.toUpperCase();
               if (!seenSymbols.has(symbolKey)) {
                 seenSymbols.set(symbolKey, token);

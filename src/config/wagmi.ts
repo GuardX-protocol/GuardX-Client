@@ -5,10 +5,8 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { SUPPORTED_CHAINS, DEFAULT_CHAIN } from './chains';
 
-// Get WalletConnect project ID from environment
 const WALLETCONNECT_PROJECT_ID = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '4243717e79313e7a8086903a599003a6';
 
-// Configure chains with public provider
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   SUPPORTED_CHAINS,
   [publicProvider()]

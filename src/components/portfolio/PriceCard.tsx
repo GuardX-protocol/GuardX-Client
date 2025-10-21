@@ -1,14 +1,14 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { TokenConfig } from '@/config/tokens';
-import { usePythPrice } from '@/hooks/usePythPrice';
+import { usePythContractPrice } from '@/hooks/usePythContractPrices';
 
 interface PriceCardProps {
   token: TokenConfig;
 }
 
 const PriceCard: React.FC<PriceCardProps> = ({ token }) => {
-  const { priceData, isLoading, isError } = usePythPrice(token.pythPriceId);
+  const { priceData, isLoading, isError } = usePythContractPrice(token.symbol);
 
   if (isLoading) {
     return (

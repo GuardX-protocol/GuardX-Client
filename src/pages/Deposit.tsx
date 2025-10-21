@@ -6,7 +6,7 @@ import TokenListItem from '@/components/prices/TokenListItem';
 import TokenPriceChart from '@/components/prices/TokenPriceChart';
 import { useAccount } from 'wagmi';
 import { useTokenList } from '@/hooks/useTokenList';
-import { usePythPriceMultiple } from '@/hooks/usePythPriceMultiple';
+import { usePythContractPrices } from '@/hooks/usePythContractPrices';
 import { TokenInfo } from '@uniswap/token-lists';
 
 const Deposit: React.FC = () => {
@@ -15,14 +15,12 @@ const Deposit: React.FC = () => {
   const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
 
   // Show popular tokens for quick access
-  const popularTokens = tokens.filter(t => 
+  const popularTokens = tokens.filter(t =>
     ['WETH', 'USDC', 'DAI', 'WBTC', 'UNI', 'LINK'].includes(t.symbol)
   ).slice(0, 6);
-  
+
   // Batch fetch prices for popular tokens
-  const { priceMap, isLoading: isLoadingPrices } = usePythPriceMultiple(
-    popularTokens.map(t => t.symbol)
-  );
+  const { priceMap, isLoading: isLoadingPrices } = usePythContractPrices(popularTokens);
 
   return (
     <div className="space-y-6">
@@ -66,7 +64,7 @@ const Deposit: React.FC = () => {
         <p className="text-sm text-gray-500 mb-4">
           Click on any token to view detailed price charts and statistics
         </p>
-        
+
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (

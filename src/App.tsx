@@ -16,8 +16,8 @@ import '@/styles/globals.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: Infinity, // Don't refetch automatically
-      gcTime: 1000 * 60 * 30, // 30 minutes cache
+      staleTime: 5000,
+      gcTime: 1000 * 60 * 5,
       retry: 1,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
@@ -25,6 +25,17 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Clear wagmi cache on every startup to prevent QuotaExceededError
+try {
+  localStorage.removeItem('wagmi.cache');
+  localStorage.removeItem('wagmi.store');
+  localStorage.removeItem('wagmi.wallet');
+  console.log('✅ Cleared wagmi cache on startup');
+} catch (error) {
+  console.warn('Could not clear cache:', error);
+  console.warn('Failed to check wagmi cache:', error);
+}
 
 const App: React.FC = () => {
   return (

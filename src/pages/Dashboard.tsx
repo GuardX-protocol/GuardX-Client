@@ -1,6 +1,6 @@
 import React from 'react';
 import { Shield, TrendingUp, AlertTriangle, Activity, DollarSign, Wallet } from 'lucide-react';
-import { usePortfolio, useProtectionPolicy, usePythCurrentPrices } from '@/hooks';
+import { usePortfolio, useProtectionPolicy, usePythContractPrices } from '@/hooks';
 import { useTokenList } from '@/hooks/useTokenList';
 import { tokenInfoToConfig } from '@/config/tokens';
 import { formatUnits } from 'viem';
@@ -54,12 +54,11 @@ const Dashboard: React.FC = () => {
   };
 
   // Get featured tokens with Pyth price feeds
-  // Call hook once with all symbols, then filter based on results
-  const allSymbols = tokens.map(t => t.symbol);
-  const { prices } = usePythCurrentPrices(allSymbols);
+  // Call hook once with all tokens, then filter based on results
+  const { priceMap } = usePythContractPrices(tokens);
   
   const featuredTokens = tokens
-    .filter(t => prices.has(t.symbol.toUpperCase()))
+    .filter(t => priceMap.has(t.symbol.toUpperCase()))
     .slice(0, 3)
     .map(tokenInfoToConfig);
 

@@ -36,7 +36,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
         network: 'arbitrumSepolia',
         timestamp: '2025-10-21T10:11:45.458Z',
         contracts: {
-            PythPriceMonitor: "0xB9408069f2dC82AB1a13eb53d53F9CD8986774a7",
+            PythPriceMonitor: "0x78694a7A55f478e5Fee95Be6Aa5AC7A13c435C9B",
             DEXAggregator: "0x126Ab675060720d699A6470c5DCe3EBdD5E0029e",
             CrashGuardCore: "0xB867f226388e1695BE040EA45c7E13F8fB493E9a",
             EmergencyExecutor: "0x110704f8337A9CF4e236f0d3A67E5F39189539c7",
@@ -48,7 +48,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
 
         },
         externalContracts: {
-            PythContract: '0xA2aa501b19aff244D90cc15a4Cf739D2725B5729',
+            PythContract: '0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF',
             OneInchRouter: '0x1111111254EEB25477B68fb85Ed929f73A960582',
             UniswapRouter: '0x101F443B4d1b059569D643917553c771E1b9663E',
             UniswapQuoter: '0x2779a0CC1c3e0E44D2542EC3e79e3864Ae93Ef0B',

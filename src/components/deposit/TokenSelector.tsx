@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronDown, Search, Check, Loader2 } from 'lucide-react';
 import { TokenConfig } from '@/config/tokens';
 import { useTokenBalance } from '@/hooks/useTokenBalance';
-import { usePythPrice } from '@/hooks/usePythPrice';
+import { usePythContractPrice } from '@/hooks/usePythContractPrices';
 import { useTokenList } from '@/hooks/useTokenList';
 import { TokenInfo } from '@uniswap/token-lists';
 
@@ -193,7 +193,7 @@ interface TokenOptionProps {
 
 const TokenOption: React.FC<TokenOptionProps> = ({ token, isSelected, onSelect }) => {
   const { formattedBalance } = useTokenBalance(token.address, token.decimals);
-  const { priceData } = usePythPrice(token.pythPriceId);
+  const { priceData } = usePythContractPrice(token.symbol);
 
   const balanceValue = priceData && formattedBalance
     ? (parseFloat(formattedBalance) * parseFloat(priceData.formattedPrice)).toFixed(2)

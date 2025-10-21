@@ -6,10 +6,10 @@ interface TokenListItemProps {
   token: TokenInfo;
   onClick: () => void;
   priceData?: {
-    price: bigint;
-    confidence: bigint;
+    price: bigint | number;
+    confidence: bigint | number;
     expo: number;
-    publishTime: bigint;
+    publishTime: bigint | number;
     formattedPrice: string;
   };
   isLoading?: boolean;
