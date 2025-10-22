@@ -79,15 +79,7 @@ export const generateMockPriceHistory = (
   timeRange: number, 
   symbol: string
 ): PriceHistoryItem[] => {
-  // Adjust points based on time range for better granularity
-  let points: number;
-  if (timeRange <= 3600) { // 1 hour or less
-    points = 12; // 5-minute intervals for 1 hour
-  } else if (timeRange <= 86400) { // 24 hours or less
-    points = 24; // 1-hour intervals for 24 hours
-  } else {
-    points = Math.min(timeRange / 3600, 48); // Max 48 points for longer ranges
-  }
+const points = Math.min(timeRange / 3600, 24);
   
   const now = Date.now();
   const interval = (timeRange * 1000) / points;
