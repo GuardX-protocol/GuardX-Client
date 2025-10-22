@@ -4,7 +4,7 @@ class FastPriceService {
   private static instance: FastPriceService;
   private fetchPromise: Promise<void> | null = null;
   private lastBatchFetch = 0;
-  private readonly BATCH_INTERVAL = 60000; // 1min
+  private readonly BATCH_INTERVAL = 30000; // 1min
   private readonly CACHE_TTL = 120000; // 2min
 
   static getInstance() {
@@ -100,29 +100,11 @@ class FastPriceService {
         };
       });
       
-      if (Object.keys(prices).length > 0) return prices;
+      return prices;
     } catch (error) {
-      console.warn('Pyth SDK fetch failed, using fallback:', error);
+      console.error('Pyth SDK fetch failed:', error);
+      return {};
     }
-    
-    // Fallback prices
-    const prices: Record<string, any> = {};
-    const basePrice: Record<string, number> = { 
-      BTC: 45000, ETH: 2800, USDC: 1, USDT: 1, BNB: 320, 
-      SOL: 95, AVAX: 28, MATIC: 0.85, LINK: 14, UNI: 6.5 
-    };
-    
-    symbols.forEach(symbol => {
-      const base = basePrice[symbol.toUpperCase()] || 1;
-      const variation = (Math.random() - 0.5) * 0.05;
-      prices[symbol] = {
-        price: base * (1 + variation),
-        timestamp: Date.now(),
-        confidence: 0.01
-      };
-    });
-    
-    return prices;
   }
 }
 

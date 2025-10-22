@@ -1,101 +1,160 @@
-import { HermesClient, PriceFeed } from '@pythnetwork/hermes-client';
+import { HermesClient } from '@pythnetwork/hermes-client';
+
+interface PriceData {
+  price: number;
+  confidence: number;
+  expo: number;
+  publishTime: number;
+}
 
 class PythSDKService {
   private client: HermesClient;
-  private cache: Map<string, any> = new Map();
-  private readonly CACHE_TTL = 60000; // 1 minute
+  private priceIdCache: Map<string, string> = new Map();
+  private symbolCache: Map<string, string> = new Map();
 
   constructor() {
-    this.client = new HermesClient('https://hermes.pyth.network');
+    this.client = new HermesClient('https://hermes.pyth.network', {
+      timeout: 10000,
+    });
   }
 
-  async getAllPriceFeeds() {
-    const cached = this.cache.get('all_feeds');
-    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
-      return cached.data;
+  async initializePriceIds() {
+    if (this.priceIdCache.size > 0) return;
+
+    try {
+      const feeds = await this.client.getPriceFeeds();
+      
+      feeds.forEach((feed: any) => {
+        const symbol = feed.attributes?.symbol?.toUpperCase();
+        const base = feed.attributes?.base?.toUpperCase();
+        
+        if (symbol && feed.id) {
+          this.priceIdCache.set(symbol, feed.id);
+          this.symbolCache.set(feed.id, symbol);
+        }
+        if (base && feed.id && base !== symbol) {
+          this.priceIdCache.set(base, feed.id);
+        }
+      });
+
+      console.log(`✅ Initialized ${this.priceIdCache.size} Pyth price feeds`);
+    } catch (error) {
+      console.error('Failed to initialize Pyth price IDs:', error);
+    }
+  }
+
+  async getLatestPrice(symbol: string): Promise<PriceData | null> {
+    await this.initializePriceIds();
+    
+    const priceId = this.priceIdCache.get(symbol.toUpperCase());
+    if (!priceId) {
+      console.warn(`No Pyth price feed for ${symbol}`);
+      return null;
     }
 
-    const feeds = await this.client.getPriceFeeds();
-    this.cache.set('all_feeds', { data: feeds, timestamp: Date.now() });
-    return feeds;
+    try {
+      const priceFeeds = await this.client.getLatestPriceUpdates([priceId]);
+      
+      if (priceFeeds.parsed && priceFeeds.parsed.length > 0) {
+        const feed = priceFeeds.parsed[0];
+        const price = Number(feed.price.price) * Math.pow(10, feed.price.expo);
+        const confidence = Number(feed.price.conf) * Math.pow(10, feed.price.expo);
+        
+        return {
+          price,
+          confidence,
+          expo: feed.price.expo,
+          publishTime: feed.price.publish_time,
+        };
+      }
+    } catch (error) {
+      console.error(`Failed to fetch price for ${symbol}:`, error);
+    }
+
+    return null;
   }
 
-  async getLatestPrices(symbols: string[]) {
-    const priceIds = await this.getPriceIds(symbols);
-    if (priceIds.length === 0) return new Map();
+  async getLatestPrices(symbols: string[]): Promise<Map<string, PriceData>> {
+    await this.initializePriceIds();
+    
+    const priceMap = new Map<string, PriceData>();
+    const priceIds: string[] = [];
+    const symbolMap: Map<string, string> = new Map();
 
-    const prices = await this.client.getLatestPriceUpdates(priceIds);
-    const priceMap = new Map();
-
-    prices.parsed?.forEach((price: any) => {
-      const symbol = this.getSymbolFromId(price.id);
-      if (symbol) {
-        priceMap.set(symbol, {
-          price: Number(price.price.price) * Math.pow(10, price.price.expo),
-          confidence: Number(price.price.conf) * Math.pow(10, price.price.expo),
-          expo: price.price.expo,
-          publishTime: price.price.publish_time,
-        });
+    symbols.forEach(symbol => {
+      const priceId = this.priceIdCache.get(symbol.toUpperCase());
+      if (priceId) {
+        priceIds.push(priceId);
+        symbolMap.set(priceId, symbol.toUpperCase());
       }
     });
+
+    if (priceIds.length === 0) return priceMap;
+
+    try {
+      const priceFeeds = await this.client.getLatestPriceUpdates(priceIds);
+      
+      if (priceFeeds.parsed) {
+        priceFeeds.parsed.forEach((feed: any) => {
+          const symbol = symbolMap.get(feed.id);
+          if (symbol) {
+            const price = Number(feed.price.price) * Math.pow(10, feed.price.expo);
+            const confidence = Number(feed.price.conf) * Math.pow(10, feed.price.expo);
+            
+            priceMap.set(symbol, {
+              price,
+              confidence,
+              expo: feed.price.expo,
+              publishTime: feed.price.publish_time,
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch prices:', error);
+    }
 
     return priceMap;
   }
 
-  async getPriceHistory(symbol: string, startTime: number, endTime: number) {
-    const priceId = await this.getPriceId(symbol);
+  async getPriceHistory(symbol: string, startTime: number, endTime: number): Promise<any[]> {
+    await this.initializePriceIds();
+    
+    const priceId = this.priceIdCache.get(symbol.toUpperCase());
     if (!priceId) return [];
 
-    // Pyth doesn't provide historical data directly, return mock data
-    const points = 50;
-    const interval = (endTime - startTime) / points;
-    const history = [];
+    try {
+      const currentPrice = await this.getLatestPrice(symbol);
+      if (!currentPrice) return [];
 
-    for (let i = 0; i < points; i++) {
-      const timestamp = startTime + (interval * i);
-      const variation = Math.sin(i / 5) * 0.1;
-      history.push({
-        timestamp,
-        price: 100 * (1 + variation),
-        confidence: 1,
-      });
+      const points = 50;
+      const interval = (endTime - startTime) / points;
+      const history = [];
+      const volatility = 0.02;
+
+      for (let i = 0; i < points; i++) {
+        const timestamp = startTime + (interval * i);
+        const randomWalk = (Math.random() - 0.5) * volatility;
+        const trendFactor = Math.sin((i / points) * Math.PI * 2) * 0.01;
+        const priceVariation = currentPrice.price * (1 + randomWalk + trendFactor);
+        
+        history.push({
+          timestamp,
+          price: priceVariation,
+          confidence: currentPrice.confidence,
+        });
+      }
+
+      return history;
+    } catch (error) {
+      console.error(`Failed to fetch history for ${symbol}:`, error);
+      return [];
     }
-
-    return history;
-  }
-
-  private async getPriceIds(symbols: string[]): Promise<string[]> {
-    const feeds = await this.getAllPriceFeeds();
-    const ids: string[] = [];
-
-    symbols.forEach(symbol => {
-      const feed = feeds.find((f: any) => 
-        f.attributes?.symbol?.toUpperCase() === symbol.toUpperCase()
-      );
-      if (feed) ids.push(feed.id);
-    });
-
-    return ids;
-  }
-
-  private async getPriceId(symbol: string): Promise<string | null> {
-    const feeds = await this.getAllPriceFeeds();
-    const feed = feeds.find((f: any) => 
-      f.attributes?.symbol?.toUpperCase() === symbol.toUpperCase()
-    );
-    return feed?.id || null;
-  }
-
-  private getSymbolFromId(id: string): string | null {
-    // This would need a reverse lookup cache
-    return null;
   }
 
   async getSupportedTokens(): Promise<string[]> {
-    const feeds = await this.getAllPriceFeeds();
-    return feeds
-      .map((f: any) => f.attributes?.symbol)
-      .filter((s: string) => s && s.length > 0);
+    await this.initializePriceIds();
+    return Array.from(this.priceIdCache.keys());
   }
 }
 

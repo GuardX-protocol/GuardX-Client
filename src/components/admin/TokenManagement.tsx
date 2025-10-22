@@ -20,7 +20,9 @@ const TokenManagement: React.FC = () => {
     enabled: !!contracts.CrashGuardCore,
   });
 
-  const isOwner = contractOwner && address && contractOwner.toLowerCase() === address.toLowerCase();
+  const isOwner = contractOwner && address &&
+    typeof contractOwner === 'string' &&
+    contractOwner.toLowerCase() === address.toLowerCase();
 
   // Add token function
   const { write: addToken, isLoading: isAdding } = useContractWrite({
@@ -66,14 +68,14 @@ const TokenManagement: React.FC = () => {
                 Only the contract owner can add supported tokens.
               </p>
               <p className="text-xs text-amber-700 mt-2">
-                <span className="font-medium">Contract Owner:</span> {contractOwner ? 
-                  `${contractOwner.slice(0, 6)}...${contractOwner.slice(-4)}` : 
+                <span className="font-medium">Contract Owner:</span> {contractOwner && typeof contractOwner === 'string' ?
+                  `${contractOwner.slice(0, 6)}...${contractOwner.slice(-4)}` :
                   'Loading...'
                 }
               </p>
               <p className="text-xs text-amber-700">
-                <span className="font-medium">Your Address:</span> {address ? 
-                  `${address.slice(0, 6)}...${address.slice(-4)}` : 
+                <span className="font-medium">Your Address:</span> {address ?
+                  `${address.slice(0, 6)}...${address.slice(-4)}` :
                   'Not connected'
                 }
               </p>
@@ -165,7 +167,7 @@ const TokenManagement: React.FC = () => {
         {/* Instructions */}
         <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">Note:</span> After adding tokens, users will be able to deposit them. 
+            <span className="font-medium">Note:</span> After adding tokens, users will be able to deposit them.
             Make sure the token contract is legitimate and has proper decimals/symbol information.
           </p>
         </div>

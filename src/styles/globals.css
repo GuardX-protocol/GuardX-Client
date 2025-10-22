@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import './web3modal.css';
 
 @tailwind base;
 @tailwind components;
@@ -154,4 +155,628 @@ body {
 
 .animate-pulse-glow {
   animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Web3Modal Custom Futuristic Styling */
+w3m-modal {
+  --w3m-z-index: 99999;
+}
+
+w3m-modal::part(w3m-modal-card) {
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 24px !important;
+}
+
+w3m-modal::part(w3m-modal-container) {
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Wallet option styling with futuristic hover effects */
+w3m-wallet-button {
+  background: rgba(37, 42, 58, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+w3m-wallet-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+w3m-wallet-button:hover {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: 
+    0 15px 35px -5px rgba(99, 102, 241, 0.3),
+    0 0 20px rgba(99, 102, 241, 0.2) !important;
+}
+
+w3m-wallet-button:hover::before {
+  left: 100% !important;
+}
+
+/* Connect button with cyberpunk styling */
+w3m-connect-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%) !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+w3m-connect-button::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  transition: width 0.6s, height 0.6s !important;
+}
+
+w3m-connect-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 15px 35px -5px rgba(99, 102, 241, 0.5),
+    0 0 30px rgba(139, 92, 246, 0.3) !important;
+}
+
+w3m-connect-button:hover::after {
+  width: 300px !important;
+  height: 300px !important;
+}
+
+/* Header with gradient and glow */
+w3m-modal-header {
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+  position: relative !important;
+}
+
+w3m-modal-header::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, #6366f1, transparent) !important;
+}
+
+/* Enhanced text styling */
+w3m-text {
+  color: #e2e8f0 !important;
+  font-weight: 500 !important;
+}
+
+/* Wallet icons with neon glow */
+w3m-wallet-image {
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+w3m-wallet-image:hover {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Loading spinner with cyberpunk animation */
+w3m-spinner {
+  animation: spin-glow 1.5s linear infinite !important;
+}
+
+@keyframes spin-glow {
+  0% {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+  }
+}
+
+/* QR Code styling */
+w3m-qr-code {
+  border-radius: 16px !important;
+  border: 2px solid rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Close button styling */
+w3m-modal-close-button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+w3m-modal-close-button:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Account button styling */
+w3m-account-button {
+  background: rgba(37, 42, 58, 0.8) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+w3m-account-button:hover {
+  background: rgba(99, 102, 241, 0.1) !important;
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Fix Web3Modal Header Visibility */
+w3m-modal {
+  --w3m-z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+/* Ensure modal header is always visible */
+w3m-modal-header,
+w3m-modal w3m-modal-header,
+w3m-modal::part(w3m-modal-header) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 100000 !important;
+  height: auto !important;
+  min-height: 60px !important;
+  padding: 16px 20px !important;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+/* Fix modal title visibility */
+w3m-modal-header h2,
+w3m-modal-header .w3m-modal-title,
+w3m-text[variant="big-bold"] {
+  color: #ffffff !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix close button visibility */
+w3m-modal-close-button,
+w3m-modal-header button {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+/* Ensure modal content is properly positioned */
+w3m-modal::part(w3m-modal-card) {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+  border-radius: 24px !important;
+}
+
+/* Fix modal body */
+w3m-modal-content,
+w3m-modal .w3m-modal-content {
+  flex: 1 !important;
+  overflow-y: auto !important;
+  padding: 20px !important;
+}
+
+/* Override any conflicting styles */
+w3m-modal * {
+  box-sizing: border-box !important;
+}
+
+/* Ensure proper stacking context */
+w3m-modal-router {
+  position: relative !important;
+  z-index: 1 !important;
+}/* A
+dditional Web3Modal Header Fixes */
+w3m-modal[open] w3m-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  background: linear-gradient(135deg, #1a1f2e 0%, #252a3a 100%) !important;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.3) !important;
+  padding: 20px 24px !important;
+  min-height: 70px !important;
+}
+
+/* Force header text to be visible */
+w3m-modal-header * {
+  color: #ffffff !important;
+  font-family: 'Inter', system-ui, sans-serif !important;
+}
+
+/* Style the modal title specifically */
+w3m-modal-header [data-testid="w3m-modal-title"],
+w3m-modal-header .w3m-modal-title,
+w3m-modal-header h1,
+w3m-modal-header h2 {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+}
+
+/* Ensure close button is styled properly */
+w3m-modal-header [data-testid="w3m-modal-close-button"],
+w3m-modal-header button[aria-label="Close"] {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+w3m-modal-header button:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  transform: scale(1.05) !important;
+}
+
+/* Fix any potential layout issues */
+w3m-modal-content {
+  padding: 0 !important;
+}
+
+w3m-modal-router {
+  padding: 24px !important;
+}/* F
+uturistic Deposit Page Styles */
+@keyframes quantum-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes data-flow {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes hologram-flicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes neon-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(147, 51, 234, 0.3);
+  }
+}
+
+.quantum-pulse {
+  animation: quantum-pulse 2s ease-in-out infinite;
+}
+
+.data-flow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  animation: data-flow 3s ease-in-out infinite;
+}
+
+.hologram-effect {
+  animation: hologram-flicker 4s ease-in-out infinite;
+  backdrop-filter: blur(16px);
+}
+
+.neon-border {
+  animation: neon-glow 3s ease-in-out infinite;
+}
+
+/* Futuristic Card Hover Effects */
+.futuristic-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.futuristic-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.futuristic-card:hover::before {
+  left: 100%;
+}
+
+.futuristic-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.2);
+}
+
+/* Quantum Button Styles */
+.quantum-button {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quantum-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.quantum-button:hover::before {
+  left: 100%;
+}
+
+.quantum-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+}
+
+.quantum-button:active {
+  transform: translateY(0);
+}
+
+/* Glitch Effect for Headers */
+.glitch-text {
+  position: relative;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+}
+
+.glitch-text::before {
+  animation: glitch-1 0.5s infinite;
+  color: #ff0080;
+  z-index: -1;
+}
+
+.glitch-text::after {
+  animation: glitch-2 0.5s infinite;
+  color: #00ff80;
+  z-index: -2;
+}
+
+@keyframes glitch-1 {
+  0%, 14%, 15%, 49%, 50%, 99%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  15%, 49% {
+    opacity: 1;
+    transform: translateX(-2px);
+  }
+}
+
+@keyframes glitch-2 {
+  0%, 19%, 20%, 44%, 45%, 99%, 100% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+  20%, 44% {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+}
+
+/* Particle Background Effect */
+.particle-bg {
+  position: relative;
+  overflow: hidden;
+}
+
+.particle-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+  animation: particle-float 20s ease-in-out infinite;
+}
+
+@keyframes particle-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-10px) rotate(120deg);
+  }
+  66% {
+    transform: translateY(5px) rotate(240deg);
+  }
+}
+
+/* Scanning Line Effect */
+.scan-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff80, transparent);
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(500%);
+  }
+}
+/* Clean 
+Dark Theme Override Styles */
+.clean-dark-card {
+  background: #111827 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.clean-dark-card:hover {
+  border-color: #4b5563 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.clean-dark-button {
+  background: white !important;
+  color: black !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.clean-dark-button:hover {
+  background: #f3f4f6 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.clean-dark-button:active {
+  transform: translateY(0) !important;
+}
+
+/* Override any colorful animations */
+* {
+  animation-duration: 0s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+}
+
+/* Keep only essential animations */
+.fade-in {
+  animation: fadeIn 0.5s ease-out !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hover-lift {
+  transition: transform 0.2s ease !important;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px) !important;
 }

@@ -9,7 +9,8 @@ export const useTokenBalance = (tokenAddress: string, decimals: number = 18) => 
   const isValidAddress = Boolean(tokenAddress && 
     tokenAddress.startsWith('0x') && 
     tokenAddress.length === 42 &&
-    /^0x[a-fA-F0-9]{40}$/.test(tokenAddress));
+    /^0x[a-fA-F0-9]{40}$/.test(tokenAddress) &&
+    tokenAddress !== '0x0000000000000000000000000000000000000000');
 
   const { data: balance, isLoading, refetch, isError } = useContractRead({
     address: isValidAddress ? (tokenAddress as `0x${string}`) : undefined,
@@ -20,13 +21,15 @@ export const useTokenBalance = (tokenAddress: string, decimals: number = 18) => 
     watch: false,
     cacheTime: 1000 * 30,
     staleTime: 1000 * 10,
-
+    // retry: false, // Don't retry failed calls
     onError: (error) => {
       // Silently handle expected errors for non-existent tokens
       const errorMessage = error.message.toLowerCase();
       if (!errorMessage.includes('returned no data') && 
           !errorMessage.includes('call revert') &&
-          !errorMessage.includes('execution reverted')) {
+          !errorMessage.includes('execution reverted') &&
+          !errorMessage.includes('contract function') &&
+          !errorMessage.includes('does not have the function')) {
         console.debug(`Balance fetch failed for ${tokenAddress}:`, error.message);
       }
     },

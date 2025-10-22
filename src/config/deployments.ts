@@ -17,6 +17,7 @@ export interface DeploymentConfig {
         CrossChainManager: string;
         CrossChainEmergencyCoordinator: string;
         PortfolioRebalancer: string;
+        SimpleCrossChainBridge: string;
     };
     externalContracts: {
         PythContract: string;
@@ -30,31 +31,30 @@ export interface DeploymentConfig {
  * Deployment configurations for all supported chains
  */
 export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
-    // Arbitrum Sepolia (Testnet)
+    // Arbitrum Sepolia (Testnet) - Updated 2025-10-22
     421614: {
         chainId: 421614,
         network: 'arbitrumSepolia',
-        timestamp: '2025-10-21T10:11:45.458Z',
+        timestamp: '2025-10-22T09:44:12.163Z',
         contracts: {
-            PythPriceMonitor: "0x78694a7A55f478e5Fee95Be6Aa5AC7A13c435C9B",
-            DEXAggregator: "0x126Ab675060720d699A6470c5DCe3EBdD5E0029e",
-            CrashGuardCore: "0xB867f226388e1695BE040EA45c7E13F8fB493E9a",
-            EmergencyExecutor: "0x110704f8337A9CF4e236f0d3A67E5F39189539c7",
-            LitRelayContract: "0x72BB4C4d925e12Fb8cc9776a32c5dbE8aB9DB500",
-            LitProtocolIntegration: "0x6952402ed7a5a6cCB5033f7F84670aec1540C493",
-            CrossChainManager: "0xEfa8B514714ebD129B3B011ce379C86225ce7244",
-            CrossChainEmergencyCoordinator: "0xEfcB2f4aAf6c24E85e354a07ae7CAef15d81B40d",
-            PortfolioRebalancer: "0xA1ED2F7C58a7A5e220084439eB1d966F2C629DE0"
-
+            PythPriceMonitor: "0x5AF0F97612B3F6cf35F94274C4FD89BA363DDa4f",
+            DEXAggregator: "0x3d07101F65B172232fBd90811dA971904f837c7f",
+            CrashGuardCore: "0xecC8AaF4f40D47576Da9931e554e6F7df53c41CC",
+            EmergencyExecutor: "0x41Bd52f4102634c7fe62a20957206A18e03Df76A",
+            LitRelayContract: "0x0601321C49279d5b66fCC058301dE1a0FfF50004",
+            LitProtocolIntegration: "0x0Bc70cB52Ea957fA6927B5D335D8CF97967e6750",
+            CrossChainManager: "0x7CFe0469F4b925B99d1631FF71E6eA2C4c197210",
+            CrossChainEmergencyCoordinator: "0xd2e0F7F34f2EEb15483bB2444ee5Fd211C938834",
+            PortfolioRebalancer: "0x0D1C78742E937376622D696E861FE5D4bEf7E72d",
+            SimpleCrossChainBridge: "0x1D568B2a2f67Edb788DA111D153319001378Ee32"
         },
         externalContracts: {
-            PythContract: '0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF',
-            OneInchRouter: '0x1111111254EEB25477B68fb85Ed929f73A960582',
-            UniswapRouter: '0x101F443B4d1b059569D643917553c771E1b9663E',
-            UniswapQuoter: '0x2779a0CC1c3e0E44D2542EC3e79e3864Ae93Ef0B',
-        },
+            PythContract: "0x4374e5a8b9C22271E9EB878A2AA31DE97DF15DAF",
+            OneInchRouter: "0x1111111254EEB25477B68fb85Ed929f73A960582",
+            UniswapRouter: "0x101F443B4d1b059569D643917553c771E1b9663E",
+            UniswapQuoter: "0x2779a0CC1c3e0E44D2542EC3e79e3864Ae93Ef0B"
+        }
     },
-
     // Base Sepolia (Testnet)
     84532: {
         chainId: 84532,
@@ -69,7 +69,8 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             LitProtocolIntegration: "0x79625e589939513e1F2dF994BBaa263366D09786",
             CrossChainManager: "0x3EAc402b3fF08C96dD7A3CB64Cacd0001a6d0538",
             CrossChainEmergencyCoordinator: "0x1f09baFc6E37A44137c130974c035eDb448b42EB",
-            PortfolioRebalancer: "0x6D9bCfdFbf62A71bB1773f8d302Cf7301418126b"
+            PortfolioRebalancer: "0x6D9bCfdFbf62A71bB1773f8d302Cf7301418126b",
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: "0xA2aa501b19aff244D90cc15a4Cf739D2725B5729",
@@ -93,6 +94,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             CrossChainManager: '0x0000000000000000000000000000000000000000',
             CrossChainEmergencyCoordinator: '0x0000000000000000000000000000000000000000',
             PortfolioRebalancer: '0x0000000000000000000000000000000000000000',
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: '0x4305FB66699C3B2702D4d05CF36551390A4c69C6',
@@ -117,6 +119,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             CrossChainManager: '0x0000000000000000000000000000000000000000',
             CrossChainEmergencyCoordinator: '0x0000000000000000000000000000000000000000',
             PortfolioRebalancer: '0x0000000000000000000000000000000000000000',
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: '0xff1a0f4744e8582DF1aE09D5611b887B6a12925C',
@@ -141,6 +144,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             CrossChainManager: '0x0000000000000000000000000000000000000000',
             CrossChainEmergencyCoordinator: '0x0000000000000000000000000000000000000000',
             PortfolioRebalancer: '0x0000000000000000000000000000000000000000',
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: '0xff1a0f4744e8582DF1aE09D5611b887B6a12925C',
@@ -165,6 +169,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             CrossChainManager: '0x0000000000000000000000000000000000000000',
             CrossChainEmergencyCoordinator: '0x0000000000000000000000000000000000000000',
             PortfolioRebalancer: '0x0000000000000000000000000000000000000000',
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: '0xff1a0f4744e8582DF1aE09D5611b887B6a12925C',
@@ -189,6 +194,7 @@ export const DEPLOYMENTS: Record<number, DeploymentConfig> = {
             CrossChainManager: '0x0000000000000000000000000000000000000000',
             CrossChainEmergencyCoordinator: '0x0000000000000000000000000000000000000000',
             PortfolioRebalancer: '0x0000000000000000000000000000000000000000',
+            SimpleCrossChainBridge: '0x0000000000000000000000000000000000000000',
         },
         externalContracts: {
             PythContract: '0x8250f4aF4B972684F7b336503E2D6dFeDeB1487a',

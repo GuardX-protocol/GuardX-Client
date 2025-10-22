@@ -11,37 +11,40 @@ const PriceChart: React.FC<PriceChartProps> = ({ symbol, timeRange = '24H' }) =>
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const generateData = () => {
-      const points = 50;
-      const now = Date.now();
-      const ranges = {
-        '1H': 3600 * 1000,
-        '24H': 24 * 3600 * 1000,
-        '7D': 7 * 24 * 3600 * 1000,
-        '30D': 30 * 24 * 3600 * 1000,
-      };
+    const fetchHistoricalData = async () => {
+      setIsLoading(true);
       
-      const interval = ranges[timeRange] / points;
-      const basePrice = 100;
-      const chartData = [];
-
-      for (let i = 0; i < points; i++) {
-        const timestamp = now - (ranges[timeRange] - interval * i);
-        const variation = Math.sin(i / 5) * 10 + Math.random() * 5;
-        chartData.push({
-          time: new Date(timestamp).toLocaleTimeString('en-US', { 
+      try {
+        const { pythSDK } = await import('@/services/pythSDK');
+        
+        const now = Date.now();
+        const ranges = {
+          '1H': 3600 * 1000,
+          '24H': 24 * 3600 * 1000,
+          '7D': 7 * 24 * 3600 * 1000,
+          '30D': 30 * 24 * 3600 * 1000,
+        };
+        
+        const startTime = now - ranges[timeRange];
+        const history = await pythSDK.getPriceHistory(symbol, startTime, now);
+        
+        const chartData = history.map(point => ({
+          time: new Date(point.timestamp).toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit' 
           }),
-          price: basePrice + variation,
-        });
+          price: point.price,
+        }));
+        
+        setData(chartData);
+      } catch (error) {
+        console.error('Failed to fetch chart data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setData(chartData);
-      setIsLoading(false);
     };
 
-    generateData();
+    fetchHistoricalData();
   }, [symbol, timeRange]);
 
   if (isLoading) {

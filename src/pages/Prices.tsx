@@ -5,7 +5,6 @@ import { usePythPrices, usePythTokensByCategory } from '@/hooks/usePythPrices';
 
 import TokenListItem from '@/components/prices/TokenListItem';
 import TokenPriceChart from '@/components/prices/TokenPriceChart';
-import PageHeader from '@/components/ui/PageHeader';
 import { TokenInfo } from '@uniswap/token-lists';
 
 /**
@@ -101,48 +100,70 @@ const Prices: React.FC = () => {
   };
 
   return (
-    <div className="w-full space-y-6">
-      <PageHeader
-        title="Market Prices"
-        description="Real-time oracle data from Pyth Network"
-        icon={DollarSign}
-      >
-        <button
-          onClick={handleRefresh}
-          className="btn-secondary flex items-center gap-2"
-        >
-          <RefreshCw className={`h-4 w-4 ${isLoadingPrices ? 'animate-spin' : ''}`} />
-          <span className="text-sm font-medium">Refresh Data</span>
-        </button>
-      </PageHeader>
-
-      <div className="card bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30">
-        <div className="flex items-start gap-3">
-          <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-            <Network className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-100 mb-1">Real-Time Oracle Data</h3>
-            <p className="text-sm text-gray-300">
-              Prices fetched directly from Pyth Network's Hermes API.
-              Decentralized oracle data with sub-second updates across all supported chains.
-            </p>
-          </div>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
+      {/* Animated Background Particles */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute inset-0 opacity-30 animate-pulse">
+          <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-white rounded-full"></div>
+          <div className="absolute top-3/4 right-1/4 w-1 h-1 bg-white rounded-full"></div>
+          <div className="absolute top-1/10 left-1/2 w-0.5 h-0.5 bg-white rounded-full"></div>
         </div>
       </div>
 
-      <div className="card">
-        <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search tokens by name or symbol..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
-            />
+      <div className="relative z-10 w-full space-y-6 p-6">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
+          <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-8">
+            <div className="flex items-center gap-6">
+              <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-cyan-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                <DollarSign className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              </div>
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">Market Prices</h1>
+                <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
+                  <Network className="h-4 w-4 text-cyan-400" />
+                  Real-time oracle data from Pyth Network
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleRefresh}
+              className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-xl font-medium hover:from-cyan-400/30 hover:to-purple-500/30 transition-all duration-300 backdrop-blur-sm flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${isLoadingPrices ? 'animate-spin' : ''} text-cyan-400`} />
+              <span className="text-sm font-medium text-white">Refresh Data</span>
+            </button>
           </div>
+        </div>
+
+        <div className="p-6 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+          <div className="flex items-start gap-3">
+            <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
+              <Network className="h-5 w-5 text-cyan-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-white mb-1">Real-Time Oracle Data</h3>
+              <p className="text-sm text-gray-300">
+                Prices fetched directly from Pyth Network's Hermes API.
+                Decentralized oracle data with sub-second updates across all supported chains.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search tokens by name or symbol..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 backdrop-blur-sm"
+              />
+            </div>
 
           <div className="flex gap-2 flex-wrap">
             {(['all', 'trending', 'layer1', 'stablecoins', 'defi'] as const).map((cat) => (
@@ -219,6 +240,7 @@ const Prices: React.FC = () => {
           onClose={() => setSelectedToken(null)}
         />
       )}
+      </div>
     </div>
   );
 };

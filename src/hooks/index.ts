@@ -18,4 +18,5 @@ export * from './useFallbackPrices';
 export * from './usePythPrices';
 export * from './useFastPrice';
 export * from './useContract';
+export * from './usePriceChange';
 export * from './useUserWalletTokens';

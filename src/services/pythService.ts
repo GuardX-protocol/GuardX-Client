@@ -26,6 +26,8 @@ class PythService {
   private client: HermesClient;
   private feedCache: Map<string, PythFeedMetadata> = new Map();
   private priceCache: Map<string, PythPriceFeed> = new Map();
+  private feedCacheTimestamp: number = 0;
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     this.client = new HermesClient('https://hermes.pyth.network');
@@ -35,6 +37,12 @@ class PythService {
    * Get all available price feeds with metadata
    */
   async getAllPriceFeeds(): Promise<PythFeedMetadata[]> {
+    // Check if cache is still valid
+    const now = Date.now();
+    if (this.feedCache.size > 0 && (now - this.feedCacheTimestamp) < this.CACHE_DURATION) {
+      return Array.from(this.feedCache.values());
+    }
+
     try {
       const feeds = await this.client.getPriceFeeds();
       if (!feeds || !Array.isArray(feeds)) {
@@ -50,10 +58,12 @@ class PythService {
         description: feed.attributes?.description || ''
       })).filter(feed => feed.id && feed.symbol);
 
-      // Cache the feeds
+      // Clear and update cache
+      this.feedCache.clear();
       metadata.forEach(feed => {
         this.feedCache.set(feed.symbol.toUpperCase(), feed);
       });
+      this.feedCacheTimestamp = now;
 
       return metadata;
     } catch (error) {

@@ -16,14 +16,17 @@ interface TokenListItemProps {
   };
   isLoading?: boolean;
   showBalance?: boolean;
+  customBalance?: string;
 }
 
-const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData, isLoading, showBalance = false }) => {
+const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData, isLoading, showBalance = false, customBalance }) => {
   const { isConnected } = useAccount();
   const { formattedBalance, isLoading: isBalanceLoading } = useTokenBalance(
-    showBalance && isConnected ? token.address : '',
+    showBalance && isConnected && !customBalance ? token.address : '',
     token.decimals
   );
+
+  const displayBalance = customBalance || formattedBalance;
 
   // Generate consistent mock 24h change based on token symbol
   // In production, this would come from historical price data
@@ -103,13 +106,13 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
               <Wallet className="h-4 w-4" />
               <span>Balance</span>
             </div>
-            {isBalanceLoading ? (
+            {isBalanceLoading && !customBalance ? (
               <div className="animate-pulse">
                 <div className="h-4 bg-gray-200 rounded w-16"></div>
               </div>
             ) : (
-              <span className="font-medium text-gray-900">
-                {parseFloat(formattedBalance) > 0 ? formattedBalance : '0.00'} {token.symbol}
+              <span className={`font-medium ${parseFloat(displayBalance) > 0 ? 'text-emerald-600' : 'text-gray-900'}`}>
+                {parseFloat(displayBalance) > 0 ? displayBalance : '0.00'} {token.symbol}
               </span>
             )}
           </div>

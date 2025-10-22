@@ -2,7 +2,7 @@ import { useContractRead, useContractReads } from 'wagmi';
 import { useNetwork } from 'wagmi';
 import { useMemo } from 'react';
 import { getContracts } from '@/config/contracts';
-import { CrashGuardCoreABI } from '@/config/abis';
+import { CrashGuardCoreABI } from '@/config/abis/CrashGuardCore';
 import { TokenInfo } from '@uniswap/token-lists';
 
 /**
@@ -39,7 +39,7 @@ export const useSupportedTokens = (tokens: TokenInfo[]) => {
   // Create contract calls for all tokens at once
   const contractCalls = useMemo(() => {
     if (!contracts.CrashGuardCore || !tokens.length) return [];
-    
+
     return tokens.map(token => ({
       address: contracts.CrashGuardCore as `0x${string}`,
       abi: CrashGuardCoreABI,
@@ -65,7 +65,7 @@ export const useSupportedTokens = (tokens: TokenInfo[]) => {
     tokens.forEach((token, index) => {
       const result = data[index];
       const isSupported = result?.status === 'success' && Boolean(result.result);
-      
+
       if (isSupported) {
         supported.push(token);
       } else {
@@ -101,7 +101,7 @@ export const useAddSupportedToken = () => {
       chainId: chain?.id,
       timestamp: new Date().toISOString(),
     });
-    
+
     // In a real implementation, this would call the contract's addSupportedToken function
     // This requires owner privileges on the contract
   };

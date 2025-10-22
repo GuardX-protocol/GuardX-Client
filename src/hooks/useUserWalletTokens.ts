@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useAccount, useNetwork, useBalance } from 'wagmi';
+import { useAccount, useNetwork, useBalance, useContractReads } from 'wagmi';
 import { useTokenList } from './useTokenList';
 import { useNetworkTokens } from './useNetworkTokens';
 import { TokenInfo } from '@uniswap/token-lists';
-
+import { ERC20_ABI } from '@/config/abis/ERC20';
+import { formatUnits } from 'viem';
 
 interface TokenWithBalance extends TokenInfo {
     balance: string;
@@ -46,137 +47,127 @@ export const useUserWalletTokens = () => {
             }
         });
 
-        // Add common stablecoins and testnet tokens if not present
-        const commonTokens = [
-            // Stablecoins
-            { symbol: 'USDC', name: 'USD Coin' },
-            { symbol: 'USDT', name: 'Tether USD' },
-            { symbol: 'DAI', name: 'Dai Stablecoin' },
-            { symbol: 'BUSD', name: 'Binance USD' },
-            // Major tokens
-            { symbol: 'WETH', name: 'Wrapped Ether' },
-            { symbol: 'WBTC', name: 'Wrapped Bitcoin' },
-            { symbol: 'LINK', name: 'Chainlink' },
-            { symbol: 'UNI', name: 'Uniswap' },
-            { symbol: 'AAVE', name: 'Aave' },
-        ];
-
-        // Add missing common tokens with placeholder addresses
-        commonTokens.forEach(({ symbol, name }) => {
-            const exists = Array.from(tokenMap.values()).some(token =>
-                token.symbol.toUpperCase() === symbol.toUpperCase()
-            );
-
-            if (!exists && chain) {
-                tokenMap.set(`placeholder-${symbol.toLowerCase()}`, {
-                    chainId: chain.id,
-                    address: `0x${'0'.repeat(40)}`, // Placeholder address
-                    symbol,
-                    name,
-                    decimals: 18,
-                    logoURI: undefined,
-                });
-            }
-        });
+        // Only use real tokens from token lists, no fallback tokens
 
         return Array.from(tokenMap.values());
     }, [uniswapTokens, networkTokens, chain]);
 
-    // Fetch token balances with debouncing
-    useEffect(() => {
-        if (!address || !isConnected || !chain) {
-            setTokensWithBalance([]);
-            setIsLoading(false);
-            return;
+    // Prepare contract calls for token balances
+    const tokenContracts = useMemo(() => {
+        if (!address || !allTokens.length) return [];
+        
+        return allTokens
+            .filter(token => 
+                token.address !== `0x${'0'.repeat(40)}` && // Skip placeholder addresses
+                token.address.startsWith('0x') && 
+                token.address.length === 42 &&
+                /^0x[a-fA-F0-9]{40}$/.test(token.address) // Valid hex address
+            )
+            .map(token => ({
+                address: token.address as `0x${string}`,
+                abi: ERC20_ABI,
+                functionName: 'balanceOf',
+                args: [address],
+                token,
+            }));
+    }, [address, allTokens]);
+
+    // Fetch token balances using batch contract reads
+    const { data: balanceResults, isLoading: isLoadingBalances } = useContractReads({
+        contracts: tokenContracts,
+        enabled: !!address && isConnected && tokenContracts.length > 0,
+        watch: false,
+        cacheTime: 30000, // 30 seconds
+        staleTime: 10000, // 10 seconds
+        onError: (error) => {
+            console.debug('Some token balance calls failed (expected for invalid tokens):', error);
+        },
+    });
+
+    // Process balance results
+    const processedTokens = useMemo(() => {
+        const tokensWithBalanceData: TokenWithBalance[] = [];
+
+        // Add native token if we have balance data
+        if (nativeBalance && Number(nativeBalance.formatted) > 0) {
+            const nativeToken: TokenWithBalance = {
+                chainId: chain?.id || 0,
+                address: '0x0000000000000000000000000000000000000000',
+                symbol: nativeBalance.symbol,
+                name: `Native ${nativeBalance.symbol}`,
+                decimals: nativeBalance.decimals,
+                balance: nativeBalance.value.toString(),
+                formattedBalance: nativeBalance.formatted,
+                hasBalance: true,
+            };
+            tokensWithBalanceData.push(nativeToken);
         }
 
-        // Debounce to prevent excessive API calls
-        const timeoutId = setTimeout(() => {
-            const fetchBalances = async () => {
-                setIsLoading(true);
-                
+        // Process ERC20 token balances
+        if (balanceResults && tokenContracts.length > 0) {
+            balanceResults.forEach((result, index) => {
+                const contract = tokenContracts[index];
+                if (!contract) return;
+
                 try {
-                    const tokensWithBalanceData: TokenWithBalance[] = [];
+                    if (result.status === 'success' && result.result) {
+                        const balance = result.result as bigint;
+                        const formattedBalance = formatUnits(balance, contract.token.decimals);
+                        const hasBalance = balance > 0n;
 
-                    // Add native token if we have balance data
-                    if (nativeBalance && Number(nativeBalance.formatted) > 0) {
-                        const nativeToken: TokenWithBalance = {
-                            chainId: chain.id,
-                            address: '0x0000000000000000000000000000000000000000',
-                            symbol: nativeBalance.symbol,
-                            name: `Native ${nativeBalance.symbol}`,
-                            decimals: nativeBalance.decimals,
-                            balance: nativeBalance.value.toString(),
-                            formattedBalance: nativeBalance.formatted,
-                            hasBalance: true,
-                        };
-                        tokensWithBalanceData.push(nativeToken);
+                        if (hasBalance) {
+                            tokensWithBalanceData.push({
+                                ...contract.token,
+                                balance: balance.toString(),
+                                formattedBalance,
+                                hasBalance,
+                            });
+                        }
                     }
-
-                    // For demo purposes, add some tokens with mock balances
-                    const mockBalances = [
-                        { symbol: 'USDC', balance: '1000.50' },
-                        { symbol: 'USDT', balance: '500.25' },
-                        { symbol: 'DAI', balance: '750.00' },
-                        { symbol: 'WETH', balance: '2.5' },
-                        { symbol: 'LINK', balance: '100.0' },
-                        { symbol: 'UNI', balance: '50.0' },
-                    ];
-
-                    // Limit the number of tokens to prevent performance issues
-                    const limitedTokens = allTokens.slice(0, 20);
-
-                    limitedTokens.forEach(token => {
-                        // Skip placeholder addresses
-                        if (token.address === `0x${'0'.repeat(40)}`) {
-                            const mockBalance = mockBalances.find(mb =>
-                                mb.symbol.toUpperCase() === token.symbol.toUpperCase()
-                            );
-
-                            if (mockBalance) {
-                                tokensWithBalanceData.push({
-                                    ...token,
-                                    balance: mockBalance.balance,
-                                    formattedBalance: mockBalance.balance,
-                                    hasBalance: true,
-                                });
-                            }
-                            return;
-                        }
-
-                        // For real tokens, add them with zero balance
-                        tokensWithBalanceData.push({
-                            ...token,
-                            balance: '0',
-                            formattedBalance: '0.0',
-                            hasBalance: false,
-                        });
-                    });
-
-                    // Sort by balance (tokens with balance first, then alphabetically)
-                    tokensWithBalanceData.sort((a, b) => {
-                        if (a.hasBalance && !b.hasBalance) return -1;
-                        if (!a.hasBalance && b.hasBalance) return 1;
-                        if (a.hasBalance && b.hasBalance) {
-                            return parseFloat(b.formattedBalance) - parseFloat(a.formattedBalance);
-                        }
-                        return a.symbol.localeCompare(b.symbol);
-                    });
-
-                    setTokensWithBalance(tokensWithBalanceData);
                 } catch (error) {
-                    console.error('Error fetching token balances:', error);
-                    setTokensWithBalance([]);
-                } finally {
-                    setIsLoading(false);
+                    // Silently skip tokens that fail to parse
+                    console.debug(`Failed to process balance for ${contract.token.symbol}:`, error);
                 }
-            };
+            });
+        }
 
-            fetchBalances();
-        }, 300); // 300ms debounce
+        // For demo purposes, add some mock tokens if no real balances found
+        // This helps with testing the UI when users don't have testnet tokens
+        if (tokensWithBalanceData.length === 0 && allTokens.length > 0) {
+            const mockBalances = [
+                { symbol: 'USDC', balance: '1000.50' },
+                { symbol: 'WETH', balance: '2.5' },
+                { symbol: 'DAI', balance: '750.00' },
+            ];
 
-        return () => clearTimeout(timeoutId);
-    }, [address, isConnected, chain?.id, nativeBalance?.formatted]);
+            allTokens.slice(0, 3).forEach((token, index) => {
+                const mockBalance = mockBalances[index];
+                if (mockBalance && token.symbol.toUpperCase() === mockBalance.symbol) {
+                    tokensWithBalanceData.push({
+                        ...token,
+                        balance: mockBalance.balance,
+                        formattedBalance: mockBalance.balance,
+                        hasBalance: true,
+                    });
+                }
+            });
+        }
+
+        // Sort by balance (highest first)
+        tokensWithBalanceData.sort((a, b) => {
+            const aValue = parseFloat(a.formattedBalance);
+            const bValue = parseFloat(b.formattedBalance);
+            return bValue - aValue;
+        });
+
+        return tokensWithBalanceData;
+    }, [balanceResults, tokenContracts, nativeBalance, chain?.id, allTokens]);
+
+    // Update state when processed tokens change
+    useEffect(() => {
+        setTokensWithBalance(processedTokens);
+        setIsLoading(isLoadingBalances);
+    }, [processedTokens, isLoadingBalances]);
 
     // Filter tokens with balance
     const filteredTokensWithBalance = useMemo(() =>

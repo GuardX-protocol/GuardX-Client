@@ -1,14 +1,14 @@
 import React from 'react';
-import WalletModal from './WalletModal';
-import { useWalletStore } from '@/store/walletStore';
+import SimpleWalletModal from './SimpleWalletModal';
+import { useWalletModal } from '@/hooks/useWalletModal';
 
 const GlobalWalletModal: React.FC = () => {
-  const { isWalletModalOpen, closeWalletModal } = useWalletStore();
+  const { showSimpleModal, closeSimpleModal } = useWalletModal();
 
   return (
-    <WalletModal
-      isOpen={isWalletModalOpen}
-      onClose={closeWalletModal}
+    <SimpleWalletModal
+      isOpen={showSimpleModal}
+      onClose={closeSimpleModal}
     />
   );
 };

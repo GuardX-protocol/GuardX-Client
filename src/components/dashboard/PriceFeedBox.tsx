@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TrendingUp, TrendingDown, Activity, BarChart3, X } from 'lucide-react';
 import { useFastPrice } from '@/hooks/useFastPrice';
+import { usePriceChange } from '@/hooks/usePriceChange';
 import PriceChart from '@/components/charts/PriceChart';
 
 interface PriceFeedBoxProps {
@@ -9,12 +10,13 @@ interface PriceFeedBoxProps {
 }
 
 const PriceFeedBox: React.FC<PriceFeedBoxProps> = ({ symbol, name }) => {
-  const { price, isLoading } = useFastPrice(symbol);
+  const { price, isLoading: priceLoading } = useFastPrice(symbol);
+  const { priceChange, isLoading: changeLoading } = usePriceChange(symbol);
   const [showChart, setShowChart] = useState(false);
 
   const formattedPrice = price || 0;
-  const priceChange = (Math.random() * 10 - 5).toFixed(2);
-  const isPositive = parseFloat(priceChange) > 0;
+  const isPositive = priceChange > 0;
+  const isLoading = priceLoading || changeLoading;
 
   if (isLoading) {
     return (
@@ -40,7 +42,7 @@ const PriceFeedBox: React.FC<PriceFeedBoxProps> = ({ symbol, name }) => {
             <div className="text-xl sm:text-2xl font-bold text-white">${formattedPrice.toFixed(formattedPrice < 1 ? 6 : 2)}</div>
             <div className={`flex items-center gap-1 text-xs sm:text-sm ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
               {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-              {isPositive ? '+' : ''}{priceChange}%
+              {isPositive ? '+' : ''}{priceChange.toFixed(2)}%
             </div>
           </div>
         </div>
@@ -83,7 +85,7 @@ const PriceFeedBox: React.FC<PriceFeedBoxProps> = ({ symbol, name }) => {
               <div className="text-3xl sm:text-4xl font-bold text-white mb-2">${formattedPrice.toFixed(formattedPrice < 1 ? 6 : 2)}</div>
               <div className={`flex items-center gap-2 text-sm sm:text-base ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
                 {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                {isPositive ? '+' : ''}{priceChange}% (24h)
+                {isPositive ? '+' : ''}{priceChange.toFixed(2)}% (24h)
               </div>
             </div>
             <PriceChart symbol={symbol} timeRange="24H" />

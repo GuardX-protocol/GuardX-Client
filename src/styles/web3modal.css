@@ -1,0 +1,269 @@
+/* Web3Modal Custom Futuristic Styling */
+w3m-modal {
+  --w3m-z-index: 99999 !important;
+  z-index: 99999 !important;
+}
+
+w3m-modal * {
+  box-sizing: border-box !important;
+}
+
+w3m-modal::part(w3m-modal-card) {
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(99, 102, 241, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 24px !important;
+  overflow: visible !important;
+  max-height: 90vh !important;
+  min-height: 400px !important;
+  width: 100% !important;
+  max-width: 480px !important;
+}
+
+w3m-modal::part(w3m-modal-container) {
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  z-index: 99999 !important;
+}
+
+/* Ensure modal header is always visible */
+w3m-modal-header,
+w3m-modal w3m-modal-header,
+w3m-modal::part(w3m-modal-header) {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 100000 !important;
+  height: auto !important;
+  min-height: 60px !important;
+  padding: 16px 20px !important;
+  background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%) !important;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+/* Ensure modal content area is visible */
+w3m-modal-content,
+w3m-modal-router,
+w3m-modal w3m-modal-router,
+w3m-modal::part(w3m-modal-content) {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  min-height: 300px !important;
+  padding: 20px !important;
+  background: transparent !important;
+  overflow-y: auto !important;
+}
+
+/* Fix the main modal structure */
+w3m-modal {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+w3m-modal[open] {
+  display: block !important;
+}
+
+/* Ensure all child elements are visible */
+w3m-modal * {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix modal title visibility */
+w3m-modal-header h2,
+w3m-modal-header .w3m-modal-title,
+w3m-text[variant="big-bold"] {
+  color: #ffffff !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Fix close button visibility */
+w3m-modal-close-button,
+w3m-modal-header button {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 8px !important;
+  cursor: pointer !important;
+}
+
+w3m-modal-close-button:hover,
+w3m-modal-header button:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  transform: scale(1.1) !important;
+}
+
+/* Wallet option styling with futuristic hover effects */
+w3m-wallet-button {
+  background: rgba(37, 42, 58, 0.6) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+w3m-wallet-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.2), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+w3m-wallet-button:hover {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border-color: rgba(99, 102, 241, 0.4) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow: 
+    0 15px 35px -5px rgba(99, 102, 241, 0.3),
+    0 0 20px rgba(99, 102, 241, 0.2) !important;
+}
+
+w3m-wallet-button:hover::before {
+  left: 100% !important;
+}
+
+/* Connect button with cyberpunk styling */
+w3m-connect-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #06b6d4 100%) !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+w3m-connect-button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 
+    0 15px 35px -5px rgba(99, 102, 241, 0.5),
+    0 0 30px rgba(139, 92, 246, 0.3) !important;
+}
+
+/* Enhanced text styling */
+w3m-text {
+  color: #e2e8f0 !important;
+  font-weight: 500 !important;
+}
+
+/* Wallet icons with neon glow */
+w3m-wallet-image {
+  border-radius: 14px !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.3s ease !important;
+}
+
+w3m-wallet-image:hover {
+  border-color: rgba(99, 102, 241, 0.5) !important;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.3) !important;
+}
+
+/* Loading spinner with cyberpunk animation */
+w3m-spinner {
+  animation: spin-glow 1.5s linear infinite !important;
+}
+
+@keyframes spin-glow {
+  0% {
+    transform: rotate(0deg);
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.8));
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+  }
+}/* F
+orce wallet selection view to be visible */
+w3m-connect-view,
+w3m-wallet-connect-view,
+w3m-modal w3m-connect-view,
+w3m-modal w3m-wallet-connect-view {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 300px !important;
+  padding: 20px !important;
+}
+
+/* Ensure wallet buttons container is visible */
+w3m-wallet-button-list,
+w3m-modal w3m-wallet-button-list,
+.w3m-wallet-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  min-height: 200px !important;
+}
+
+/* Fix any hidden containers */
+w3m-modal-container,
+w3m-modal-card,
+w3m-modal-content,
+w3m-modal-router {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+}
+
+/* Ensure the modal backdrop doesn't interfere */
+w3m-modal-backdrop {
+  pointer-events: none !important;
+}
+
+/* Force all views to be visible */
+w3m-modal [data-view] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Specific fix for connect wallet view */
+w3m-modal[data-view="Connect"],
+w3m-modal[data-view="ConnectWallet"] {
+  display: block !important;
+}
+
+/* Override any display: none rules */
+w3m-modal *[style*="display: none"] {
+  display: block !important;
+}
+
+w3m-modal *[style*="visibility: hidden"] {
+  visibility: visible !important;
+}
+
+w3m-modal *[style*="opacity: 0"] {
+  opacity: 1 !important;
+}

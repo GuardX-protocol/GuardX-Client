@@ -1,8 +1,14 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useContractRead } from 'wagmi';
 import { useNetwork } from 'wagmi';
 import { getContracts } from '@/config/contracts';
-import { CrashGuardCoreABI } from '@/config/abis';
+import {
+  CrashGuardCoreABI,
+  EmergencyExecutorABI,
+  PythPriceMonitorABI,
+  DEXAggregatorABI,
+  PortfolioRebalancerABI
+} from '@/config/abis';
 import toast from 'react-hot-toast';
 
 export const useCrashGuardCore = () => {
@@ -18,7 +24,6 @@ export const useCrashGuardCore = () => {
 export const useEmergencyExecutor = () => {
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id);
-  const { EmergencyExecutorABI } = require('@/config/abis');
 
   return useMemo(() => ({
     address: contracts.EmergencyExecutor as `0x${string}`,
@@ -29,7 +34,6 @@ export const useEmergencyExecutor = () => {
 export const usePythPriceMonitor = () => {
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id);
-  const { PythPriceMonitorABI } = require('@/config/abis');
 
   return useMemo(() => ({
     address: contracts.PythPriceMonitor as `0x${string}`,
@@ -40,7 +44,6 @@ export const usePythPriceMonitor = () => {
 export const useDEXAggregator = () => {
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id);
-  const { DEXAggregatorABI } = require('@/config/abis');
 
   return useMemo(() => ({
     address: contracts.DEXAggregator as `0x${string}`,
@@ -51,7 +54,6 @@ export const useDEXAggregator = () => {
 export const usePortfolioRebalancer = () => {
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id);
-  const { PortfolioRebalancerABI } = require('@/config/abis');
 
   return useMemo(() => ({
     address: contracts.PortfolioRebalancer as `0x${string}`,
@@ -124,7 +126,7 @@ export const usePortfolioData = (userAddress?: string) => {
   const { data: portfolio, isLoading, refetch } = useContractRead({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
-    functionName: 'getPortfolio' as any,
+    functionName: 'getUserPortfolio',
     args: userAddress ? [userAddress as `0x${string}`] : undefined,
     enabled: !!userAddress,
     watch: false,

@@ -7,7 +7,7 @@ export const usePortfolio = () => {
 
   const { data, isLoading, refetch } = useContractRead({
     ...contract,
-    functionName: 'getUserPortfolio' as any,
+    functionName: 'getUserPortfolio',
     args: address ? [address] : undefined,
     enabled: !!address,
     watch: false,

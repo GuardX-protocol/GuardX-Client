@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, CheckCircle, TrendingUp } from 'lucide-react';
 import { useAccount, useDisconnect, useBalance, useNetwork } from 'wagmi';
+import { useWeb3Modal } from '@web3modal/react';
 import { formatAddress, formatCurrency } from '@/utils/format';
 import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
 import { usePortfolio } from '@/hooks';
 import { formatUnits } from 'viem';
-import { useWalletStore } from '@/store/walletStore';
-import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 
 const WalletButton: React.FC = () => {
-  const { openWalletModal } = useWalletStore();
+  const { open } = useWeb3Modal();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -47,10 +46,13 @@ const WalletButton: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <Button onClick={openWalletModal} size="sm">
-        <Wallet className="h-4 w-4 mr-2" />
+      <button
+        onClick={() => open()}
+        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium"
+      >
+        <Wallet className="h-4 w-4" />
         Connect Wallet
-      </Button>
+      </button>
     );
   }
 
@@ -99,12 +101,10 @@ const WalletButton: React.FC = () => {
 
                 {/* Network */}
                 {chainMetadata && (
-                  <div className={`mb-3 flex items-center gap-2 px-3 py-2 bg-white rounded-lg border ${
-                    isDeployed ? 'border-success-200' : 'border-orange-200'
-                  }`}>
-                    <div className={`w-2 h-2 rounded-full ${
-                      isDeployed ? 'bg-success-500 animate-pulse' : 'bg-orange-500'
-                    }`} />
+                  <div className={`mb-3 flex items-center gap-2 px-3 py-2 bg-white rounded-lg border ${isDeployed ? 'border-success-200' : 'border-orange-200'
+                    }`}>
+                    <div className={`w-2 h-2 rounded-full ${isDeployed ? 'bg-success-500 animate-pulse' : 'bg-orange-500'
+                      }`} />
                     <span className="text-sm">{chainMetadata.icon}</span>
                     <p className="text-xs font-medium text-gray-700 flex-1">{chainMetadata.name}</p>
                     {!isDeployed && (
