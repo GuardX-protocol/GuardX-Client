@@ -1,4 +1,4 @@
-interface CoinMarketCapHistoricalData {
+interface CoinMarketCapOHLCVData {
   time_open: string;
   time_close: string;
   time_high: string;
@@ -16,7 +16,7 @@ interface CoinMarketCapHistoricalData {
   };
 }
 
-interface CoinMarketCapResponse {
+interface CoinMarketCapOHLCVResponse {
   status: {
     timestamp: string;
     error_code: number;
@@ -25,7 +25,7 @@ interface CoinMarketCapResponse {
     credit_count: number;
   };
   data: {
-    quotes: CoinMarketCapHistoricalData[];
+    quotes: CoinMarketCapOHLCVData[];
   };
 }
 
@@ -39,8 +39,7 @@ interface HistoricalPricePoint {
 }
 
 class CoinMarketCapService {
-  private readonly apiKey = 'b54bcf4d-1bca-4e8e-9a24-22ff2c3d462c';
-  private readonly baseUrl = 'https://sandbox-api.coinmarketcap.com/v1';
+  private readonly baseUrl = '/api/coinmarketcap'; // Use proxy to avoid CORS issues
 
   /**
    * Get historical price data for a cryptocurrency
@@ -49,20 +48,26 @@ class CoinMarketCapService {
     symbol: string,
     timeRange: '1H' | '24H' | '7D' | '30D'
   ): Promise<HistoricalPricePoint[]> {
+    console.log(`🔍 Fetching CoinMarketCap historical data for ${symbol} (${timeRange})`);
+
     try {
       // First, get the cryptocurrency ID by symbol
       const cryptoId = await this.getCryptocurrencyId(symbol);
       if (!cryptoId) {
+        console.warn(`❌ Cryptocurrency ${symbol} not found in CoinMarketCap`);
         throw new Error(`Cryptocurrency ${symbol} not found`);
       }
+
+      console.log(`✅ Found cryptocurrency ID ${cryptoId} for ${symbol}`);
 
       // Calculate date range
       const endDate = new Date();
       const startDate = new Date();
-      
+
       switch (timeRange) {
         case '1H':
-          startDate.setHours(startDate.getHours() - 1);
+          // Get last 6 hours of data with 1h intervals to show trend
+          startDate.setHours(startDate.getHours() - 6);
           break;
         case '24H':
           startDate.setDate(startDate.getDate() - 1);
@@ -86,27 +91,33 @@ class CoinMarketCapService {
         convert: 'USD'
       });
 
+      console.log(`📡 Requesting historical data from: ${this.baseUrl}/cryptocurrency/ohlcv/historical?${params}`);
+
       const response = await fetch(
-        `${this.baseUrl}/cryptocurrency/quotes/historical?${params}`,
+        `${this.baseUrl}/cryptocurrency/ohlcv/historical?${params}`,
         {
           headers: {
-            'X-CMC_PRO_API_KEY': this.apiKey,
             'Accept': 'application/json',
           },
         }
       );
 
       if (!response.ok) {
+        console.error(`❌ HTTP error! status: ${response.status}`);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data: CoinMarketCapResponse = await response.json();
+      const data: CoinMarketCapOHLCVResponse = await response.json();
 
       if (data.status.error_code !== 0) {
+        console.error(`❌ API error:`, data.status.error_message);
         throw new Error(data.status.error_message || 'API error');
       }
 
-      return this.transformHistoricalData(data.data.quotes);
+      const transformedData = this.transformHistoricalData(data.data.quotes);
+      console.log(`✅ Successfully fetched ${transformedData.length} historical data points for ${symbol}`);
+
+      return transformedData;
     } catch (error) {
       console.error('Error fetching historical data from CoinMarketCap:', error);
       throw error;
@@ -129,7 +140,6 @@ class CoinMarketCapService {
         `${this.baseUrl}/cryptocurrency/listings/latest?${params}`,
         {
           headers: {
-            'X-CMC_PRO_API_KEY': this.apiKey,
             'Accept': 'application/json',
           },
         }
@@ -140,12 +150,12 @@ class CoinMarketCapService {
       }
 
       const data = await response.json();
-      
+
       if (data.status.error_code !== 0) {
         throw new Error(data.status.error_message || 'API error');
       }
 
-      const crypto = data.data.find((item: any) => 
+      const crypto = data.data.find((item: any) =>
         item.symbol.toUpperCase() === symbol.toUpperCase()
       );
 
@@ -158,11 +168,12 @@ class CoinMarketCapService {
 
   /**
    * Get appropriate interval based on time range
+   * Note: CoinMarketCap sandbox may have limitations on certain intervals
    */
   private getInterval(timeRange: '1H' | '24H' | '7D' | '30D'): string {
     switch (timeRange) {
       case '1H':
-        return '5m'; // 5 minute intervals
+        return '1h'; // Use 1 hour intervals (sandbox may not support 5m)
       case '24H':
         return '1h'; // 1 hour intervals
       case '7D':
@@ -175,12 +186,12 @@ class CoinMarketCapService {
   }
 
   /**
-   * Transform CoinMarketCap data to our format
+   * Transform CoinMarketCap OHLCV data to our format
    */
-  private transformHistoricalData(quotes: CoinMarketCapHistoricalData[]): HistoricalPricePoint[] {
+  private transformHistoricalData(quotes: CoinMarketCapOHLCVData[]): HistoricalPricePoint[] {
     return quotes.map(quote => {
       const timestamp = new Date(quote.quote.USD.timestamp).getTime() / 1000;
-      
+
       return {
         price: quote.quote.USD.close,
         timestamp,
@@ -206,7 +217,6 @@ class CoinMarketCapService {
         `${this.baseUrl}/cryptocurrency/quotes/latest?${params}`,
         {
           headers: {
-            'X-CMC_PRO_API_KEY': this.apiKey,
             'Accept': 'application/json',
           },
         }
@@ -217,7 +227,7 @@ class CoinMarketCapService {
       }
 
       const data = await response.json();
-      
+
       if (data.status.error_code !== 0) {
         throw new Error(data.status.error_message || 'API error');
       }
@@ -237,6 +247,73 @@ class CoinMarketCapService {
     }
   }
 }
+
+/**
+ * Generate mock historical data in CoinMarketCap format
+ * Used as fallback when API is unavailable
+ */
+export const generateCoinMarketCapMockData = (
+  currentPrice: number,
+  timeRange: '1H' | '24H' | '7D' | '30D',
+  symbol: string
+): HistoricalPricePoint[] => {
+  // Determine number of data points based on time range
+  let points: number;
+  let intervalMinutes: number;
+  
+  switch (timeRange) {
+    case '1H':
+      points = 12; // 5-minute intervals
+      intervalMinutes = 5;
+      break;
+    case '24H':
+      points = 24; // 1-hour intervals
+      intervalMinutes = 60;
+      break;
+    case '7D':
+      points = 28; // 6-hour intervals
+      intervalMinutes = 360;
+      break;
+    case '30D':
+      points = 30; // 1-day intervals
+      intervalMinutes = 1440;
+      break;
+    default:
+      points = 24;
+      intervalMinutes = 60;
+  }
+
+  const now = Date.now();
+  const intervalMs = intervalMinutes * 60 * 1000;
+  
+  // Generate deterministic but realistic price movements
+  const seed = symbol.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const volatility = timeRange === '1H' ? 0.005 : 0.02; // Lower volatility for shorter timeframes
+  
+  return Array.from({ length: points }, (_, i) => {
+    const timestamp = now - (points - i - 1) * intervalMs;
+    
+    // Simple random walk with mean reversion
+    const randomFactor = Math.sin(seed + i * 0.5) * volatility;
+    const meanReversion = (currentPrice - currentPrice * (1 + randomFactor)) * 0.1;
+    const price = currentPrice * (1 + randomFactor - meanReversion);
+    
+    // Generate OHLCV data
+    const basePrice = Math.max(price, currentPrice * 0.95);
+    const high = basePrice * (1 + Math.abs(Math.sin(seed + i)) * volatility * 0.5);
+    const low = basePrice * (1 - Math.abs(Math.cos(seed + i)) * volatility * 0.5);
+    const volume = 1000000 + Math.abs(Math.sin(seed + i * 2)) * 5000000;
+    
+    return {
+      price: basePrice,
+      timestamp: Math.floor(timestamp / 1000),
+      date: new Date(timestamp),
+      high,
+      low,
+      volume,
+    };
+  }).sort((a, b) => a.timestamp - b.timestamp);
+};
 
 export const coinMarketCapService = new CoinMarketCapService();
 export type { HistoricalPricePoint };

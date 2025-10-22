@@ -4,6 +4,7 @@ import { TrendingUp, TrendingDown, DollarSign, BarChart3, X, RefreshCw } from 'l
 import { usePythContractPrice } from '@/hooks/usePythContractPrices';
 import { usePythPriceMonitorHistory, generateMockPriceHistory } from '@/hooks/usePythPriceMonitorHistory';
 import { useCoinMarketCapHistory } from '@/hooks/useCoinMarketCapHistory';
+import { generateCoinMarketCapMockData } from '@/services/coinMarketCapService';
 import { TokenInfo } from '@uniswap/token-lists';
 
 interface TokenPriceChartProps {
@@ -27,12 +28,12 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
     }, [timeRange]);
 
     // Fetch historical data from CoinMarketCap API
-    const { 
-        historicalData: cmcHistoricalData, 
-        isLoading: isCmcLoading, 
+    const {
+        historicalData: cmcHistoricalData,
+        isLoading: isCmcLoading,
         error: cmcError,
         refetch: refetchCmc,
-        isEmpty: isCmcEmpty 
+        isEmpty: isCmcEmpty
     } = useCoinMarketCapHistory(token.symbol, timeRange);
 
     // Fetch price history from PythPriceMonitor contract as fallback
@@ -57,19 +58,29 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
             return contractHistory;
         }
 
-        // Fallback 2: Mock data if we have current price
+        // Fallback 2: CoinMarketCap-style mock data if we have current price
+        if (priceData && priceData.price > 0) {
+            const cmcMockData = generateCoinMarketCapMockData(priceData.price, timeRange, token.symbol);
+            return cmcMockData.map(item => ({
+                price: item.price,
+                timestamp: item.timestamp,
+                date: item.date,
+            }));
+        }
+
+        // Fallback 3: Original mock data
         if (priceData && priceData.price > 0) {
             return generateMockPriceHistory(priceData.price, timeRangeSeconds, token.symbol);
         }
 
         return [];
-    }, [cmcHistoricalData, contractHistory, priceData, timeRangeSeconds, token.symbol]);
+    }, [cmcHistoricalData, contractHistory, priceData, timeRange, timeRangeSeconds, token.symbol]);
 
     // Format historical data for chart
     const historicalData = useMemo(() => {
         if (!priceHistory || priceHistory.length === 0) return [];
 
-        return priceHistory.map(item => ({
+        const formatted = priceHistory.map(item => ({
             time: item.date.toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: timeRange === '1H' ? '2-digit' : undefined,
@@ -80,7 +91,16 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
             timestamp: item.timestamp,
             fullDate: item.date.toLocaleString(),
         }));
-    }, [priceHistory, timeRange]);
+
+        console.log(`📊 Chart data for ${token.symbol} (${timeRange}):`, {
+            dataPoints: formatted.length,
+            timeRange,
+            firstPoint: formatted[0],
+            lastPoint: formatted[formatted.length - 1]
+        });
+
+        return formatted;
+    }, [priceHistory, timeRange, token.symbol]);
 
     const isLoading = isPriceLoading || isCmcLoading || isHistoryLoading;
     const hasValidData = priceData && priceData.price > 0;
@@ -215,12 +235,13 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
                         <div className="flex items-center gap-2">
                             {cmcError && (
                                 <span className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded">
-                                    CMC API Error
+                                    CMC API Error{timeRange === '1H' ? ' (using fallback)' : ''}
                                 </span>
                             )}
                             <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
-                                {cmcHistoricalData.length > 0 ? 'CoinMarketCap' : 
-                                 contractHistory.length > 0 ? 'Pyth Contract' : 'Mock Data'}
+                                {cmcHistoricalData.length > 0 ? 'CoinMarketCap' :
+                                    contractHistory.length > 0 ? 'Pyth Contract' :
+                                        `Mock Data (${timeRange})`}
                             </span>
                         </div>
                     </div>

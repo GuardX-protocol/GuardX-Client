@@ -29,9 +29,11 @@ export const useCoinMarketCapHistory = (
     try {
       const data = await coinMarketCapService.getHistoricalData(symbol, timeRange);
       setHistoricalData(data);
+      setError(null); // Clear any previous errors
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch historical data';
       setError(errorMessage);
+      setHistoricalData([]); // Clear data on error
       console.error('Error fetching CoinMarketCap historical data:', err);
     } finally {
       setIsLoading(false);
