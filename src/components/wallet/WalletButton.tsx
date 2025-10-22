@@ -97,6 +97,13 @@ const WalletButton: React.FC = () => {
                       {formatAddress(address || '', 6)}
                     </p>
                   </div>
+                  <button
+                    onClick={handleDisconnect}
+                    className="p-2 hover:bg-red-100 rounded-lg transition-colors text-red-600 group"
+                    title="Disconnect Wallet"
+                  >
+                    <LogOut className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  </button>
                 </div>
 
                 {/* Network */}
@@ -176,10 +183,10 @@ const WalletButton: React.FC = () => {
 
                 <button
                   onClick={handleDisconnect}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-lg transition-colors text-red-600"
+                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-lg transition-colors text-red-600 border-t border-gray-200 mt-2 pt-4"
                 >
                   <LogOut className="h-5 w-5" />
-                  <span className="text-sm font-medium">Disconnect</span>
+                  <span className="text-sm font-medium">Disconnect Wallet</span>
                 </button>
               </div>
             </div>

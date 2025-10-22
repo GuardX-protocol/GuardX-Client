@@ -61,23 +61,23 @@ const EnhancedPolicyConfiguration: React.FC = () => {
   const selectedToken = stablecoins.find(t => t.address === selectedStablecoin);
 
   return (
-    <div className="card">
+    <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
       <div className="flex items-center gap-3 mb-6">
-        <div className="p-2 bg-primary-100 rounded-lg">
-          <Shield className="h-6 w-6 text-primary-600" />
+        <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-lg border border-cyan-500/30">
+          <Shield className="h-6 w-6 text-cyan-400" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Protection Policy</h2>
-          <p className="text-sm text-gray-500">Configure your crash protection settings</p>
+          <h2 className="text-xl font-semibold text-white">Protection Policy</h2>
+          <p className="text-sm text-gray-400">Configure your crash protection settings</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="label">Crash Threshold (%)</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Crash Threshold (%)</label>
           <input
             type="number"
-            className="input"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
             placeholder="10"
             value={crashThreshold}
             onChange={(e) => setCrashThreshold(e.target.value)}
@@ -86,10 +86,10 @@ const EnhancedPolicyConfiguration: React.FC = () => {
             max="100"
             required
           />
-          <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-2 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
             <div className="flex items-start gap-2">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-blue-700">
+              <Info className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-cyan-300">
                 Emergency action triggers when asset price drops by this percentage
               </p>
             </div>
@@ -97,10 +97,10 @@ const EnhancedPolicyConfiguration: React.FC = () => {
         </div>
 
         <div>
-          <label className="label">Max Slippage (%)</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Max Slippage (%)</label>
           <input
             type="number"
-            className="input"
+            className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
             placeholder="5"
             value={maxSlippage}
             onChange={(e) => setMaxSlippage(e.target.value)}
@@ -109,10 +109,10 @@ const EnhancedPolicyConfiguration: React.FC = () => {
             max="50"
             required
           />
-          <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-2 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
             <div className="flex items-start gap-2">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-blue-700">
+              <Info className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-cyan-300">
                 Maximum acceptable price impact during emergency conversion
               </p>
             </div>
@@ -120,7 +120,7 @@ const EnhancedPolicyConfiguration: React.FC = () => {
         </div>
 
         <div>
-          <label className="label">Preferred Stablecoin</label>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Preferred Stablecoin</label>
           <div className="space-y-2">
             {stablecoins.map((stablecoin) => (
               <button
@@ -129,8 +129,8 @@ const EnhancedPolicyConfiguration: React.FC = () => {
                 onClick={() => setSelectedStablecoin(stablecoin.address)}
                 className={`w-full flex items-center justify-between p-4 border-2 rounded-lg transition-all ${
                   selectedStablecoin === stablecoin.address
-                    ? 'border-primary-500 bg-primary-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-cyan-500 bg-cyan-500/10'
+                    : 'border-gray-700 bg-gray-900/50 hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -142,22 +142,22 @@ const EnhancedPolicyConfiguration: React.FC = () => {
                     />
                   )}
                   <div className="text-left">
-                    <p className="font-medium text-gray-900">{stablecoin.symbol}</p>
-                    <p className="text-xs text-gray-500">{stablecoin.name}</p>
+                    <p className="font-medium text-white">{stablecoin.symbol}</p>
+                    <p className="text-xs text-gray-400">{stablecoin.name}</p>
                   </div>
                 </div>
                 {selectedStablecoin === stablecoin.address && (
-                  <div className="w-5 h-5 bg-primary-600 rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 bg-cyan-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 )}
               </button>
             ))}
           </div>
-          <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-2 p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
             <div className="flex items-start gap-2">
-              <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-blue-700">
+              <Info className="h-4 w-4 text-cyan-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-cyan-300">
                 Assets will be converted to {selectedToken?.symbol || 'this stablecoin'} during emergency
               </p>
             </div>
@@ -166,7 +166,7 @@ const EnhancedPolicyConfiguration: React.FC = () => {
 
         <button
           type="submit"
-          className={`w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-2 text-sm bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+          className={`w-full inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 px-4 py-3 text-sm bg-gradient-to-r from-cyan-500 to-purple-500 text-white hover:from-cyan-600 hover:to-purple-600 focus:ring-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(34,197,94,0.3)] ${
             isLoading || isConfirming ? 'cursor-wait' : ''
           }`}
           disabled={!selectedStablecoin || isLoading || isConfirming}
