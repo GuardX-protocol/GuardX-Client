@@ -3,6 +3,7 @@ import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaCh
 import { TrendingUp, TrendingDown, DollarSign, BarChart3, X, RefreshCw } from 'lucide-react';
 import { usePythContractPrice } from '@/hooks/usePythContractPrices';
 import { usePythPriceMonitorHistory, generateMockPriceHistory } from '@/hooks/usePythPriceMonitorHistory';
+import { useCoinMarketCapHistory } from '@/hooks/useCoinMarketCapHistory';
 import { TokenInfo } from '@uniswap/token-lists';
 
 interface TokenPriceChartProps {
@@ -25,25 +26,44 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
         }
     }, [timeRange]);
 
-    // Fetch price history from PythPriceMonitor contract
-    const { priceHistory: contractHistory, isLoading: isHistoryLoading, refetch, isEmpty } = usePythPriceMonitorHistory(
+    // Fetch historical data from CoinMarketCap API
+    const { 
+        historicalData: cmcHistoricalData, 
+        isLoading: isCmcLoading, 
+        error: cmcError,
+        refetch: refetchCmc,
+        isEmpty: isCmcEmpty 
+    } = useCoinMarketCapHistory(token.symbol, timeRange);
+
+    // Fetch price history from PythPriceMonitor contract as fallback
+    const { priceHistory: contractHistory, isLoading: isHistoryLoading, refetch: refetchContract, isEmpty: isContractEmpty } = usePythPriceMonitorHistory(
         token.symbol,
         timeRangeSeconds
     );
 
-    // Generate fallback data if no contract history available
+    // Use CoinMarketCap data as primary source, fallback to contract data, then mock data
     const priceHistory = useMemo(() => {
+        // Primary: CoinMarketCap data
+        if (cmcHistoricalData && cmcHistoricalData.length > 0) {
+            return cmcHistoricalData.map(item => ({
+                price: item.price,
+                timestamp: item.timestamp,
+                date: item.date,
+            }));
+        }
+
+        // Fallback 1: Contract history
         if (contractHistory && contractHistory.length > 0) {
             return contractHistory;
         }
 
-        // Fallback to mock data if no contract data and we have current price
+        // Fallback 2: Mock data if we have current price
         if (priceData && priceData.price > 0) {
             return generateMockPriceHistory(priceData.price, timeRangeSeconds, token.symbol);
         }
 
         return [];
-    }, [contractHistory, priceData, timeRangeSeconds, token.symbol]);
+    }, [cmcHistoricalData, contractHistory, priceData, timeRangeSeconds, token.symbol]);
 
     // Format historical data for chart
     const historicalData = useMemo(() => {
@@ -62,8 +82,9 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
         }));
     }, [priceHistory, timeRange]);
 
-    const isLoading = isPriceLoading || isHistoryLoading;
+    const isLoading = isPriceLoading || isCmcLoading || isHistoryLoading;
     const hasValidData = priceData && priceData.price > 0;
+    const isEmpty = isCmcEmpty && isContractEmpty;
 
     if (isLoading) {
         return (
@@ -151,7 +172,10 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
                     </div>
                     <div className="flex items-center gap-2">
                         <button
-                            onClick={() => refetch()}
+                            onClick={() => {
+                                refetchCmc();
+                                refetchContract();
+                            }}
                             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             title="Refresh data"
                         >
@@ -184,9 +208,22 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
                             </span>
                         </div>
                     </div>
-                    <p className="text-sm text-gray-500 mt-2">
-                        Last updated: {new Date(Number(priceData.publishTime) * 1000).toLocaleString()}
-                    </p>
+                    <div className="flex items-center justify-between mt-2">
+                        <p className="text-sm text-gray-500">
+                            Last updated: {new Date(Number(priceData.publishTime) * 1000).toLocaleString()}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            {cmcError && (
+                                <span className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded">
+                                    CMC API Error
+                                </span>
+                            )}
+                            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded">
+                                {cmcHistoricalData.length > 0 ? 'CoinMarketCap' : 
+                                 contractHistory.length > 0 ? 'Pyth Contract' : 'Mock Data'}
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Time Range Selector */}
