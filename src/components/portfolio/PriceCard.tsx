@@ -1,14 +1,14 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { TokenConfig } from '@/config/tokens';
-import { usePythContractPrice } from '@/hooks/usePythContractPrices';
+import { usePythPrice } from '@/hooks/usePythPrices';
 
 interface PriceCardProps {
   token: TokenConfig;
 }
 
 const PriceCard: React.FC<PriceCardProps> = ({ token }) => {
-  const { priceData, isLoading, isError } = usePythContractPrice(token.symbol);
+  const { price: priceData, isLoading, error } = usePythPrice(token.symbol);
 
   if (isLoading) {
     return (
@@ -19,7 +19,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ token }) => {
     );
   }
 
-  if (isError || !priceData) {
+  if (error || !priceData) {
     return (
       <div className="card">
         <div className="flex items-center gap-3">
@@ -29,7 +29,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ token }) => {
           <div>
             <p className="text-sm font-medium text-gray-500">{token.symbol}</p>
             <p className="text-lg font-semibold text-gray-400">
-              {isError ? 'Error loading price' : 'Price unavailable'}
+              {error ? 'Error loading price' : 'Price unavailable'}
             </p>
           </div>
         </div>
@@ -50,7 +50,7 @@ const PriceCard: React.FC<PriceCardProps> = ({ token }) => {
           <div>
             <p className="text-sm font-medium text-gray-500">{token.symbol}</p>
             <p className="text-2xl font-bold text-gray-900">
-              ${priceData.formattedPrice}
+              ${priceData.price.toFixed(2)}
             </p>
           </div>
         </div>

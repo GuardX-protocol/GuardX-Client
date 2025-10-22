@@ -32,7 +32,8 @@ GuardX supports multiple EVM-compatible networks:
 - **Network Switching**: Seamless switching between supported networks
 - **Audit Tools**: Security audit capabilities for smart contracts and transactions
 - **Web3 Integration**: Seamless wallet connectivity with MetaMask, WalletConnect, and other providers
-- **Real-time Price Feeds**: Live price data via Pyth Network
+- **Real-time Price Feeds**: Live price data via Pyth Network (300+ assets)
+- **Dynamic Price Discovery**: Automatic price feed detection and management
 - **Cross-Chain Support**: Manage assets across multiple chains from a single interface
 
 ## Technology Stack
@@ -46,7 +47,8 @@ GuardX supports multiple EVM-compatible networks:
 - Wagmi 1.4 - React hooks for Ethereum
 - Viem 1.19 - TypeScript interface for Ethereum
 - Multi-chain support for 10+ EVM networks
-- Pyth Network integration for real-time price feeds
+- Pyth Network integration for real-time price feeds (Hermes API)
+- @pythnetwork/hermes-client for dynamic price feed management
 - 1inch & Uniswap V3 DEX integration
 
 ### State Management & Data Fetching
@@ -206,3 +208,66 @@ Copyright 2024 GuardX. All rights reserved.
 ## Support
 
 For issues and questions, please refer to the project documentation or contact the development team.
+
+## 🔮 Pyth Network Integration
+
+GuardX integrates with Pyth Network for real-time, decentralized price feeds across 300+ crypto assets.
+
+### Features
+
+- **Dynamic Price Discovery**: Automatically fetches available price feeds from Pyth Network
+- **Real-time Updates**: Sub-second price updates with confidence intervals
+- **Decentralized Oracle**: No single point of failure, cryptographically secure
+- **Comprehensive Coverage**: Supports major cryptocurrencies, DeFi tokens, stablecoins, and more
+
+### Implementation
+
+The Pyth integration uses the official Hermes client for optimal performance:
+
+```typescript
+import { usePythPrices, usePythPrice } from '@/hooks/usePythPrices';
+
+// Get multiple token prices
+const { priceMap, isLoading } = usePythPrices(['BTC', 'ETH', 'USDC']);
+
+// Get single token price
+const { price, error } = usePythPrice('BTC');
+```
+
+### Supported Assets
+
+The integration dynamically discovers supported assets, including:
+
+- **Major Cryptocurrencies**: BTC, ETH, BNB, SOL, ADA, DOT, AVAX
+- **Stablecoins**: USDC, USDT, DAI, BUSD, FRAX, EUROC
+- **DeFi Tokens**: LINK, UNI, AAVE, CRV, SUSHI, COMP, MKR
+- **Layer 2 Tokens**: MATIC, ARB, OP, IMX, STX
+- **Meme Tokens**: DOGE, SHIB, PEPE, BONK, FLOKI
+
+### Price Feed Categories
+
+Tokens are automatically categorized for easy filtering:
+
+```typescript
+import { usePythTokensByCategory } from '@/hooks/usePythPrices';
+
+const { tokens: stablecoins } = usePythTokensByCategory('stablecoins');
+const { tokens: defiTokens } = usePythTokensByCategory('defi');
+```
+
+### Configuration
+
+No manual configuration required - the service automatically:
+- Discovers available price feeds
+- Maps token symbols to Pyth feed IDs  
+- Handles price formatting and confidence intervals
+- Provides fallback mechanisms for unsupported tokens
+
+### Performance
+
+- **Caching**: Intelligent caching reduces API calls
+- **Batch Requests**: Multiple prices fetched in single API call
+- **Error Handling**: Graceful fallbacks for network issues
+- **Type Safety**: Full TypeScript support with proper types
+
+See the Pyth Network [documentation](https://docs.pyth.network/) for more details on the underlying oracle infrastructure.

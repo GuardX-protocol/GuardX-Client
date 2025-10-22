@@ -1,9 +1,9 @@
 import { useContractRead, useNetwork } from 'wagmi';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { getContracts } from '@/config/contracts';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import { PythPriceMonitorABI } from '@/config/abis';
-import { PYTH_PRICE_FEED_IDS } from '@/config/pythPriceFeeds';
+import { getPythPriceFeedId } from '@/config/pythPriceFeeds';
 
 interface PriceHistoryItem {
   price: number;
@@ -18,7 +18,15 @@ interface PriceHistoryItem {
 export const usePythPriceMonitorHistory = (symbol: string, timeRange: number) => {
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
-  const priceId = PYTH_PRICE_FEED_IDS[symbol.toUpperCase()];
+  const [priceId, setPriceId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPriceId = async () => {
+      const id = await getPythPriceFeedId(symbol);
+      setPriceId(id);
+    };
+    fetchPriceId();
+  }, [symbol]);
 
   // Fetch price history from PythPriceMonitor contract
   const { data, isLoading, isError, refetch } = useContractRead({

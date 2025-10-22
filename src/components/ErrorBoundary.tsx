@@ -1,4 +1,4 @@
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 interface Props {
@@ -31,29 +31,29 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="min-h-screen flex items-center justify-center px-4">
           <div className="max-w-md w-full">
             <div className="card text-center">
-              <div className="p-3 bg-red-100 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                <AlertTriangle className="h-8 w-8 text-red-600" />
+              <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <AlertTriangle className="h-8 w-8 text-red-400" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h2>
-              <p className="text-gray-600 mb-6">
+              <h2 className="text-2xl font-bold text-gray-100 mb-2">Something went wrong</h2>
+              <p className="text-gray-400 mb-6">
                 We encountered an unexpected error. Please try refreshing the page.
               </p>
               {this.state.error && (
                 <details className="text-left mb-6">
-                  <summary className="text-sm font-medium text-gray-700 cursor-pointer mb-2">
+                  <summary className="text-sm font-medium text-gray-300 cursor-pointer mb-2">
                     Error details
                   </summary>
-                  <pre className="text-xs bg-gray-100 p-3 rounded overflow-auto text-red-600">
+                  <pre className="text-xs bg-gray-800/50 p-3 rounded overflow-auto text-red-400 max-h-32">
                     {this.state.error.message}
                   </pre>
                 </details>
               )}
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="btn-primary"
               >
                 Refresh Page
               </button>

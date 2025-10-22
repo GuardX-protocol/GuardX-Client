@@ -1,10 +1,7 @@
 import { getDeployment } from './deployments';
 import { DEFAULT_CHAIN } from './chains';
 
-/**
- * Get contracts for current chain
- * This function should be called with the active chain ID
- */
+
 export const getContracts = (chainId?: number) => {
   const deployment = getDeployment(chainId || DEFAULT_CHAIN.id);
   
@@ -16,9 +13,6 @@ export const getContracts = (chainId?: number) => {
   return deployment.contracts;
 };
 
-/**
- * Get external contracts for current chain
- */
 export const getExternalContracts = (chainId?: number) => {
   const deployment = getDeployment(chainId || DEFAULT_CHAIN.id);
   
@@ -30,16 +24,11 @@ export const getExternalContracts = (chainId?: number) => {
   return deployment.externalContracts;
 };
 
-/**
- * Legacy exports for backward compatibility
- * These use the default chain
- */
+
 export const CONTRACTS = getContracts();
 export const EXTERNAL_CONTRACTS = getExternalContracts();
 
-/**
- * Network configuration for backward compatibility
- */
+
 export const NETWORK_CONFIG = {
   chainId: DEFAULT_CHAIN.id,
   network: DEFAULT_CHAIN.network || DEFAULT_CHAIN.name.toLowerCase(),

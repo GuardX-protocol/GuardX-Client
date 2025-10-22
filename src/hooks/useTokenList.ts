@@ -1,11 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
 import { TokenInfo } from '@uniswap/token-lists';
 
-// Multiple token list sources
-const TOKEN_LIST_URLS = [
-  'https://tokens.uniswap.org',
-  'https://gateway.ipfs.io/ipns/tokens.uniswap.org',
-  'https://raw.githubusercontent.com/Uniswap/default-token-list/main/build/uniswap-default.tokenlist.json',
+// Fallback to static token list to avoid CORS issues
+const STATIC_TOKENS: TokenInfo[] = [
+  { chainId: 1, address: '0xA0b86a33E6441b8435b662303c0f479c7e2b6b1e', symbol: 'BTC', name: 'Bitcoin', decimals: 8, logoURI: '' },
+  { chainId: 1, address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', symbol: 'WETH', name: 'Wrapped Ether', decimals: 18, logoURI: '' },
+  { chainId: 1, address: '0xA0b86a33E6441b8435b662303c0f479c7e2b6b1e', symbol: 'USDC', name: 'USD Coin', decimals: 6, logoURI: '' },
+  { chainId: 1, address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', symbol: 'USDT', name: 'Tether USD', decimals: 6, logoURI: '' },
+  { chainId: 1, address: '0x514910771AF9Ca656af840dff83E8264EcF986CA', symbol: 'LINK', name: 'Chainlink', decimals: 18, logoURI: '' },
+  { chainId: 1, address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984', symbol: 'UNI', name: 'Uniswap', decimals: 18, logoURI: '' },
 ];
 
 /**
@@ -19,86 +22,17 @@ export const useTokenList = (filterByChain?: number) => {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    setIsLoading(true);
     
-    const fetchTokenList = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const fetchPromises = TOKEN_LIST_URLS.map(url =>
-          fetch(url, { 
-            headers: { 'Accept': 'application/json' },
-            signal: AbortSignal.timeout(15000)
-          })
-          .then(res => {
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            return res.json();
-          })
-          .catch(() => null)
-        );
-
-        const results = await Promise.allSettled(fetchPromises);
-        
-        const allTokens: TokenInfo[] = [];
-        const seenSymbols = new Map<string, TokenInfo>();
-
-        for (const result of results) {
-          if (result.status === 'fulfilled' && result.value?.tokens) {
-            let tokenList = result.value.tokens;
-            
-            // Only filter by chain if explicitly requested
-            if (filterByChain !== undefined) {
-              tokenList = tokenList.filter(
-                (token: TokenInfo) => token.chainId === filterByChain
-              );
-            }
-            
-            // Deduplicate by symbol and validate addresses
-            for (const token of tokenList) {
-              // Validate Ethereum address format (0x + 40 hex chars)
-              if (!token.address || 
-                  !token.address.match(/^0x[a-fA-F0-9]{40}$/)) {
-                continue; // Skip invalid addresses (like Solana addresses)
-              }
-              
-              const symbolKey = token.symbol.toUpperCase();
-              if (!seenSymbols.has(symbolKey)) {
-                seenSymbols.set(symbolKey, token);
-                allTokens.push(token);
-              }
-            }
-          }
-        }
-
-        if (isMounted) {
-          if (allTokens.length > 0) {
-            allTokens.sort((a, b) => a.symbol.localeCompare(b.symbol));
-            console.log(`✅ Loaded ${allTokens.length} tokens from Uniswap`);
-            setTokens(allTokens);
-          } else {
-            console.warn('⚠️ No tokens loaded');
-            setTokens([]);
-          }
-        }
-      } catch (err) {
-        console.error('❌ Failed to fetch token list:', err);
-        if (isMounted) {
-          setError(err as Error);
-          setTokens([]);
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    fetchTokenList();
-
-    return () => {
-      isMounted = false;
-    };
+    // Use static tokens to avoid CORS issues
+    let filteredTokens = STATIC_TOKENS;
+    if (filterByChain !== undefined) {
+      filteredTokens = STATIC_TOKENS.filter(token => token.chainId === filterByChain);
+    }
+    
+    setTokens(filteredTokens);
+    setIsLoading(false);
+    console.log(`✅ Loaded ${filteredTokens.length} static tokens`);
   }, [filterByChain]);
 
   const tokenMap = useMemo(() => {

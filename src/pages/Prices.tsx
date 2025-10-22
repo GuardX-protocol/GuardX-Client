@@ -1,11 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { DollarSign, RefreshCw, Search, Network } from 'lucide-react';
-import { useTokenList } from '@/hooks/useTokenList';
-import { usePythContractPrices } from '@/hooks/usePythContractPrices';
-import { useNetwork } from 'wagmi';
-import { isStablecoin } from '@/config/tokens';
+import { useEnhancedTokenList, useTokensByCategory, useTopTokensForPrices } from '@/hooks/useEnhancedTokenList';
+import { usePythPrices, usePythTokensByCategory } from '@/hooks/usePythPrices';
+
 import TokenListItem from '@/components/prices/TokenListItem';
 import TokenPriceChart from '@/components/prices/TokenPriceChart';
+import PageHeader from '@/components/ui/PageHeader';
 import { TokenInfo } from '@uniswap/token-lists';
 
 /**
@@ -15,27 +15,58 @@ import { TokenInfo } from '@uniswap/token-lists';
 const Prices: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
-  const [category, setCategory] = useState<'all' | 'trending' | 'stablecoins' | 'defi'>('all');
+  const [category, setCategory] = useState<'all' | 'trending' | 'layer1' | 'stablecoins' | 'defi'>('trending');
 
-  const { chain } = useNetwork();
-  const { tokens, isLoading: isLoadingTokens } = useTokenList();
+
+  const { tokens, isLoading: isLoadingTokens } = useEnhancedTokenList();
+
+  // Get category-specific tokens from Pyth
+  const { tokens: pythStablecoins } = usePythTokensByCategory('stablecoins');
+  const { tokens: pythDefiTokens } = usePythTokensByCategory('defi');
+  const { tokens: pythLayer1Tokens } = usePythTokensByCategory('layer1');
+
+  // Always call these hooks (Rules of Hooks)
+  const localStablecoins = useTokensByCategory('stablecoins');
+  const localDefiTokens = useTokensByCategory('defi');
+  const localLayer1Tokens = useTokensByCategory('layer1');
+  const topTokens = useTopTokensForPrices(20);
+
+  // Create filtered token arrays using useMemo
+  const stablecoins = useMemo(() => {
+    if (pythStablecoins && pythStablecoins.length > 0 && tokens) {
+      return tokens.filter(t => pythStablecoins.includes(t.symbol.toUpperCase()));
+    }
+    return localStablecoins || [];
+  }, [pythStablecoins, tokens, localStablecoins]);
+
+  const defiTokens = useMemo(() => {
+    if (pythDefiTokens && pythDefiTokens.length > 0 && tokens) {
+      return tokens.filter(t => pythDefiTokens.includes(t.symbol.toUpperCase()));
+    }
+    return localDefiTokens || [];
+  }, [pythDefiTokens, tokens, localDefiTokens]);
+
+  const layer1Tokens = useMemo(() => {
+    if (pythLayer1Tokens && pythLayer1Tokens.length > 0 && tokens) {
+      return tokens.filter(t => pythLayer1Tokens.includes(t.symbol.toUpperCase()));
+    }
+    return localLayer1Tokens || [];
+  }, [pythLayer1Tokens, tokens, localLayer1Tokens]);
 
   const filteredTokens = useMemo(() => {
-    let filtered = tokens;
+    let filtered = tokens || [];
 
     if (category === 'stablecoins') {
-      filtered = filtered.filter(t => isStablecoin(t.symbol));
+      filtered = Array.isArray(stablecoins) ? stablecoins : [];
     } else if (category === 'defi') {
-      filtered = filtered.filter(t =>
-        ['UNI', 'AAVE', 'COMP', 'MKR', 'CRV', 'SUSHI', 'SNX', 'LDO', 'BAL', 'YFI'].includes(t.symbol)
-      );
+      filtered = Array.isArray(defiTokens) ? defiTokens : [];
     } else if (category === 'trending') {
-      filtered = filtered.filter(t =>
-        ['ETH', 'WETH', 'BTC', 'WBTC', 'UNI', 'LINK', 'AAVE', 'MATIC', 'ARB', 'OP'].includes(t.symbol)
-      );
+      filtered = Array.isArray(topTokens) ? topTokens : [];
+    } else if (category === 'layer1') {
+      filtered = Array.isArray(layer1Tokens) ? layer1Tokens : [];
     }
 
-    if (searchQuery) {
+    if (searchQuery && Array.isArray(filtered)) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(token =>
         token.symbol.toLowerCase().includes(query) ||
@@ -43,48 +74,58 @@ const Prices: React.FC = () => {
       );
     }
 
-    return filtered.sort((a, b) => a.symbol.localeCompare(b.symbol));
-  }, [tokens, searchQuery, category]);
+    return Array.isArray(filtered) ? filtered.sort((a, b) => a.symbol.localeCompare(b.symbol)) : [];
+  }, [tokens, searchQuery, category, stablecoins, defiTokens, topTokens, layer1Tokens]);
 
-  const { priceMap, isLoading: isLoadingPrices, refetch } = usePythContractPrices(filteredTokens);
+  // Get symbols from filtered tokens for Pyth price fetching
+  const tokenSymbols = useMemo(() =>
+    Array.isArray(filteredTokens) ? filteredTokens.map(token => token.symbol) : [],
+    [filteredTokens]
+  );
+
+  const { priceMap, isLoading: isLoadingPrices, refetch } = usePythPrices(tokenSymbols);
+
+  // Debug logging
+  React.useEffect(() => {
+    console.log('🔍 Prices page debug:', {
+      filteredTokensCount: filteredTokens.length,
+      priceMapSize: priceMap.size,
+      isLoadingPrices,
+      sampleTokens: filteredTokens.slice(0, 3).map(t => t.symbol),
+      samplePrices: Array.from(priceMap.entries()).slice(0, 3)
+    });
+  }, [filteredTokens, priceMap, isLoadingPrices]);
 
   const handleRefresh = () => {
     refetch();
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-primary-100 rounded-lg">
-            <DollarSign className="h-6 w-6 text-primary-600" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Live Prices</h1>
-            <p className="text-sm text-gray-500">
-              Real-time prices from Pyth contract on {chain?.name || 'selected network'}
-            </p>
-          </div>
-        </div>
+    <div className="w-full space-y-6">
+      <PageHeader
+        title="Market Prices"
+        description="Real-time oracle data from Pyth Network"
+        icon={DollarSign}
+      >
         <button
           onClick={handleRefresh}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          className="btn-secondary flex items-center gap-2"
         >
           <RefreshCw className={`h-4 w-4 ${isLoadingPrices ? 'animate-spin' : ''}`} />
-          <span className="text-sm font-medium">Refresh</span>
+          <span className="text-sm font-medium">Refresh Data</span>
         </button>
-      </div>
+      </PageHeader>
 
-      <div className="card bg-gradient-to-r from-primary-50 to-blue-50 border-primary-200">
+      <div className="card bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30">
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-white rounded-lg">
-            <Network className="h-5 w-5 text-primary-600" />
+          <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+            <Network className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900 mb-1">Multi-Chain Price Feeds</h3>
-            <p className="text-sm text-gray-600">
-              Prices fetched directly from Pyth oracle contract on {chain?.name || 'the selected network'}.
-              Switch networks to see prices from different chains. Click any token to view detailed charts.
+            <h3 className="font-semibold text-gray-100 mb-1">Real-Time Oracle Data</h3>
+            <p className="text-sm text-gray-300">
+              Prices fetched directly from Pyth Network's Hermes API.
+              Decentralized oracle data with sub-second updates across all supported chains.
             </p>
           </div>
         </div>
@@ -104,16 +145,16 @@ const Prices: React.FC = () => {
           </div>
 
           <div className="flex gap-2 flex-wrap">
-            {(['all', 'trending', 'stablecoins', 'defi'] as const).map((cat) => (
+            {(['all', 'trending', 'layer1', 'stablecoins', 'defi'] as const).map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${category === cat
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
               >
-                {cat}
+                {cat === 'layer1' ? 'Layer 1' : cat}
               </button>
             ))}
           </div>
@@ -148,8 +189,8 @@ const Prices: React.FC = () => {
                     price: price.price,
                     confidence: price.confidence,
                     expo: price.expo,
-                    publishTime: price.timestamp,
-                    formattedPrice: price.formattedPrice,
+                    publishTime: price.publishTime,
+                    formattedPrice: price.price.toFixed(2),
                   } : undefined}
                   isLoading={isLoadingPrices}
                 />
@@ -166,7 +207,7 @@ const Prices: React.FC = () => {
           )}
 
           <div className="text-center text-sm text-gray-500">
-            Showing {filteredTokens.length} of {tokens.length} tokens
+            Showing {filteredTokens?.length || 0} of {tokens?.length || 0} tokens
             {isLoadingPrices && <span className="ml-2">(Loading prices...)</span>}
           </div>
         </>

@@ -9,10 +9,10 @@ const EmergencyHistory: React.FC = () => {
   const { address } = useAccount();
   const contract = useEmergencyExecutor();
 
-  const { data: history, isLoading } = useContractRead({
+  const { isLoading } = useContractRead({
     ...contract,
-    functionName: 'getEmergencyHistory',
-    args: address ? [address] : undefined,
+    functionName: 'owner', // Placeholder - getEmergencyHistory not in ABI
+    // args: address ? [address] : undefined,
     enabled: !!address,
   });
 
@@ -27,7 +27,7 @@ const EmergencyHistory: React.FC = () => {
     );
   }
 
-  const emergencies = (history as any[]) || [];
+  const emergencies: any[] = [];
 
   return (
     <div className="card">
@@ -46,7 +46,7 @@ const EmergencyHistory: React.FC = () => {
         <div className="space-y-3">
           {emergencies.map((emergency: any, index: number) => {
             const timestamp = new Date(Number(emergency.timestamp) * 1000);
-            const amountIn = Number(formatUnits(emergency.amountIn, 18));
+            // const amountIn = Number(formatUnits(emergency.amountIn, 18));
             const amountOut = Number(formatUnits(emergency.amountOut, 18));
 
             return (

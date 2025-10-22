@@ -1,125 +1,126 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import NetworkIndicator from '@/components/ui/NetworkIndicator';
-import WalletButton from '@/components/wallet/WalletButton';
+import { Link, useLocation } from 'react-router-dom';
 import { Shield, Menu, X } from 'lucide-react';
+import { useAccount, useNetwork, useConnect, useDisconnect } from 'wagmi';
+import NetworkIndicator from '@/components/ui/NetworkIndicator';
 
-interface HeaderProps {
-  onMobileMenuToggle: () => void;
-  isMobileMenuOpen: boolean;
-}
+const Header: React.FC = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [showWalletModal, setShowWalletModal] = React.useState(false);
+  const location = useLocation();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
 
-const Header: React.FC<HeaderProps> = ({ onMobileMenuToggle, isMobileMenuOpen }) => {
-  const { isConnected } = useAccount();
+  const navigation = [
+    { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Deposit', path: '/deposit' },
+    { name: 'Policies', path: '/policies' },
+    { name: 'Prices', path: '/prices' },
+    { name: 'Audit', path: '/audit' },
+  ];
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
-    <header className="bg-white/80 backdrop-blur-lg shadow-lg border-b border-gray-200 sticky top-0 z-50">
+    <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0a0e1a]/80 border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo and Brand */}
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-3 group">
-              <div className="p-2 bg-gradient-to-br from-primary-500 to-blue-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-200">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold gradient-text">GuardX</span>
-            </Link>
-          </div>
+        <div className="flex items-center justify-between h-16">
+          <Link to="/dashboard" className="flex items-center gap-3 group">
+            <div className="p-2 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl group-hover:scale-110 transition-transform">
+              <Shield className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold gradient-text">GuardX</span>
+          </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-2">
-            <Link
-              to="/dashboard"
-              className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/deposit"
-              className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-            >
-              Deposit
-            </Link>
-            <Link
-              to="/prices"
-              className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-            >
-              Prices
-            </Link>
-            <Link
-              to="/policies"
-              className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-            >
-              Policies
-            </Link>
-            <Link
-              to="/audit"
-              className="text-gray-700 hover:text-primary-600 hover:bg-primary-50 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200"
-            >
-              Audit
-            </Link>
+          <nav className="hidden md:flex items-center gap-1">
+            {navigation.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`px-4 py-2 rounded-lg font-medium transition-all ${isActive(item.path)
+                  ? 'bg-white/10 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
-          {/* Wallet Connection */}
           <div className="flex items-center gap-3">
             {isConnected && <NetworkIndicator />}
-            <WalletButton />
+            {isConnected ? (
+              <button
+                onClick={() => disconnect()}
+                className="btn-secondary px-4 py-2 text-sm"
+              >
+                {`${address?.slice(0, 6)}...${address?.slice(-4)}`}
+              </button>
+            ) : (
+              <button
+                onClick={() => setShowWalletModal(true)}
+                className="btn-primary px-4 py-2 text-sm"
+              >
+                Connect Wallet
+              </button>
+            )}
 
-            {/* Mobile menu button */}
             <button
-              onClick={onMobileMenuToggle}
-              className="md:hidden p-2 rounded-md text-gray-700 hover:text-primary-600 hover:bg-gray-100 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 text-gray-400 hover:text-white"
             >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Navigation */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link
-              to="/dashboard"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-colors"
-              onClick={onMobileMenuToggle}
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/deposit"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-colors"
-              onClick={onMobileMenuToggle}
-            >
-              Deposit
-            </Link>
-            <Link
-              to="/prices"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-colors"
-              onClick={onMobileMenuToggle}
-            >
-              Prices
-            </Link>
-            <Link
-              to="/policies"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-colors"
-              onClick={onMobileMenuToggle}
-            >
-              Policies
-            </Link>
-            <Link
-              to="/audit"
-              className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 transition-colors"
-              onClick={onMobileMenuToggle}
-            >
-              Audit
-            </Link>
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-white/10 bg-[#0f1419]">
+          <nav className="px-4 py-4 space-y-2">
+            {navigation.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`block px-4 py-3 rounded-lg font-medium transition-all ${isActive(item.path)
+                  ? 'bg-white/10 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      )}
+
+      {showWalletModal && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setShowWalletModal(false)}>
+          <div className="glass-card max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Connect Wallet</h3>
+              <button onClick={() => setShowWalletModal(false)} className="text-gray-400 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              {connectors.map((connector) => (
+                <button
+                  key={connector.id}
+                  onClick={() => {
+                    connect({ connector });
+                    setShowWalletModal(false);
+                  }}
+                  className="w-full btn-secondary py-4 text-left flex items-center gap-3"
+                >
+                  <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg"></div>
+                  <span className="font-semibold">{connector.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

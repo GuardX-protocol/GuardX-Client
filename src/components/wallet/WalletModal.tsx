@@ -1,8 +1,9 @@
 import React from 'react';
-import { X, Wallet, AlertCircle, Network } from 'lucide-react';
+import { X, Wallet, AlertCircle, Network, Shield, Zap, CheckCircle } from 'lucide-react';
 import { useConnect, useAccount, useNetwork } from 'wagmi';
 import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
+import toast from 'react-hot-toast';
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -10,7 +11,22 @@ interface WalletModalProps {
 }
 
 const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
-  const { connect, connectors, isLoading, pendingConnector } = useConnect();
+  const { connect, connectors, isLoading, pendingConnector } = useConnect({
+    onSuccess: (data) => {
+      console.log('✅ Wallet connected:', {
+        address: data.account,
+        connector: data.connector?.name,
+        chainId: data.chain?.id,
+        timestamp: new Date().toISOString()
+      });
+      toast.success(`Connected to ${data.connector?.name}`);
+      onClose();
+    },
+    onError: (error) => {
+      console.error('❌ Wallet connection failed:', error);
+      toast.error(`Connection failed: ${error.message}`);
+    }
+  });
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
 
@@ -57,70 +73,89 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[9999] overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-[99999] overflow-y-auto" role="dialog" aria-modal="true">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-backdrop-in"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
 
-      {/* Modal Container - Centered with min-height trick */}
+      {/* Modal Container */}
       <div className="flex min-h-full items-center justify-center p-4 relative">
-        <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-modal-in">
+        <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all duration-300 scale-100">
           {/* Header */}
-          <div className="relative p-6 border-b border-gray-200">
+          <div className="relative bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-white">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-xl transition-colors"
             >
-              <X className="h-5 w-5 text-gray-500" />
+              <X className="h-5 w-5" />
             </button>
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary-100 rounded-xl">
-                <Wallet className="h-6 w-6 text-primary-600" />
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
+                <Wallet className="h-8 w-8" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Connect Wallet</h2>
-                <p className="text-sm text-gray-500 mt-1">
-                  Choose your preferred wallet
+                <h2 className="text-2xl font-bold">Connect Wallet</h2>
+                <p className="text-blue-100 mt-1">
+                  Secure • Fast • Decentralized
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Network Info */}
-          <div className={`px-6 py-4 border-b ${
-            isDeployed 
-              ? 'bg-gradient-to-r from-blue-50 to-primary-50 border-blue-100' 
-              : 'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-100'
-          }`}>
-            <div className="flex items-start gap-3">
-              {isDeployed ? (
-                <Network className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
-              ) : (
-                <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
-              )}
-              <div>
-                <p className={`text-sm font-medium ${isDeployed ? 'text-blue-900' : 'text-orange-900'}`}>
-                  Multi-Chain Support
-                </p>
-                <p className={`text-xs mt-1 ${isDeployed ? 'text-blue-700' : 'text-orange-700'}`}>
-                  {chainMetadata ? (
-                    <>
-                      Currently on {chainMetadata.icon} {chainMetadata.name}
-                      {!isDeployed && ' (contracts not deployed)'}
-                    </>
-                  ) : (
-                    'Connect to any supported network. You can switch networks after connecting.'
-                  )}
-                </p>
+          {/* Features */}
+          <div className="p-6 bg-gray-50 border-b">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="p-2 bg-green-100 rounded-xl w-fit mx-auto mb-2">
+                  <Shield className="h-5 w-5 text-green-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Secure</p>
+              </div>
+              <div className="text-center">
+                <div className="p-2 bg-blue-100 rounded-xl w-fit mx-auto mb-2">
+                  <Zap className="h-5 w-5 text-blue-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Fast</p>
+              </div>
+              <div className="text-center">
+                <div className="p-2 bg-purple-100 rounded-xl w-fit mx-auto mb-2">
+                  <Network className="h-5 w-5 text-purple-600" />
+                </div>
+                <p className="text-xs font-medium text-gray-700">Multi-Chain</p>
               </div>
             </div>
           </div>
+
+          {/* Network Status */}
+          {chainMetadata && (
+            <div className={`px-6 py-4 border-b ${
+              isDeployed 
+                ? 'bg-green-50 border-green-100' 
+                : 'bg-amber-50 border-amber-100'
+            }`}>
+              <div className="flex items-center gap-3">
+                {isDeployed ? (
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                ) : (
+                  <AlertCircle className="h-5 w-5 text-amber-600" />
+                )}
+                <div>
+                  <p className={`text-sm font-medium ${isDeployed ? 'text-green-900' : 'text-amber-900'}`}>
+                    {chainMetadata.icon} {chainMetadata.name}
+                  </p>
+                  <p className={`text-xs ${isDeployed ? 'text-green-700' : 'text-amber-700'}`}>
+                    {isDeployed ? 'Contracts deployed' : 'Limited functionality'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Wallet Options */}
-          <div className="p-6 space-y-3 max-h-[50vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          <div className="p-6 space-y-3">
             {connectors.map((connector) => {
               const isReady = connector.ready;
               const isConnecting = isLoading && pendingConnector?.id === connector.id;
@@ -132,40 +167,49 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
                   key={connector.id}
                   onClick={() => connect({ connector })}
                   disabled={!isReady || isConnecting}
-                  className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 ${
+                  className={`w-full group relative overflow-hidden rounded-2xl border-2 transition-all duration-300 ${
                     isReady
-                      ? 'border-gray-200 hover:border-primary-500 hover:shadow-lg hover:scale-[1.02] cursor-pointer active:scale-[0.98]'
+                      ? 'border-gray-200 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 cursor-pointer'
                       : 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60'
-                  } ${isConnecting ? 'border-primary-500 bg-primary-50 shadow-md' : ''}`}
+                  } ${isConnecting ? 'border-blue-500 bg-blue-50 shadow-lg' : ''}`}
                 >
-                  <div className="relative">
-                    {icon ? (
-                      <img
-                        src={icon}
-                        alt={connector.name}
-                        className="w-12 h-12 rounded-xl"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                    ) : null}
-                    <div className={`w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center ${icon ? 'hidden' : ''}`}>
-                      <Wallet className="h-6 w-6 text-white" />
+                  <div className="flex items-center gap-4 p-5">
+                    <div className="relative">
+                      {icon ? (
+                        <img
+                          src={icon}
+                          alt={connector.name}
+                          className="w-14 h-14 rounded-2xl shadow-sm"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                      ) : null}
+                      <div className={`w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-sm ${icon ? 'hidden' : ''}`}>
+                        <Wallet className="h-7 w-7 text-white" />
+                      </div>
+                      {isConnecting && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/90 rounded-2xl">
+                          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                        </div>
+                      )}
                     </div>
-                    {isConnecting && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-xl">
-                        <div className="w-6 h-6 border-2 border-primary-600 border-t-transparent rounded-full animate-spin" />
+                    <div className="flex-1 text-left">
+                      <p className="font-bold text-gray-900 text-lg group-hover:text-blue-600 transition-colors">
+                        {connector.name}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {!isReady ? 'Not installed' : description}
+                      </p>
+                    </div>
+                    {isReady && !isConnecting && (
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                          <CheckCircle className="h-5 w-5 text-blue-600" />
+                        </div>
                       </div>
                     )}
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="font-semibold text-gray-900 text-base">
-                      {connector.name}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-0.5">
-                      {!isReady ? 'Not installed' : description}
-                    </p>
                   </div>
                 </button>
               );
@@ -173,14 +217,10 @@ const WalletModal: React.FC<WalletModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-            <div className="flex items-start gap-2">
-              <AlertCircle className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-gray-600">
-                By connecting your wallet, you agree to our Terms of Service and Privacy Policy.
-                Make sure you trust this site before connecting.
-              </p>
-            </div>
+          <div className="px-6 py-4 bg-gray-50 border-t">
+            <p className="text-xs text-gray-600 text-center">
+              Secure connection • Your keys, your crypto
+            </p>
           </div>
         </div>
       </div>

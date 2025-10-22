@@ -5,26 +5,26 @@ import { DEFAULT_CHAIN } from '@/config/chains';
 import { PythPriceMonitorABI } from '@/config/abis';
 import { useTokenList } from './useTokenList';
 
-interface ConfiguredFeed {
-  tokenAddress: string;
-  tokenSymbol: string;
-  tokenName: string;
-  priceId: string;
-  hasPrice: boolean;
-}
+// interface ConfiguredFeed {
+//   tokenAddress: string;
+//   tokenSymbol: string;
+//   tokenName: string;
+//   priceId: string;
+//   hasPrice: boolean;
+// }
 
 /**
  * Get all configured price feeds from the PythPriceMonitor contract
  * This checks which tokens have price feeds configured
  */
 export const useConfiguredPriceFeeds = () => {
-  const { chain } = useNetwork();
-  const chainContracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  // const { chain } = useNetwork();
+  // const chainContracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
   const { tokens } = useTokenList();
 
   // Check each token to see if it has a price feed configured
   const configuredFeeds = useMemo(() => {
-    const feeds: ConfiguredFeed[] = [];
+    // const feeds: ConfiguredFeed[] = [];
     
     // We'll check the first 50 tokens to avoid too many RPC calls
     const tokensToCheck = tokens.slice(0, 50);

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage - GuardX</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 { color: #1f2937; margin-bottom: 1rem; }
+        p { color: #6b7280; margin-bottom: 2rem; }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        button:hover { background: #2563eb; transform: scale(1.05); }
+        .result { margin-top: 1.5rem; padding: 1rem; border-radius: 0.5rem; }
+        .success { background: #d1fae5; color: #065f46; }
+        .info { background: #dbeafe; color: #1e40af; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Clear Browser Storage</h1>
+        <p>Click the button below to clear all cached data and fix storage issues.</p>
+        <button onclick="clearStorage()">Clear All Storage</button>
+        <div id="result"></div>
+    </div>
+    <script>
+        function clearStorage() {
+            try {
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Also try to clear IndexedDB
+                if (window.indexedDB) {
+                    indexedDB.databases().then(dbs => {
+                        dbs.forEach(db => {
+                            if (db.name) indexedDB.deleteDatabase(db.name);
+                        });
+                    });
+                }
+                
+                document.getElementById('result').innerHTML = 
+                    '<div class="result success"><strong>✅ Success!</strong><br>All storage cleared. Close this tab and refresh your app.</div>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = 
+                    '<div class="result info"><strong>⚠️ Partial Success</strong><br>Some storage cleared. Try refreshing your app.</div>';
+            }
+        }
+        
+        // Show storage info
+        window.addEventListener('load', () => {
+            try {
+                const wagmiCache = localStorage.getItem('wagmi.cache');
+                if (wagmiCache) {
+                    const size = (wagmiCache.length / 1024).toFixed(2);
+                    document.querySelector('p').innerHTML += 
+                        `<br><br><small style="color: #ef4444;">Current wagmi cache: ${size} KB</small>`;
+                }
+            } catch (e) {}
+        });
+    </script>
+</body>
+</html>

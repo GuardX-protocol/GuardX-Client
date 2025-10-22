@@ -6,12 +6,12 @@ import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
 import { usePortfolio } from '@/hooks';
 import { formatUnits } from 'viem';
-import WalletModal from './WalletModal';
+import { useWalletStore } from '@/store/walletStore';
 import Button from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 
 const WalletButton: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { openWalletModal } = useWalletStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -47,13 +47,10 @@ const WalletButton: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <>
-        <Button onClick={() => setIsModalOpen(true)} size="sm">
-          <Wallet className="h-4 w-4 mr-2" />
-          Connect Wallet
-        </Button>
-        <WalletModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      </>
+      <Button onClick={openWalletModal} size="sm">
+        <Wallet className="h-4 w-4 mr-2" />
+        Connect Wallet
+      </Button>
     );
   }
 
@@ -189,7 +186,6 @@ const WalletButton: React.FC = () => {
           </>
         )}
       </div>
-      <WalletModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
 };

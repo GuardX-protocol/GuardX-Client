@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react';
-import { TrendingUp, TrendingDown, Activity } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, Wallet } from 'lucide-react';
 import { TokenInfo } from '@uniswap/token-lists';
+import { useTokenBalance } from '@/hooks/useTokenBalance';
+import { useAccount } from 'wagmi';
 
 interface TokenListItemProps {
   token: TokenInfo;
@@ -13,9 +15,16 @@ interface TokenListItemProps {
     formattedPrice: string;
   };
   isLoading?: boolean;
+  showBalance?: boolean;
 }
 
-const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData, isLoading }) => {
+const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData, isLoading, showBalance = false }) => {
+  const { isConnected } = useAccount();
+  const { formattedBalance, isLoading: isBalanceLoading } = useTokenBalance(
+    showBalance && isConnected ? token.address : '',
+    token.decimals
+  );
+
   // Generate consistent mock 24h change based on token symbol
   // In production, this would come from historical price data
   const priceChange = useMemo(() => {
@@ -85,6 +94,27 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
           )}
         </div>
       </div>
+
+      {/* Balance Display */}
+      {showBalance && isConnected && (
+        <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Wallet className="h-4 w-4" />
+              <span>Balance</span>
+            </div>
+            {isBalanceLoading ? (
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 rounded w-16"></div>
+              </div>
+            ) : (
+              <span className="font-medium text-gray-900">
+                {parseFloat(formattedBalance) > 0 ? formattedBalance : '0.00'} {token.symbol}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
     </button>
   );
 };

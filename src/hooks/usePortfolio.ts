@@ -5,7 +5,7 @@ export const usePortfolio = () => {
   const { address } = useAccount();
   const contract = useCrashGuardCore();
 
-  const { data, isLoading, isError, refetch } = useContractRead({
+  const { data, isLoading, refetch } = useContractRead({
     ...contract,
     functionName: 'getUserPortfolio' as any,
     args: address ? [address] : undefined,
