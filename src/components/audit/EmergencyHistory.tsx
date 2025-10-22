@@ -20,8 +20,8 @@ const EmergencyHistory: React.FC = () => {
     return (
       <div className="card">
         <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-20 bg-gray-200 rounded"></div>
+          <div className="h-4 bg-gray-800 rounded w-1/3"></div>
+          <div className="h-20 bg-gray-800 rounded"></div>
         </div>
       </div>
     );
@@ -33,7 +33,7 @@ const EmergencyHistory: React.FC = () => {
     <div className="card">
       <div className="flex items-center gap-2 mb-4">
         <AlertTriangle className="h-5 w-5 text-warning-600" />
-        <h2 className="text-lg font-semibold text-gray-900">Emergency Actions</h2>
+        <h2 className="text-lg font-semibold text-gray-400">Emergency Actions</h2>
       </div>
 
       {emergencies.length === 0 ? (

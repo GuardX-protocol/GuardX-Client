@@ -40,7 +40,7 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
   return (
     <button
       onClick={onClick}
-      className="w-full p-4 bg-white border border-gray-200 rounded-lg hover:border-primary-500 hover:shadow-md transition-all duration-200 text-left group"
+      className="w-full p-4 bg-black/50 border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)] rounded-lg hover:shadow-md transition-all duration-200 text-left group"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -61,7 +61,7 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
           
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <p className="font-semibold text-gray-900 truncate">{token.symbol}</p>
+              <p className="font-semibold text-gray-300 truncate">{token.symbol}</p>
               <Activity className="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
             </div>
             <p className="text-sm text-gray-500 truncate">{token.name}</p>
@@ -71,12 +71,12 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
         <div className="text-right flex-shrink-0 ml-4">
           {isLoading ? (
             <div className="animate-pulse">
-              <div className="h-5 bg-gray-200 rounded w-20 mb-1"></div>
-              <div className="h-4 bg-gray-200 rounded w-16"></div>
+              <div className="h-5 bg-gray-800 rounded w-20 mb-1"></div>
+              <div className="h-4 bg-gray-800 rounded w-16"></div>
             </div>
           ) : priceData ? (
             <>
-              <p className="font-semibold text-gray-900">
+              <p className="font-semibold text-gray-500">
                 ${priceData.formattedPrice}
               </p>
               <div className={`flex items-center justify-end gap-1 text-sm ${

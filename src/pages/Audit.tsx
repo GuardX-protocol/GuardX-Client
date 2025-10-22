@@ -78,7 +78,7 @@ const Audit: React.FC = () => {
 
         <div className="card">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-semibold text-gray-900">Transaction History</h2>
+            <h2 className="text-lg font-semibold text-gray-400">Transaction History</h2>
             <div className="relative">
               <Search className="h-4 w-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
@@ -86,7 +86,7 @@ const Audit: React.FC = () => {
                 placeholder="Search transactions..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="pl-10 pr-4 py-2 bg-black/35 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
           </div>
