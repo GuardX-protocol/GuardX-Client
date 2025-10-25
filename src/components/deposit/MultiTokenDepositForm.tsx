@@ -522,21 +522,6 @@ const MultiTokenDepositForm: React.FC = () => {
           </div>
         )}
 
-        {/* Debug info (remove in production) */}
-        {process.env.NODE_ENV === "development" && (
-          <div className="text-xs text-gray-500 space-y-1">
-            <div>Amount: {amount}</div>
-            <div>Parsed Amount: {parsedAmount.toString()}</div>
-            <div>Has Valid Amount: {hasValidAmount.toString()}</div>
-            <div>
-              Current Balance: {currentBalance?.value?.toString() || "none"}
-            </div>
-            <div>Can Transact: {canTransact.toString()}</div>
-            <div>Is Loading: {isLoading.toString()}</div>
-            <div>Needs Approval: {needsApproval.toString()}</div>
-          </div>
-        )}
-
         {/* Action Buttons */}
         <div className="space-y-3" style={{ position: "relative", zIndex: 10 }}>
           {needsApproval && !isETH && hasValidAmount && mode === "deposit" && (

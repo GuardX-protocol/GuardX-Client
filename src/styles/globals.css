@@ -235,26 +235,7 @@ w3m-connect-button {
     #6366f1 0%,
     #8b5cf6 50%,
     #06b6d4 100%
-  ) !important;  <button
-            onClick={() => {
-              console.log("Withdraw button clicked!");
-              setMode("withdraw");
-              setAmount("");
-            }}
-            style={{
-              cursor: "pointer",
-              pointerEvents: "auto",
-            }}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              mode === "withdraw"
-                ? "bg-purple-500 text-white shadow-lg"
-                : "text-gray-400 hover:text-white hover:bg-gray-800/50"
-            }`}
-          >
-            <ArrowUpCircle className="h-4 w-4" />
-            Withdraw
-          </button>
-        </div>
+  ) !important;
   border-radius: 14px !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
