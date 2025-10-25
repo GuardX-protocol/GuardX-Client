@@ -1,103 +1,83 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { ArrowDown, AlertTriangle, CheckCircle2, Search, Wallet, ExternalLink } from 'lucide-react';
-import { useAccount, useNetwork, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { parseUnits } from 'viem';
+import { useAccount, useNetwork, useContractWrite, useWaitForTransaction, useContractRead } from 'wagmi';
+import { parseUnits, formatUnits } from 'viem';
 import toast from 'react-hot-toast';
-import { getContracts } from '@/config/contracts';
-import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance';
-import { CrashGuardCoreABI } from '@/config/abis';
-import { TokenInfo } from '@uniswap/token-lists';
-
-// Simple token list for deposit
-const DEPOSIT_TOKENS: TokenInfo[] = [
-  {
-    chainId: 421614,
-    address: '0x0000000000000000000000000000000000000000',
-    name: 'Ethereum',
-    symbol: 'ETH',
-    decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png'
-  },
-  {
-    chainId: 421614,
-    address: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
-    name: 'USD Coin',
-    symbol: 'USDC',
-    decimals: 6,
-    logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png'
-  },
-  {
-    chainId: 421614,
-    address: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    name: 'Tether USD',
-    symbol: 'USDT',
-    decimals: 6,
-    logoURI: 'https://assets.coingecko.com/coins/images/325/small/Tether.png'
-  },
-  {
-    chainId: 421614,
-    address: '0x980B62Da83eFf3D4576C647993b0c1D7faf17c73',
-    name: 'Wrapped Ether',
-    symbol: 'WETH',
-    decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/2518/small/weth.png'
-  }
-];
+import { VAULT_CONTRACTS, SUPPORTED_TOKENS, SupportedToken } from '@/config/vault';
+import { VaultERC4626ABI, ERC20ABI } from '@/config/abis/vault';
 
 const DepositForm: React.FC = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
 
-  const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
-  const [amount, setAmount] = useState('');
-  const [isApproving, setIsApproving] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedToken, setSelectedToken] = useState<SupportedToken | null>(null);
+      </div>
+    abi: ERC20ABI,
+    functionName: 'mint',
+    args: [address!, parseUnits('1000', 18)], // Mint 1000 mock tokens
+  });
 
-  // Check if selected token is ETH
-  const isETH = selectedToken?.address === '0x0000000000000000000000000000000000000000';
+  // Handle approval
+  const handleApprove = useCallback(async () => {
+    if (!selectedToken || !amount) return;
+    
+    setIsApproving(true);
+    try {
+      approveToken?.();
+    } catch (error) {
+      toast.error('Failed to approve token');
+      setIsApproving(false);
+    }
+  }, [selectedToken, amount, approveToken]);
 
-  // Filter tokens based on search
-  const filteredTokens = useMemo(() => {
-    if (!searchQuery.trim()) return DEPOSIT_TOKENS;
+  // Handle deposit
+  const handleDeposit = useCallback(async () => {
+    if (!selectedToken || !amount) return;
 
-    const query = searchQuery.toLowerCase();
-    return DEPOSIT_TOKENS.filter(token =>
-      token.symbol.toLowerCase().includes(query) ||
-      token.name.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
+    try {
+      depositToVault?.();
+    } catch (error) {
+      toast.error('Failed to deposit to vault');
+    }
+  }, [selectedToken, amount, depositToVault]);
 
-  // Get balance for selected token
-  const { formattedBalance, refetch: refetchBalance } = useTokenBalance(
-    selectedToken?.address || '',
-    selectedToken?.decimals || 18
-  );
+  // Handle mint mock tokens
+  const handleMintMock = useCallback(() => {
+    if (selectedToken?.symbol === 'MOCK') {
+      mintMockTokens?.();
+      toast.success('Minting 1000 MOCK tokens...');
+    }
+  }, [selectedToken, mintMockTokens]);
 
-  const { allowance, refetch: refetchAllowance } = useTokenAllowance(
-    selectedToken?.address || '',
-    contracts.CrashGuardCore
-  );
-
-  // Check if approval is needed (only for ERC20 tokens, not ETH)
-  const needsApproval = useMemo(() => {
-    if (!selectedToken || !amount || isETH) return false;
-    if (!allowance) return true; // Need approval if we don't have allowance data
+  // Validation
+  const isValidAmount = useMemo(() => {
+    if (!amount || !selectedToken) return false;
     try {
       const amountBigInt = parseUnits(amount, selectedToken.decimals);
-      return allowance < amountBigInt;
+      return amountBigInt > 0n && (!tokenBalance || amountBigInt <= tokenBalance);
     } catch {
       return false;
     }
-  }, [selectedToken, amount, allowance, isETH]);
+  }, [amount, selectedToken, tokenBalance]);
 
-  // Token approval (only for ERC20 tokens)
-  const { write: approveToken, data: approvalTx } = useContractWrite({
-    address: selectedToken?.address as `0x${string}`,
-    abi: [
-      {
-        name: 'approve',
-        type: 'function',
+  if (!isCorrectNetwork) {
+    return (
+      <div className="bg-white rounded-xl p-6 shadow-lg">
+        <div className="flex items-center justify-center p-8">
+          <div className="text-center">
+            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Wrong Network</h3>
+            <p className="text-gray-600 mb-4">
+              Please switch to Base Sepolia (Chain ID: {VAULT_CONTRACTS.CHAIN_ID}) to use the vault.
+            </p>
+            <p className="text-sm text-gray-500">
+              Current network: {chain?.name || 'Unknown'} (ID: {chain?.id || 'Unknown'})
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
         stateMutability: 'nonpayable',
         inputs: [
           { name: 'spender', type: 'address' },
