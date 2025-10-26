@@ -1,56 +1,111 @@
 import React from 'react';
-import { Shield, TrendingUp, AlertTriangle, Activity, DollarSign, BarChart3, Wallet, ArrowUpRight } from 'lucide-react';
-import { usePortfolioData, usePolicyData } from '@/hooks';
-import { formatUnits } from 'viem';
-import { useNetwork, useAccount } from 'wagmi';
+import { Shield, TrendingUp, AlertTriangle, Activity, DollarSign, BarChart3, Wallet, ArrowUpRight, User, CheckCircle, Clock } from 'lucide-react';
+import { useVincentAuth } from '@/components/auth/VincentAuth';
+import { useGuardXUser, useGuardXPrices } from '@/hooks/useGuardX';
 import { Link } from 'react-router-dom';
+import GuardXMonitoringCard from '@/components/guardx/GuardXMonitoringCard';
+import ProfileManagement from '@/components/profile/ProfileManagement';
 
 const Dashboard: React.FC = () => {
-  const { chain } = useNetwork();
-  const { address, isConnected } = useAccount();
+  const { isAuthenticated } = useVincentAuth();
+  const { user, createUser, isLoading: userLoading } = useGuardXUser();
+  const { prices, fetchPrices } = useGuardXPrices();
 
-  const { portfolio, isLoading: portfolioLoading } = usePortfolioData(address);
-  const { policy, isLoading: policyLoading } = usePolicyData(address);
+  // Mock portfolio and policy data for now (replace with Vincent-based calls)
+  const portfolioLoading = false;
+  const policyLoading = false;
 
-  // Handle portfolio data structure
-  const portfolioData = portfolio as any;
-  let totalValue = 0;
-  let assets: any[] = [];
-  let riskLevel = 0;
-
-  if (portfolioData) {
-    // Portfolio data comes as [assets, totalValue, riskScore]
-    if (Array.isArray(portfolioData) && portfolioData.length >= 3) {
-      assets = portfolioData[0] || [];
-      totalValue = Number(formatUnits(BigInt(portfolioData[1] || 0), 18));
-      riskLevel = Number(portfolioData[2] || 0);
-    } else if (portfolioData.assets) {
-      // If it's an object with properties
-      assets = portfolioData.assets || [];
-      totalValue = Number(formatUnits(BigInt(portfolioData.totalValue || 0), 18));
-      riskLevel = Number(portfolioData.riskScore || 0);
-    }
-  }
+  // Mock data for now - replace with Vincent-based portfolio calls
+  const totalValue = 0;
+  const assets: any[] = [];
+  const riskLevel = 0;
 
   const assetsCount = Array.isArray(assets) ? assets.length : 0;
 
-  // Handle policy data structure
-  const policyData = policy as any;
-  let isProtectionActive = false;
-  let crashThreshold = 0;
+  // Fetch prices for assets
+  React.useEffect(() => {
+    if (assets.length > 0) {
+      const symbols = assets.map((asset: any) => {
+        const tokenAddress = asset.tokenAddress || asset[0] || asset;
+        const getTokenSymbol = (address: string) => {
+          const addr = address?.toLowerCase();
+          if (addr === '0x0000000000000000000000000000000000000000') return 'ETH';
+          if (addr === '0x4200000000000000000000000000000000000006') return 'WETH';
+          if (addr === '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'.toLowerCase()) return 'USDC';
+          if (addr === '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0'.toLowerCase()) return 'USDT';
+          return 'TOKEN';
+        };
+        return getTokenSymbol(tokenAddress);
+      }).filter(symbol => symbol !== 'TOKEN');
 
-  if (policyData) {
-    // Policy data structure: [crashThreshold, maxSlippage, emergencyActions, stablecoinPreference, gasLimit]
-    if (Array.isArray(policyData) && policyData.length >= 1) {
-      crashThreshold = Number(policyData[0] || 0);
-      isProtectionActive = crashThreshold > 0;
-    } else if (policyData.crashThreshold !== undefined) {
-      crashThreshold = Number(policyData.crashThreshold || 0);
-      isProtectionActive = crashThreshold > 0;
+      if (symbols.length > 0) {
+        fetchPrices(symbols);
+      }
     }
-  }
+  }, [assets, fetchPrices]);
 
-  if (!isConnected || !address) {
+  // Mock protection status for now - replace with Vincent-based policy calls
+  const isProtectionActive = false;
+  const crashThreshold = 0;
+
+  const handleCreateUser = async () => {
+    try {
+      await createUser({
+        notificationPreferences: {
+          telegram_alerts: true,
+          email_alerts: false,
+          webhook_alerts: false,
+        },
+      });
+    } catch (error: any) {
+      if (error.message?.includes('already exists')) {
+        // User already exists, show success message and refresh
+        window.location.reload();
+      } else {
+        console.error('Error creating GuardX user:', error);
+      }
+    }
+  };
+
+  const getOnboardingSteps = () => {
+    const steps = [
+      {
+        id: 'connect',
+        title: 'Connect Wallet',
+        description: 'Connect your wallet to get started',
+        completed: isAuthenticated,
+        action: null,
+      },
+      {
+        id: 'profile',
+        title: 'Create Profile',
+        description: 'Set up your GuardX profile for monitoring',
+        completed: !!user,
+        action: user ? null : handleCreateUser,
+      },
+      {
+        id: 'deposit',
+        title: 'Deposit Assets',
+        description: 'Deposit your first assets to protect',
+        completed: assetsCount > 0,
+        action: '/app/deposit',
+      },
+      {
+        id: 'policies',
+        title: 'Configure Protection',
+        description: 'Set up crash protection policies',
+        completed: isProtectionActive,
+        action: '/app/policies',
+      },
+    ];
+    return steps;
+  };
+
+  const onboardingSteps = getOnboardingSteps();
+  const completedSteps = onboardingSteps.filter(step => step.completed).length;
+  const isFullyOnboarded = completedSteps === onboardingSteps.length;
+
+  if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
         {/* Animated Background Particles */}
@@ -88,6 +143,87 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="relative z-10 space-y-6 sm:space-y-8 p-6">
+        {/* User Onboarding Section */}
+        {!isFullyOnboarded && (
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-transparent"></div>
+            <div className="relative p-6 bg-gray-900/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
+                    <User className="h-6 w-6 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Welcome to GuardX</h2>
+                    <p className="text-gray-400 text-sm">Complete setup to start protecting your assets</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-bold text-cyan-400">{completedSteps}/{onboardingSteps.length}</div>
+                  <div className="text-xs text-gray-400">Steps Complete</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {onboardingSteps.map((step, index) => (
+                  <div
+                    key={step.id}
+                    className={`p-4 rounded-xl border transition-all duration-200 ${step.completed
+                      ? 'bg-green-500/10 border-green-500/30'
+                      : 'bg-gray-800/50 border-gray-700/50 hover:border-cyan-500/30'
+                      }`}
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.completed
+                        ? 'bg-green-500/20 text-green-400'
+                        : 'bg-gray-700/50 text-gray-400'
+                        }`}>
+                        {step.completed ? (
+                          <CheckCircle className="h-4 w-4" />
+                        ) : (
+                          <span className="text-sm font-bold">{index + 1}</span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-medium text-white text-sm">{step.title}</h3>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-400 mb-3">{step.description}</p>
+                    {!step.completed && step.action && (
+                      <div>
+                        {typeof step.action === 'string' ? (
+                          <Link
+                            to={step.action}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-xs hover:bg-cyan-500/30 transition-colors"
+                          >
+                            Complete
+                            <ArrowUpRight className="h-3 w-3" />
+                          </Link>
+                        ) : (
+                          <button
+                            onClick={step.action}
+                            disabled={userLoading}
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-xs hover:bg-cyan-500/30 transition-colors disabled:opacity-50"
+                          >
+                            {userLoading ? (
+                              <>
+                                <Clock className="h-3 w-3 animate-spin" />
+                                Creating...
+                              </>
+                            ) : (
+                              'Complete'
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hero Header */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
@@ -109,7 +245,7 @@ const Dashboard: React.FC = () => {
             <div className="px-3 sm:px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span className="text-xs sm:text-sm font-semibold text-emerald-300">{chain?.name || 'Network'}</span>
+                <span className="text-xs sm:text-sm font-semibold text-emerald-300">Vincent Network</span>
               </div>
             </div>
           </div>
@@ -250,46 +386,73 @@ const Dashboard: React.FC = () => {
                     {assets.map((asset: any, index: number) => {
                       // Handle both array and object formats
                       const tokenAddress = asset.tokenAddress || asset[0] || asset;
-                      const amount = asset.amount || asset[1] || 0;
-                      const valueUSD = asset.valueUSD || asset[2] || 0;
+                      // const amount = asset.amount || asset[1] || 0; // Unused in mock
+                      // const valueUSD = asset.valueUSD || asset[2] || 0; // Unused in mock
 
                       // Determine token symbol and decimals from address
                       const getTokenInfo = (address: string) => {
                         const addr = address?.toLowerCase();
                         if (addr === '0x0000000000000000000000000000000000000000') return { symbol: 'ETH', decimals: 18 };
+                        if (addr === '0x4200000000000000000000000000000000000006') return { symbol: 'WETH', decimals: 18 };
                         if (addr === '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d'.toLowerCase()) return { symbol: 'USDC', decimals: 6 };
                         if (addr === '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0'.toLowerCase()) return { symbol: 'USDT', decimals: 6 };
-                        if (addr === '0x980B62Da83eFf3D4576C647993b0c1D7faf17c73'.toLowerCase()) return { symbol: 'WETH', decimals: 18 };
                         return { symbol: 'TOKEN', decimals: 18 };
                       };
 
                       const tokenInfo = getTokenInfo(tokenAddress);
-                      const formattedAmount = formatUnits(BigInt(amount || 0), tokenInfo.decimals);
-                      const formattedValue = formatUnits(BigInt(valueUSD || 0), 18);
+                      const formattedAmount = '0.000000'; // Mock for now
+                      const formattedValue = '0.00'; // Mock for now
+
+                      // Get real-time price data
+                      const priceData = prices[`${tokenInfo.symbol}USDT`] || prices[tokenInfo.symbol];
+                      const currentPrice = priceData?.price || 0;
+                      const priceChange = priceData?.change_24h || 0;
+
+                      // Skip zero amounts
+                      if (parseFloat(formattedAmount) === 0) return null;
 
                       return (
                         <div key={`${tokenAddress}-${index}`} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center border border-gray-700">
-                              <span className="text-xs font-bold text-white">{tokenInfo.symbol.slice(0, 2)}</span>
+                            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
+                              <span className="text-xs font-bold text-cyan-400">{tokenInfo.symbol.slice(0, 2)}</span>
                             </div>
                             <div>
                               <p className="font-medium text-white">{tokenInfo.symbol}</p>
                               <p className="text-xs text-gray-400">{parseFloat(formattedAmount).toFixed(6)}</p>
+                              {currentPrice > 0 && (
+                                <p className="text-xs text-gray-500">
+                                  ${currentPrice.toFixed(2)} •
+                                  <span className={`ml-1 ${priceChange >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                                    {priceChange >= 0 ? '+' : ''}{priceChange.toFixed(1)}%
+                                  </span>
+                                </p>
+                              )}
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium text-white">${parseFloat(formattedValue).toFixed(2)}</p>
+                            <p className="font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                              ${parseFloat(formattedValue).toFixed(2)}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {((parseFloat(formattedValue) / totalValue) * 100).toFixed(1)}%
+                            </p>
                           </div>
                         </div>
                       );
-                    })}
+                    }).filter(Boolean)}
                   </div>
                 ) : (
                   <div className="text-center py-8">
                     <Wallet className="h-12 w-12 text-gray-600 mx-auto mb-4" />
                     <p className="text-gray-400 mb-2">No assets deposited yet</p>
-                    <p className="text-sm text-gray-500">Start by depositing your first asset</p>
+                    <p className="text-sm text-gray-500 mb-4">Start by depositing your first asset</p>
+                    <Link
+                      to="/app/deposit"
+                      className="inline-block px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors text-sm"
+                    >
+                      Deposit Now
+                    </Link>
                   </div>
                 )}
               </div>
@@ -339,6 +502,12 @@ const Dashboard: React.FC = () => {
                 )}
               </div>
 
+              {/* Profile Management */}
+              <ProfileManagement />
+
+              {/* GuardX AI Monitoring */}
+              <GuardXMonitoringCard />
+
               {/* Quick Actions */}
               <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
                 <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
@@ -364,6 +533,8 @@ const Dashboard: React.FC = () => {
                     </div>
                     <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-400 transition-colors" />
                   </Link>
+
+
 
                   <Link
                     to="/app/audit"
