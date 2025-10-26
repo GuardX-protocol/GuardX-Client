@@ -1,434 +1,592 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { ArrowDown, AlertTriangle, CheckCircle2, Search, Wallet, ExternalLink } from 'lucide-react';
-import { useAccount, useNetwork, useContractWrite, useWaitForTransaction } from 'wagmi';
-import { parseUnits } from 'viem';
-import toast from 'react-hot-toast';
-import { getContracts } from '@/config/contracts';
-import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance';
-import { CrashGuardCoreABI } from '@/config/abis';
-import { TokenInfo } from '@uniswap/token-lists';
+import React, { useState, useMemo, useCallback } from "react";
+import {
+  ArrowDownCircle,
+  ArrowUpCircle,
+  AlertTriangle,
+  Check,
+  Loader2,
+  TrendingDown,
+  Shield,
+} from "lucide-react";
+import {
+  useAccount,
+  useBalance,
+  useContractWrite,
+  useWaitForTransaction,
+  useContractRead,
+  useNetwork,
+} from "wagmi";
+import {
+  parseUnits,
+  formatUnits,
+} from "viem";
+import toast from "react-hot-toast";
 
-// Simple token list for deposit
-const DEPOSIT_TOKENS: TokenInfo[] = [
-  {
-    chainId: 421614,
-    address: '0x0000000000000000000000000000000000000000',
-    name: 'Ethereum',
-    symbol: 'ETH',
-    decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png'
-  },
-  {
-    chainId: 421614,
-    address: '0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d',
-    name: 'USD Coin',
-    symbol: 'USDC',
-    decimals: 6,
-    logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png'
-  },
-  {
-    chainId: 421614,
-    address: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    name: 'Tether USD',
-    symbol: 'USDT',
-    decimals: 6,
-    logoURI: 'https://assets.coingecko.com/coins/images/325/small/Tether.png'
-  },
-  {
-    chainId: 421614,
-    address: '0x980B62Da83eFf3D4576C647993b0c1D7faf17c73',
-    name: 'Wrapped Ether',
-    symbol: 'WETH',
-    decimals: 18,
-    logoURI: 'https://assets.coingecko.com/coins/images/2518/small/weth.png'
-  }
-];
+import {
+  SUPPORTED_TOKENS,
+  type SupportedToken,
+} from "../../config/vault";
+import { CrashGuardCoreABI } from "@/config/abis/CrashGuardCore";
+import { ERC20_ABI } from "@/config/abis/ERC20";
+import { getContracts } from "@/config/contracts";
+import { usePortfolioData } from "@/hooks";
 
 const DepositForm: React.FC = () => {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const contracts = getContracts(chain?.id);
 
-  const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
-  const [amount, setAmount] = useState('');
+  const [selectedToken, setSelectedToken] = useState<SupportedToken>(
+    SUPPORTED_TOKENS[0]
+  ); // Default to ETH
+  const [amount, setAmount] = useState("");
   const [isApproving, setIsApproving] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [mode, setMode] = useState<"deposit" | "withdraw">("deposit");
 
-  // Check if selected token is ETH
-  const isETH = selectedToken?.address === '0x0000000000000000000000000000000000000000';
+  // Get portfolio data for withdrawals
+  const { portfolio, refetch: refetchPortfolio } = usePortfolioData(address);
 
-  // Filter tokens based on search
-  const filteredTokens = useMemo(() => {
-    if (!searchQuery.trim()) return DEPOSIT_TOKENS;
-
-    const query = searchQuery.toLowerCase();
-    return DEPOSIT_TOKENS.filter(token =>
-      token.symbol.toLowerCase().includes(query) ||
-      token.name.toLowerCase().includes(query)
-    );
-  }, [searchQuery]);
-
-  // Get balance for selected token
-  const { formattedBalance, refetch: refetchBalance } = useTokenBalance(
-    selectedToken?.address || '',
-    selectedToken?.decimals || 18
-  );
-
-  const { allowance, refetch: refetchAllowance } = useTokenAllowance(
-    selectedToken?.address || '',
-    contracts.CrashGuardCore
-  );
-
-  // Check if approval is needed (only for ERC20 tokens, not ETH)
-  const needsApproval = useMemo(() => {
-    if (!selectedToken || !amount || isETH) return false;
-    if (!allowance) return true; // Need approval if we don't have allowance data
-    try {
-      const amountBigInt = parseUnits(amount, selectedToken.decimals);
-      return allowance < amountBigInt;
-    } catch {
-      return false;
-    }
-  }, [selectedToken, amount, allowance, isETH]);
-
-  // Token approval (only for ERC20 tokens)
-  const { write: approveToken, data: approvalTx } = useContractWrite({
-    address: selectedToken?.address as `0x${string}`,
-    abi: [
-      {
-        name: 'approve',
-        type: 'function',
-        stateMutability: 'nonpayable',
-        inputs: [
-          { name: 'spender', type: 'address' },
-          { name: 'amount', type: 'uint256' }
-        ],
-        outputs: [{ name: '', type: 'bool' }]
-      }
-    ],
-    functionName: 'approve',
-    args: selectedToken && !isETH ? [
-      contracts.CrashGuardCore as `0x${string}`,
-      parseUnits(amount || '0', selectedToken.decimals)
-    ] : undefined,
-    onSuccess: (data) => {
-      console.log('🔄 Approval transaction sent:', {
-        hash: data.hash,
-        token: selectedToken?.symbol,
-        amount,
-        spender: contracts.CrashGuardCore,
-        timestamp: new Date().toISOString()
-      });
-      toast.loading('Approving token...', { id: 'approval' });
-    },
-    onError: (error) => {
-      console.error('❌ Approval failed:', error);
-      toast.error(`Approval failed: ${error.message}`);
-      setIsApproving(false);
-    }
-  });
-
-  // Deposit transaction
-  const { write: depositToken, data: depositTx } = useContractWrite({
+  // Contract interactions using CrashGuardCore
+  const {
+    write: depositAsset,
+    data: depositTx,
+    isLoading: isDepositLoading,
+  } = useContractWrite({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
-    functionName: 'depositAsset',
-    args: selectedToken ? [
-      selectedToken.address as `0x${string}`,
-      parseUnits(amount || '0', selectedToken.decimals)
-    ] : undefined,
-    value: selectedToken && isETH ? parseUnits(amount || '0', selectedToken.decimals) : undefined,
-    onSuccess: (data) => {
-      console.log('🚀 Deposit transaction sent:', {
-        hash: data.hash,
-        token: selectedToken?.symbol,
-        amount,
-        isETH,
-        contract: contracts.CrashGuardCore,
-        user: address,
-        timestamp: new Date().toISOString()
-      });
-      toast.loading('Processing deposit...', { id: 'deposit' });
-    },
-    onError: (error) => {
-      console.error('❌ Deposit failed:', error);
-      toast.error(`Deposit failed: ${error.message}`);
-    }
+    functionName: "depositAsset",
   });
 
-  // Wait for approval confirmation
-  useWaitForTransaction({
-    hash: approvalTx?.hash,
-    onSuccess: (receipt) => {
-      console.log('✅ Approval confirmed:', {
-        hash: receipt.transactionHash,
-        blockNumber: receipt.blockNumber,
-        gasUsed: receipt.gasUsed.toString(),
-        timestamp: new Date().toISOString()
-      });
-      toast.dismiss('approval');
-      toast.success('Token approved successfully!');
-
-      setIsApproving(false);
-      refetchAllowance();
-    },
-    onError: (error) => {
-      console.error('❌ Approval confirmation failed:', error);
-      toast.dismiss('approval');
-      toast.error('Approval failed');
-      setIsApproving(false);
-    }
+  const {
+    write: withdrawAsset,
+    data: withdrawTx,
+    isLoading: isWithdrawLoading,
+  } = useContractWrite({
+    address: contracts.CrashGuardCore as `0x${string}`,
+    abi: CrashGuardCoreABI,
+    functionName: "withdrawAsset",
   });
 
-  // Wait for deposit confirmation
-  useWaitForTransaction({
+  const {
+    write: approveToken,
+    data: approvalTx,
+    isLoading: isApprovalLoading,
+  } = useContractWrite({
+    address:
+      selectedToken.address !== "0x0000000000000000000000000000000000000000"
+        ? (selectedToken.address as `0x${string}`)
+        : undefined,
+    abi: ERC20_ABI,
+    functionName: "approve",
+  });
+
+  // Check token allowance for ERC20 tokens (only for deposits)
+  const { data: allowance, refetch: refetchAllowance } = useContractRead({
+    address:
+      selectedToken.address !== "0x0000000000000000000000000000000000000000"
+        ? (selectedToken.address as `0x${string}`)
+        : undefined,
+    abi: ERC20_ABI,
+    functionName: "allowance",
+    args: [address!, contracts.CrashGuardCore as `0x${string}`],
+    enabled:
+      !!selectedToken &&
+      !!address &&
+      selectedToken.address !== "0x0000000000000000000000000000000000000000" &&
+      mode === "deposit",
+    watch: true,
+  });
+
+
+
+  // Transaction receipts for deposits
+  const { isLoading: isDepositConfirming } = useWaitForTransaction({
     hash: depositTx?.hash,
-    onSuccess: (receipt) => {
-      console.log('✅ Deposit confirmed:', {
-        hash: receipt.transactionHash,
-        blockNumber: receipt.blockNumber,
-        gasUsed: receipt.gasUsed.toString(),
-        timestamp: new Date().toISOString()
-      });
-      toast.dismiss('deposit');
-      toast.success('Deposit successful! 🎉');
-      setAmount('');
-      refetchBalance();
-      refetchAllowance();
+    onSuccess: () => {
+      setAmount("");
+      toast.success(`Successfully deposited ${selectedToken.symbol}!`);
+      refetchPortfolio?.();
     },
     onError: (error) => {
-      console.error('❌ Deposit confirmation failed:', error);
-      toast.dismiss('deposit');
-      toast.error('Deposit failed');
-    }
+      toast.error("Deposit failed: " + error.message);
+    },
   });
 
-  const handleApprove = () => {
-    if (!selectedToken || !amount) return;
-    setIsApproving(true);
-    approveToken?.();
-  };
+  // Transaction receipts for withdrawals
+  const { isLoading: isWithdrawConfirming } = useWaitForTransaction({
+    hash: withdrawTx?.hash,
+    onSuccess: () => {
+      setAmount("");
+      toast.success(`Successfully withdrew ${selectedToken.symbol}!`);
+      refetchPortfolio?.();
+    },
+    onError: (error) => {
+      toast.error("Withdrawal failed: " + error.message);
+    },
+  });
 
-  const handleDeposit = () => {
-    if (!selectedToken || !amount) return;
-    depositToken?.();
-  };
+  const { isLoading: isApprovalConfirming } = useWaitForTransaction({
+    hash: approvalTx?.hash,
+    onSuccess: () => {
+      setIsApproving(false);
+      toast.success("Token approval successful!");
+      refetchAllowance?.();
+    },
+    onError: (error) => {
+      toast.error("Approval failed: " + error.message);
+      setIsApproving(false);
+    },
+  });
 
-  const handleMaxClick = useCallback(() => {
-    setAmount(formattedBalance);
-  }, [formattedBalance]);
+  // Get user's ETH balance
+  const { data: ethBalance } = useBalance({
+    address: address,
+  });
 
-  // Get minimum deposit amount based on token type
-  const getMinimumDeposit = useCallback((token: TokenInfo): string => {
-    if (token.address === '0x0000000000000000000000000000000000000000') {
-      return '0.01'; // ETH: minimum 0.01 ETH
-    } else if (token.symbol === 'USDC' || token.symbol === 'USDT') {
-      return '1'; // Stablecoins: minimum 1 token
+  // Get user's token balance for ERC20 tokens
+  const { data: tokenBalance } = useBalance({
+    address: address,
+    token:
+      selectedToken.address !== "0x0000000000000000000000000000000000000000"
+        ? (selectedToken.address as `0x${string}`)
+        : undefined,
+  });
+
+  const isETH =
+    selectedToken.address === "0x0000000000000000000000000000000000000000";
+
+  // For deposits, use wallet balance; for withdrawals, use vault balance
+  const currentBalance = useMemo(() => {
+    if (mode === "deposit") {
+      return isETH ? ethBalance : tokenBalance;
     } else {
-      return '0.01'; // Other tokens: minimum 0.01 tokens
+      // For withdrawals, get balance from portfolio
+      const portfolioData = portfolio as any;
+      if (portfolioData) {
+        let assets: any[] = [];
+        if (Array.isArray(portfolioData) && portfolioData.length >= 1) {
+          assets = portfolioData[0] || [];
+        } else if (portfolioData.assets) {
+          assets = portfolioData.assets || [];
+        }
+
+        const vaultAsset = assets.find((asset: any) => {
+          const tokenAddress = asset.tokenAddress || asset[0] || asset;
+          return tokenAddress?.toLowerCase() === selectedToken.address.toLowerCase();
+        });
+
+        if (vaultAsset) {
+          const amount = vaultAsset.amount || vaultAsset[1] || 0;
+          return {
+            value: BigInt(amount || 0),
+            decimals: selectedToken.decimals,
+            symbol: selectedToken.symbol,
+          };
+        }
+      }
+      return null;
     }
-  }, []);
+  }, [mode, isETH, ethBalance, tokenBalance, portfolio, selectedToken]);
 
+  // Parse amount with proper decimals
+  const parseAmount = (value: string) => {
+    if (!value || value === "") return BigInt(0);
+    try {
+      return parseUnits(value, selectedToken.decimals);
+    } catch {
+      return BigInt(0);
+    }
+  };
 
+  const parsedAmount = parseAmount(amount);
+  const hasValidAmount = useMemo(() => {
+    // Check if amount is greater than 0
+    if (parsedAmount <= 0) return false;
+
+    // Check if we have balance data
+    if (!currentBalance?.value) return false;
+
+    // Check if amount doesn't exceed balance
+    return parsedAmount <= currentBalance.value;
+  }, [parsedAmount, currentBalance]);
+
+  // Check if approval is needed for ERC20 tokens (only for deposits)
+  const needsApproval = useMemo(() => {
+    if (mode === "withdraw" || isETH || !address || !hasValidAmount)
+      return false;
+    if (!allowance) return true; // If we can't check allowance, assume approval needed
+    try {
+      return allowance < parsedAmount;
+    } catch {
+      return true;
+    }
+  }, [mode, isETH, address, hasValidAmount, allowance, parsedAmount]);
+
+  // Handle approval for ERC20 tokens
+  const handleApproval = useCallback(async () => {
+    if (isETH || !address || !selectedToken) return;
+
+    try {
+      setIsApproving(true);
+
+      approveToken?.({
+        args: [contracts.CrashGuardCore as `0x${string}`, parsedAmount],
+      });
+    } catch (error) {
+      console.error("Approval error:", error);
+      toast.error("Failed to approve token spend");
+      setIsApproving(false);
+    }
+  }, [isETH, address, selectedToken, approveToken, parsedAmount, contracts]);
+
+  // Handle deposit
+  const handleDeposit = useCallback(async () => {
+    if (!address || !hasValidAmount || !selectedToken) return;
+
+    try {
+      if (isETH) {
+        // Deposit ETH - pass ETH address and send value
+        depositAsset?.({
+          args: [selectedToken.address as `0x${string}`, parsedAmount],
+          value: parsedAmount,
+        });
+      } else {
+        // Deposit ERC20 token
+        depositAsset?.({
+          args: [selectedToken.address as `0x${string}`, parsedAmount],
+        });
+      }
+
+      toast.success(`Depositing ${amount} ${selectedToken.symbol}...`);
+    } catch (error) {
+      console.error("Deposit error:", error);
+      toast.error("Failed to deposit");
+    }
+  }, [
+    address,
+    hasValidAmount,
+    selectedToken,
+    isETH,
+    depositAsset,
+    parsedAmount,
+    amount,
+  ]);
+
+  // Handle withdrawal
+  const handleWithdraw = useCallback(async () => {
+    if (!address || !hasValidAmount || !selectedToken) return;
+
+    try {
+      // Withdraw asset using CrashGuardCore
+      withdrawAsset?.({
+        args: [selectedToken.address as `0x${string}`, parsedAmount],
+      });
+
+      toast.success(`Withdrawing ${amount} ${selectedToken.symbol}...`);
+    } catch (error) {
+      console.error("Withdrawal error:", error);
+      toast.error("Failed to withdraw");
+    }
+  }, [
+    address,
+    hasValidAmount,
+    selectedToken,
+    withdrawAsset,
+    parsedAmount,
+    amount,
+  ]);
+
+  const canTransact =
+    hasValidAmount && (mode === "withdraw" || !needsApproval || isETH);
+  const isLoading =
+    isDepositConfirming ||
+    isWithdrawConfirming ||
+    isApprovalConfirming ||
+    isDepositLoading ||
+    isWithdrawLoading ||
+    isApprovalLoading;
+
+  if (!isConnected) {
+    return (
+      <div className="p-8 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm text-center">
+        <h3 className="text-xl font-semibold text-white mb-4">
+          Connect Wallet
+        </h3>
+        <p className="text-gray-400">
+          Please connect your wallet to start depositing
+        </p>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Token Selection */}
-      <div className="p-6 bg-gray-900 rounded-2xl border border-gray-800">
-        <h3 className="text-lg font-semibold text-white mb-4">Select Token</h3>
+    <div
+      className="p-8 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border"
+      style={{ position: "relative", zIndex: 1 }}
+    >
+      <div className="flex items-center gap-3 mb-6">
+        <Shield className="h-6 w-6 text-cyan-400" />
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+          Vault Operations
+        </h2>
+      </div>
 
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search tokens..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-black border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:border-gray-600 focus:outline-none"
-          />
+      <div className="space-y-6">
+        {/* Mode Selection */}
+        <div className="flex p-1 bg-gray-900/50 rounded-xl border border-gray-700">
+          <button
+            onClick={() => {
+              console.log("Deposit button clicked!");
+              setMode("deposit");
+              setAmount("");
+            }}
+            style={{
+              cursor: "pointer",
+              pointerEvents: "auto",
+            }}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${mode === "deposit"
+              ? "bg-cyan-500 text-white shadow-lg"
+              : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+              }`}
+          >
+            <ArrowDownCircle className="h-4 w-4" />
+            Deposit
+          </button>
+          <button
+            onClick={() => {
+              console.log("Withdraw button clicked!");
+              setMode("withdraw");
+              setAmount("");
+            }}
+            style={{
+              cursor: "pointer",
+              pointerEvents: "auto",
+            }}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${mode === "withdraw"
+              ? "bg-purple-500 text-white shadow-lg"
+              : "text-gray-400 hover:text-white hover:bg-gray-800/50"
+              }`}
+          >
+            <ArrowUpCircle className="h-4 w-4" />
+            Withdraw
+          </button>
         </div>
 
-        {/* Token List */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {filteredTokens.map((token) => {
-            // Get balance for this token using the hook
-            const { formattedBalance: tokenBalance } = useTokenBalance(
-              token.address === '0x0000000000000000000000000000000000000000' ? '' : token.address,
-              token.decimals
-            );
-            
-            const hasBalance = parseFloat(tokenBalance) > 0;
-            
-            return (
+        {/* Risk Warning */}
+        <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <TrendingDown className="h-5 w-5 text-yellow-400 mt-0.5" />
+            <div>
+              <h4 className="text-sm font-medium text-yellow-400 mb-1">
+                Crash Protection Vault
+              </h4>
+              <p className="text-xs text-yellow-300/80">
+                {mode === "deposit"
+                  ? "Deposit volatile assets for 24/7 crash protection monitoring."
+                  : "Withdraw your protected assets from the vault anytime."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Token Selection */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-3">
+            Select Asset to {mode === "deposit" ? "Deposit" : "Withdraw"}
+          </label>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {SUPPORTED_TOKENS.map((token) => (
               <button
                 key={token.address}
                 onClick={() => setSelectedToken(token)}
-                className={`p-4 rounded-xl border transition-all text-left relative ${selectedToken?.address === token.address
-                  ? 'border-cyan-400 bg-gray-800'
-                  : 'border-gray-700 bg-black hover:border-gray-600'
+                className={`p-4 rounded-xl border transition-all ${selectedToken.address === token.address
+                  ? "border-cyan-500 bg-cyan-500/10"
+                  : "border-gray-700 bg-gray-900/50 hover:border-gray-600"
                   }`}
               >
-                {hasBalance && (
-                  <div className="absolute -top-2 -right-2">
-                    <div className="flex items-center gap-1 bg-cyan-400 text-black text-xs px-2 py-1 rounded-full font-medium">
-                      <Wallet className="h-3 w-3" />
-                      {parseFloat(tokenBalance).toFixed(4)}
-                    </div>
-                  </div>
-                )}
-                
                 <div className="flex items-center gap-3">
-                  {token.logoURI ? (
-                    <img src={token.logoURI} alt={token.symbol} className="w-8 h-8 rounded-full" />
-                  ) : (
-                    <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-                      <span className="text-xs font-bold text-white">{token.symbol.slice(0, 2)}</span>
+                  <img
+                    src={token.logoURI}
+                    alt={token.symbol}
+                    className="w-8 h-8 rounded-full"
+                  />
+                  <div className="text-left">
+                    <div className="text-sm font-medium text-white">
+                      {token.symbol}
                     </div>
-                  )}
-                  <div className="flex-1">
-                    <p className="font-medium text-white">{token.symbol}</p>
-                    <p className="text-xs text-gray-400">{token.name}</p>
-                    {hasBalance && (
-                      <p className="text-xs text-cyan-400 mt-1">
-                        Balance: {parseFloat(tokenBalance).toFixed(6)}
-                      </p>
-                    )}
+                    <div className="text-xs text-gray-400">{token.name}</div>
                   </div>
+                  {selectedToken.address === token.address && (
+                    <Check className="h-4 w-4 text-cyan-400 ml-auto" />
+                  )}
                 </div>
               </button>
-            );
-          })}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Amount Input */}
-      {selectedToken && (
-        <div className="p-6 bg-gray-900 rounded-2xl border border-gray-800">
-          <div className="flex items-center gap-3 mb-4">
-            <CheckCircle2 className="h-5 w-5 text-green-400" />
-            <div>
-              <p className="font-medium text-white">{selectedToken.symbol} Selected</p>
-              <p className="text-xs text-gray-400">
-                {isETH ? 'Native ETH deposit' : 'ERC20 token deposit'}
-              </p>
+        {/* Amount Input */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-3">
+            Amount to {mode === "deposit" ? "Deposit" : "Withdraw"}
+          </label>
+          <div className="relative">
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder={`0.0 ${selectedToken.symbol}`}
+              className="w-full p-4 pr-20 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-colors"
+              step="any"
+              min="0"
+            />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+              {selectedToken.symbol}
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-300">Amount</label>
-                <button
-                  onClick={handleMaxClick}
-                  className="text-xs text-gray-400 hover:text-white transition-colors"
-                >
-                  Balance: {formattedBalance} {selectedToken.symbol}
-                </button>
-              </div>
-
-              <div className="relative">
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0.0"
-                  className="w-full px-4 py-3 bg-black border border-gray-700 rounded-xl text-white text-lg focus:border-gray-600 focus:outline-none"
-                  step="any"
-                  min="0"
-                />
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                  {selectedToken.logoURI && (
-                    <img src={selectedToken.logoURI} alt={selectedToken.symbol} className="w-5 h-5 rounded-full" />
-                  )}
-                  <span className="text-sm font-medium text-gray-300">{selectedToken.symbol}</span>
-                </div>
-              </div>
-
-              <p className="text-xs text-gray-400 mt-2">
-                Minimum: {getMinimumDeposit(selectedToken)} {selectedToken.symbol}
-              </p>
+          {/* Balance Display */}
+          {currentBalance && (
+            <div className="flex justify-between items-center mt-2 text-sm">
+              <span className="text-gray-400">
+                {mode === "deposit" ? "Wallet" : "Vault"} Balance:{" "}
+                {formatUnits(currentBalance.value, selectedToken.decimals)}{" "}
+                {selectedToken.symbol}
+              </span>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  console.log("Max button clicked!", {
+                    currentBalance: currentBalance?.value?.toString(),
+                    decimals: selectedToken.decimals,
+                    formatted: formatUnits(
+                      currentBalance!.value,
+                      selectedToken.decimals
+                    ),
+                  });
+                  setAmount(
+                    formatUnits(currentBalance!.value, selectedToken.decimals)
+                  );
+                }}
+                style={{
+                  cursor: "pointer",
+                  zIndex: 20,
+                  position: "relative",
+                  padding: "4px 8px",
+                  borderRadius: "4px",
+                  backgroundColor: "rgba(34, 197, 94, 0.1)",
+                }}
+                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+              >
+                Max
+              </button>
             </div>
+          )}
+        </div>
 
-            {/* Approval Status */}
-            {needsApproval && (
-              <div className="p-3 bg-yellow-900/20 border border-yellow-500/30 rounded-xl">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-yellow-400" />
-                  <p className="text-sm text-yellow-300">Approval required for {selectedToken.symbol}</p>
-                </div>
-              </div>
-            )}
+        {/* Validation Messages */}
+        {amount && !hasValidAmount && (
+          <div className="flex items-center gap-2 text-red-400 text-sm">
+            <AlertTriangle className="h-4 w-4" />
+            <span>
+              {parsedAmount <= 0
+                ? "Enter a valid amount"
+                : !currentBalance?.value
+                  ? "Loading balance..."
+                  : "Insufficient balance"}
+            </span>
+          </div>
+        )}
 
-            {/* Validation */}
-            {amount && parseFloat(amount) > 0 && parseFloat(amount) < parseFloat(getMinimumDeposit(selectedToken)) && (
-              <div className="p-3 bg-red-900/20 border border-red-500/30 rounded-xl">
-                <p className="text-sm text-red-300">
-                  Amount below minimum of {getMinimumDeposit(selectedToken)} {selectedToken.symbol}
-                </p>
-              </div>
-            )}
-
+        {/* Action Buttons */}
+        <div className="space-y-3" style={{ position: "relative", zIndex: 10 }}>
+          {needsApproval && !isETH && hasValidAmount && mode === "deposit" && (
             <button
-              onClick={needsApproval ? handleApprove : handleDeposit}
-              disabled={
-                !amount ||
-                parseFloat(amount) <= 0 ||
-                parseFloat(amount) < parseFloat(getMinimumDeposit(selectedToken)) ||
-                parseFloat(amount) > parseFloat(formattedBalance) ||
-                isApproving
-              }
-              className="w-full py-3 bg-white text-black rounded-xl font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              onClick={handleApproval}
+              disabled={isApproving || isApprovalConfirming}
+              className="w-full p-4 bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
-              {needsApproval ? (
+              {isApproving || isApprovalConfirming ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4" />
-                  {isApproving ? 'Approving...' : `Approve ${selectedToken.symbol}`}
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Approving...
                 </>
               ) : (
                 <>
-                  <ArrowDown className="h-4 w-4" />
-                  Deposit {selectedToken.symbol}
+                  <Check className="h-4 w-4" />
+                  Approve {selectedToken.symbol}
                 </>
               )}
             </button>
+          )}
 
-            {/* Transaction Status */}
-            {(approvalTx || depositTx) && (
-              <div className="space-y-2 mt-4">
-                {approvalTx && (
-                  <div className="flex items-center justify-between p-3 bg-black rounded-xl border border-gray-800">
-                    <span className="text-sm text-white">Approval Transaction</span>
-                    <a
-                      href={`https://sepolia.arbiscan.io/tx/${approvalTx.hash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors"
-                    >
-                      <span className="text-xs">View</span>
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              console.log(`${mode} button clicked!`, {
+                canTransact,
+                isLoading,
+                address,
+                hasValidAmount,
+                selectedToken,
+                amount,
+                parsedAmount: parsedAmount.toString(),
+                mode,
+              });
+              mode === "deposit" ? handleDeposit() : handleWithdraw();
+            }}
+            disabled={!canTransact || isLoading}
+            style={{
+              opacity: !canTransact || isLoading ? 0.5 : 1,
+              pointerEvents: !canTransact || isLoading ? "none" : "auto",
+              cursor: !canTransact || isLoading ? "not-allowed" : "pointer",
+            }}
+            className={`w-full p-4 ${mode === "deposit"
+              ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+              : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              } text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2`}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                {isDepositConfirming || isWithdrawConfirming
+                  ? `${mode === "deposit" ? "Depositing" : "Withdrawing"}...`
+                  : "Processing..."}
+              </>
+            ) : (
+              <>
+                {mode === "deposit" ? (
+                  <ArrowDownCircle className="h-4 w-4" />
+                ) : (
+                  <ArrowUpCircle className="h-4 w-4" />
                 )}
-                {depositTx && (
-                  <div className="flex items-center justify-between p-3 bg-black rounded-xl border border-gray-800">
-                    <span className="text-sm text-white">Deposit Transaction</span>
-                    <a
-                      href={`https://sepolia.arbiscan.io/tx/${depositTx.hash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors"
-                    >
-                      <span className="text-xs">View</span>
-                      <ExternalLink className="h-3 w-3" />
-                    </a>
-                  </div>
-                )}
-              </div>
+                {mode === "deposit" ? "Deposit" : "Withdraw"}{" "}
+                {selectedToken.symbol}
+              </>
             )}
-          </div>
+          </button>
         </div>
-      )}
+
+        {/* Transaction Status */}
+        {(depositTx?.hash || withdrawTx?.hash) && (
+          <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+            <div className="flex items-center gap-2 text-blue-400 text-sm">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Transaction submitted</span>
+            </div>
+            <a
+              href={`https://sepolia.arbiscan.io/tx/${depositTx?.hash || withdrawTx?.hash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-blue-400 hover:text-blue-300 underline mt-1 block"
+            >
+              View on Explorer
+            </a>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
