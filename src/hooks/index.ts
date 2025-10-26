@@ -20,3 +20,9 @@ export * from './useFastPrice';
 export * from './useContract';
 export * from './usePriceChange';
 export * from './useUserWalletTokens';
+
+// GuardX API hooks
+export * from './useGuardX';
+
+// Contract transaction hooks
+export * from './useContractTransactions';
