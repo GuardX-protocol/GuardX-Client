@@ -1,39 +1,30 @@
 import React, { useState } from 'react';
-import { Wallet, ChevronDown, Copy, ExternalLink, LogOut, CheckCircle, TrendingUp } from 'lucide-react';
-import { useAccount, useDisconnect, useBalance, useNetwork } from 'wagmi';
-import { useWeb3Modal } from '@web3modal/react';
-import { formatAddress, formatCurrency } from '@/utils/format';
+import { Wallet, ChevronDown, Copy, Power, Shield } from 'lucide-react';
+import { useAccount, useDisconnect, useBalance, useNetwork, useConnect } from 'wagmi';
+import { formatAddress } from '@/utils/format';
 import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
-import { usePortfolio } from '@/hooks';
-import { formatUnits } from 'viem';
 import toast from 'react-hot-toast';
 
 const WalletButton: React.FC = () => {
-  const { open } = useWeb3Modal();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showConnectModal, setShowConnectModal] = useState(false);
 
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
   const { chain } = useNetwork();
   const { data: balance } = useBalance({ address });
-  const { portfolio } = usePortfolio();
+  const { connect, connectors, isLoading, pendingConnector } = useConnect();
 
   const chainMetadata = chain ? getChainMetadata(chain.id) : null;
   const isDeployed = chain ? isChainDeployed(chain.id) : false;
-
-  // Get portfolio value
-  const portfolioData = portfolio as any;
-  const totalValue = portfolioData
-    ? Number(formatUnits(BigInt(portfolioData.totalValue || portfolioData[1] || 0), 18))
-    : 0;
 
   const handleCopy = () => {
     if (address) {
       navigator.clipboard.writeText(address);
       setCopied(true);
-      toast.success('Address copied to clipboard');
+      toast.success('Address copied');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -44,156 +35,186 @@ const WalletButton: React.FC = () => {
     toast.success('Wallet disconnected');
   };
 
+  const handleConnect = (connectorToUse: any) => {
+    connect({ connector: connectorToUse });
+    setShowConnectModal(false);
+  };
+
+  const getConnectorIcon = (connectorName: string) => {
+    if (connectorName.toLowerCase().includes('metamask')) return '🦊';
+    if (connectorName.toLowerCase().includes('walletconnect')) return '🔗';
+    if (connectorName.toLowerCase().includes('coinbase')) return '🔵';
+    if (connectorName.toLowerCase().includes('rainbow')) return '🌈';
+    return '👛';
+  };
+
   if (!isConnected) {
     return (
-      <button
-        onClick={() => open()}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all font-medium"
-      >
-        <Wallet className="h-4 w-4" />
-        Connect Wallet
-      </button>
+      <>
+        <button
+          onClick={() => setShowConnectModal(true)}
+          className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl hover:from-cyan-600 hover:to-purple-600 transition-all font-medium shadow-lg hover:shadow-xl"
+        >
+          <Wallet className="h-4 w-4" />
+          Connect Wallet
+        </button>
+
+        {/* Clean Connect Modal */}
+        {showConnectModal && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-8 max-w-md w-full">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
+                    <Wallet className="h-6 w-6 text-cyan-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Connect Wallet</h3>
+                    <p className="text-gray-400 text-sm">Choose your preferred wallet</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowConnectModal(false)}
+                  className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                {connectors.filter(c => c.ready).map((connectorOption) => (
+                  <button
+                    key={connectorOption.id}
+                    onClick={() => handleConnect(connectorOption)}
+                    disabled={isLoading}
+                    className="w-full flex items-center gap-4 p-4 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl border border-gray-700/50 hover:border-cyan-500/30 transition-all disabled:opacity-50"
+                  >
+                    <span className="text-2xl">{getConnectorIcon(connectorOption.name)}</span>
+                    <div className="flex-1 text-left">
+                      <div className="font-medium text-white">{connectorOption.name}</div>
+                      <div className="text-sm text-gray-400">
+                        {isLoading && connectorOption.id === pendingConnector?.id ? 'Connecting...' : 'Available'}
+                      </div>
+                    </div>
+                    {isLoading && connectorOption.id === pendingConnector?.id && (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-400"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-6 p-4 bg-cyan-500/10 rounded-xl border border-cyan-500/20">
+                <div className="flex items-start gap-3">
+                  <Shield className="h-5 w-5 text-cyan-400 mt-0.5" />
+                  <div>
+                    <div className="text-sm font-medium text-white mb-1">Secure & Private</div>
+                    <div className="text-xs text-gray-400">
+                      Your keys remain in your wallet. We never store or access your private information.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
   return (
-    <>
-      <div className="relative">
-        <button
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center gap-3 px-4 py-2 bg-white border-2 border-gray-200 rounded-lg hover:border-primary-500 transition-all"
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-primary-600 rounded-lg flex items-center justify-center">
-              <Wallet className="h-4 w-4 text-white" />
-            </div>
-            <div className="text-left hidden sm:block">
-              <p className="text-xs text-gray-500">Connected</p>
-              <p className="text-sm font-semibold text-gray-900">
-                {formatAddress(address || '', 4)}
-              </p>
-            </div>
-          </div>
-          <ChevronDown className={`h-4 w-4 text-gray-500 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
+    <div className="relative">
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="flex items-center gap-3 px-4 py-3 bg-gray-900/50 border border-gray-700/50 rounded-xl hover:border-cyan-500/50 transition-all backdrop-blur-sm"
+      >
+        <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-purple-500 rounded-lg flex items-center justify-center">
+          <Wallet className="h-4 w-4 text-white" />
+        </div>
+        <div className="text-left hidden sm:block">
+          <p className="text-xs text-gray-400">{connector?.name}</p>
+          <p className="text-sm font-medium text-white">
+            {formatAddress(address || '', 4)}
+          </p>
+        </div>
+        <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+      </button>
 
-        {/* Dropdown */}
-        {isDropdownOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-[60]"
-              onClick={() => setIsDropdownOpen(false)}
-            />
-            <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-gray-200 rounded-xl shadow-2xl z-[70] overflow-hidden">
-              {/* Account Info */}
-              <div className="p-4 bg-gradient-to-r from-primary-50 to-blue-50 border-b border-gray-200">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center">
-                    <Wallet className="h-6 w-6 text-white" />
+      {/* Clean Dropdown */}
+      {isDropdownOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-[60]"
+            onClick={() => setIsDropdownOpen(false)}
+          />
+          <div className="absolute right-0 top-full mt-2 w-72 bg-gray-900/95 backdrop-blur-xl border border-cyan-500/30 rounded-2xl shadow-2xl z-[70] overflow-hidden">
+            {/* Header */}
+            <div className="p-6 border-b border-gray-700/50">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center">
+                    <Wallet className="h-5 w-5 text-white" />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-600">Your Address</p>
-                    <p className="text-sm font-semibold text-gray-900 font-mono">
+                  <div>
+                    <p className="text-sm font-medium text-white">{connector?.name}</p>
+                    <p className="text-xs text-gray-400 font-mono">
                       {formatAddress(address || '', 6)}
                     </p>
                   </div>
-                  <button
-                    onClick={handleDisconnect}
-                    className="p-2 hover:bg-red-100 rounded-lg transition-colors text-red-600 group"
-                    title="Disconnect Wallet"
-                  >
-                    <LogOut className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                  </button>
                 </div>
-
-                {/* Network */}
-                {chainMetadata && (
-                  <div className={`mb-3 flex items-center gap-2 px-3 py-2 bg-white rounded-lg border ${isDeployed ? 'border-success-200' : 'border-orange-200'
-                    }`}>
-                    <div className={`w-2 h-2 rounded-full ${isDeployed ? 'bg-success-500 animate-pulse' : 'bg-orange-500'
-                      }`} />
-                    <span className="text-sm">{chainMetadata.icon}</span>
-                    <p className="text-xs font-medium text-gray-700 flex-1">{chainMetadata.name}</p>
-                    {!isDeployed && (
-                      <span className="text-xs text-orange-600 font-medium">Not deployed</span>
-                    )}
-                  </div>
-                )}
-
-                {/* Stats Grid */}
-                <div className="grid grid-cols-2 gap-2">
-                  {/* Native Balance */}
-                  {balance && (
-                    <div className="p-3 bg-white rounded-lg">
-                      <p className="text-xs text-gray-500">Wallet Balance</p>
-                      <p className="text-sm font-bold text-gray-900">
-                        {parseFloat(balance.formatted).toFixed(4)}
-                      </p>
-                      <p className="text-xs text-gray-500">{balance.symbol}</p>
-                    </div>
-                  )}
-
-                  {/* Portfolio Value */}
-                  {isDeployed && (
-                    <div className="p-3 bg-white rounded-lg">
-                      <p className="text-xs text-gray-500">Portfolio</p>
-                      <p className="text-sm font-bold text-gray-900">
-                        {formatCurrency(totalValue)}
-                      </p>
-                      <p className="text-xs text-success-600 flex items-center gap-1">
-                        <TrendingUp className="h-3 w-3" />
-                        Protected
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="p-2">
-                <button
-                  onClick={handleCopy}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
-                >
-                  {copied ? (
-                    <CheckCircle className="h-5 w-5 text-success-600" />
-                  ) : (
-                    <Copy className="h-5 w-5 text-gray-600" />
-                  )}
-                  <span className="text-sm font-medium text-gray-700">
-                    {copied ? 'Copied!' : 'Copy Address'}
-                  </span>
-                </button>
-
-                {chainMetadata && chainMetadata.explorer && (
-                  <a
-                    href={`${chainMetadata.explorer}/address/${address}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    <ExternalLink className="h-5 w-5 text-gray-600" />
-                    <span className="text-sm font-medium text-gray-700">
-                      View on {chainMetadata.shortName} Explorer
-                    </span>
-                  </a>
-                )}
-
-                <div className="my-2 border-t border-gray-200" />
-
                 <button
                   onClick={handleDisconnect}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-lg transition-colors text-red-600 border-t border-gray-200 mt-2 pt-4"
+                  className="p-2 hover:bg-red-500/20 rounded-lg transition-colors text-red-400"
+                  title="Disconnect"
                 >
-                  <LogOut className="h-5 w-5" />
-                  <span className="text-sm font-medium">Disconnect Wallet</span>
+                  <Power className="h-4 w-4" />
                 </button>
               </div>
+
+              {/* Network Status */}
+              {chainMetadata && (
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${
+                  isDeployed 
+                    ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                    : 'bg-orange-500/10 border-orange-500/30 text-orange-400'
+                }`}>
+                  <div className={`w-2 h-2 rounded-full ${
+                    isDeployed ? 'bg-green-400 animate-pulse' : 'bg-orange-400'
+                  }`} />
+                  <span className="text-sm">{chainMetadata.icon}</span>
+                  <span className="text-xs font-medium flex-1">{chainMetadata.name}</span>
+                  {!isDeployed && <span className="text-xs">Not supported</span>}
+                </div>
+              )}
             </div>
-          </>
-        )}
-      </div>
-    </>
+
+            {/* Balance */}
+            {balance && (
+              <div className="p-4 border-b border-gray-700/50">
+                <div className="text-center">
+                  <p className="text-xs text-gray-400 mb-1">Wallet Balance</p>
+                  <p className="text-lg font-bold text-white">
+                    {parseFloat(balance.formatted).toFixed(4)} {balance.symbol}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="p-4 space-y-2">
+              <button
+                onClick={handleCopy}
+                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-800/50 rounded-xl transition-colors"
+              >
+                <Copy className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-white">
+                  {copied ? 'Copied!' : 'Copy Address'}
+                </span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
   );
 };
 
