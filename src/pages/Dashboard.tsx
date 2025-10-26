@@ -267,9 +267,9 @@ const Dashboard: React.FC = () => {
             )}
           </div>
 
-          <div className={`stat-card glow-border ${isProtectionActive ? 'border-blue-500/30' : ''}`}>
+          <div className={`stat-card glow-border ${isProtectionActive ? 'border-red-500/30' : ''}`}>
             <div className="flex items-center justify-between mb-4">
-              <div className={`p-2 sm:p-3 rounded-xl ${isProtectionActive ? 'bg-gradient-to-br from-blue-500 to-purple-600' : 'bg-gray-600'}`}>
+              <div className={`p-2 sm:p-3 rounded-xl ${isProtectionActive ? 'bg-gradient-to-br from-red-500 to-orange-600' : 'bg-gray-600'}`}>
                 <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
             </div>
