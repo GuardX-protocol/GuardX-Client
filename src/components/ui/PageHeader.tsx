@@ -12,7 +12,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, description, icon: Icon,
   return (
     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
       <div className="flex items-center gap-4">
-        <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl glow">
+        <div className="p-3 bg-gradient-to-br from-red-500 to-orange-600 rounded-2xl glow">
           <Icon className="h-8 w-8 text-white" />
         </div>
         <div>

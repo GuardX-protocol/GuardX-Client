@@ -59,7 +59,7 @@ export const CHAIN_METADATA: Record<number, {
   1: {
     name: 'Ethereum',
     shortName: 'ETH',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    color: 'bg-red-50 text-red-700 border-red-200',
     icon: '⟠',
     explorer: 'https://etherscan.io',
     isTestnet: false,
@@ -75,7 +75,7 @@ export const CHAIN_METADATA: Record<number, {
   42161: {
     name: 'Arbitrum',
     shortName: 'ARB',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
     icon: '◆',
     explorer: 'https://arbiscan.io',
     isTestnet: false,
@@ -91,8 +91,8 @@ export const CHAIN_METADATA: Record<number, {
   8453: {
     name: 'Base',
     shortName: 'BASE',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    icon: '🔵',
+    color: 'bg-amber-50 text-amber-700 border-amber-200',
+    icon: '🟡',
     explorer: 'https://basescan.org',
     isTestnet: false,
   },
@@ -116,7 +116,7 @@ export const CHAIN_METADATA: Record<number, {
   421614: {
     name: 'Arbitrum Sepolia',
     shortName: 'ARB-SEP',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
+    color: 'bg-orange-50 text-orange-700 border-orange-200',
     icon: '◆',
     explorer: 'https://sepolia.arbiscan.io',
     isTestnet: true,
@@ -132,8 +132,8 @@ export const CHAIN_METADATA: Record<number, {
   84532: {
     name: 'Base Sepolia',
     shortName: 'BASE-SEP',
-    color: 'bg-blue-50 text-blue-700 border-blue-200',
-    icon: '🔵',
+    color: 'bg-amber-50 text-amber-700 border-amber-200',
+    icon: '🟡',
     explorer: 'https://sepolia.basescan.org',
     isTestnet: true,
   },

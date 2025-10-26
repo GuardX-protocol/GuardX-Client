@@ -164,17 +164,17 @@ const Policies: React.FC = () => {
     return (
       <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
         <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
-              <Shield className="h-10 w-10 text-cyan-400" />
+          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm">
+            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+              <Shield className="h-10 w-10 text-red-400" />
             </div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-3">
               Complete Profile Setup
             </h2>
             <p className="text-gray-400 mb-6">Create your GuardX profile to start monitoring</p>
             <button
               onClick={handleCreateUser}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl font-medium hover:from-cyan-600 hover:to-purple-600 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-medium hover:from-red-600 hover:to-orange-600 transition-colors"
             >
               Create Profile
             </button>
@@ -198,19 +198,19 @@ const Policies: React.FC = () => {
       <div className="relative z-10 p-6 space-y-6">
         {/* Hero Header */}
         <div className="relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-transparent"></div>
-          <div className="relative p-8 bg-gray-900/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 via-orange-500/10 to-transparent"></div>
+          <div className="relative p-8 bg-gray-900/50 rounded-2xl border border-red-500/30 backdrop-blur-sm">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="flex items-center gap-6">
-                <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl border border-cyan-500/30">
-                  <Shield className="h-10 w-10 text-cyan-400" />
+                <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/30">
+                  <Shield className="h-10 w-10 text-red-400" />
                 </div>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent mb-2">
                     AI Monitor Control
                   </h1>
                   <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
-                    <Activity className="h-4 w-4 text-cyan-400" />
+                    <Activity className="h-4 w-4 text-red-400" />
                     Advanced crash detection and protection
                   </p>
                 </div>
@@ -219,7 +219,7 @@ const Policies: React.FC = () => {
               {/* Stats Overview */}
               <div className="grid grid-cols-3 gap-4 lg:gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-cyan-400">{monitors.filter(m => m.enabled).length}</div>
+                  <div className="text-2xl font-bold text-red-400">{monitors.filter(m => m.enabled).length}</div>
                   <div className="text-xs text-gray-400">Active</div>
                 </div>
                 <div className="text-center">
@@ -241,7 +241,7 @@ const Policies: React.FC = () => {
           <div className="lg:col-span-1 space-y-4">
             <div className="p-6 bg-gray-900/50 rounded-2xl border border-gray-700/50 backdrop-blur-sm">
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <Filter className="h-5 w-5 text-cyan-400" />
+                <Filter className="h-5 w-5 text-red-400" />
                 Filters
               </h3>
               
@@ -254,7 +254,7 @@ const Policies: React.FC = () => {
                     placeholder="Search monitors..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white text-sm focus:outline-none focus:border-cyan-500/50"
+                    className="w-full pl-10 pr-3 py-2 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50"
                   />
                 </div>
               </div>
@@ -273,7 +273,7 @@ const Policies: React.FC = () => {
                       onClick={() => setFilterStatus(filter.id as any)}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                         filterStatus === filter.id
-                          ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                          ? 'bg-red-500/20 text-red-400 border border-red-500/30'
                           : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                       }`}
                     >
@@ -291,7 +291,7 @@ const Policies: React.FC = () => {
                   setEditingMonitor(null);
                   setShowCreateMonitor(true);
                 }}
-                className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl font-medium hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                className="w-full mt-6 flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-medium hover:from-red-600 hover:to-orange-600 transition-colors"
               >
                 <Plus className="h-4 w-4" />
                 Create Monitor
@@ -320,7 +320,7 @@ const Policies: React.FC = () => {
                       setEditingMonitor(null);
                       setShowCreateMonitor(true);
                     }}
-                    className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl font-medium hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                    className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-medium hover:from-red-600 hover:to-orange-600 transition-colors"
                   >
                     Create Your First Monitor
                   </button>
@@ -385,7 +385,7 @@ const Policies: React.FC = () => {
                       {/* Tokens */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm text-gray-300">
-                          <Activity className="h-4 w-4 text-cyan-400" />
+                          <Activity className="h-4 w-4 text-red-400" />
                           Monitoring {monitor.symbols.length} tokens
                         </div>
                         <div className="flex flex-wrap gap-2">
@@ -438,9 +438,9 @@ const Policies: React.FC = () => {
         </div>
 
         {!isAuthenticated && (
-          <div className="p-6 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+          <div className="p-6 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(255,66,6,0.2)]">
             <div className="flex items-start gap-3">
-              <Info className="h-5 w-5 text-cyan-400 mt-0.5" />
+              <Info className="h-5 w-5 text-red-400 mt-0.5" />
               <div>
                 <p className="font-medium text-white">Connect Your Wallet</p>
                 <p className="text-sm text-gray-300 mt-1">
@@ -455,13 +455,13 @@ const Policies: React.FC = () => {
           <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <TrendingDown className="h-5 w-5 text-cyan-400" />
+                <TrendingDown className="h-5 w-5 text-red-400" />
                 AI Crash Monitoring
               </h3>
               {user && (
                 <button
                   onClick={() => setShowCreateMonitor(true)}
-                  className="p-2 bg-cyan-500/20 border border-cyan-500/30 rounded-lg text-cyan-400 hover:bg-cyan-500/30 transition-colors"
+                  className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
                 </button>
@@ -474,7 +474,7 @@ const Policies: React.FC = () => {
                 <p className="text-gray-400 mb-4">Enable AI monitoring to get crash alerts</p>
                 <button
                   onClick={handleCreateUser}
-                  className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
                 >
                   Enable AI Monitoring
                 </button>
@@ -567,51 +567,6 @@ const Policies: React.FC = () => {
               </div>
             )}
           </div>
-
-          <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Activity className="h-5 w-5 text-cyan-400" />
-              How It Works
-            </h3>
-            <div className="space-y-4">
-              <div className="p-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg border border-cyan-500/30 backdrop-blur-sm">
-                <p className="font-medium text-white mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-cyan-400 text-black rounded-full flex items-center justify-center text-sm font-bold">1</span>
-                  Real-Time Monitoring
-                </p>
-                <p className="text-sm text-gray-300">
-                  Pyth Network oracles continuously monitor your asset prices with sub-second updates.
-                </p>
-              </div>
-              <div className="p-4 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-lg border border-purple-500/30 backdrop-blur-sm">
-                <p className="font-medium text-white mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-purple-400 text-black rounded-full flex items-center justify-center text-sm font-bold">2</span>
-                  Crash Detection
-                </p>
-                <p className="text-sm text-gray-300">
-                  When price drops exceed your threshold, the system automatically triggers emergency protocols.
-                </p>
-              </div>
-              <div className="p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg border border-green-500/30 backdrop-blur-sm">
-                <p className="font-medium text-white mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-green-400 text-black rounded-full flex items-center justify-center text-sm font-bold">3</span>
-                  Emergency Conversion
-                </p>
-                <p className="text-sm text-gray-300">
-                  Assets are swapped to your chosen stablecoin through optimized DEX routing with slippage protection.
-                </p>
-              </div>
-              <div className="p-4 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-lg border border-yellow-500/30 backdrop-blur-sm">
-                <p className="font-medium text-white mb-2 flex items-center gap-2">
-                  <span className="w-6 h-6 bg-yellow-400 text-black rounded-full flex items-center justify-center text-sm font-bold">4</span>
-                  Cross-Chain Coordination
-                </p>
-                <p className="text-sm text-gray-300">
-                  Lit Protocol ensures synchronized protection across multiple blockchain networks.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Create/Edit Monitor Modal */}
@@ -666,7 +621,7 @@ const Policies: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                    className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
                   >
                     {editingMonitor ? 'Update' : 'Create'} Monitor
                   </button>
@@ -678,11 +633,11 @@ const Policies: React.FC = () => {
         {/* Create/Edit Monitor Modal */}
         {showCreateMonitor && (
           <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-cyan-500/30 p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-red-500/30 p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
-                    <Target className="h-6 w-6 text-cyan-400" />
+                  <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
+                    <Target className="h-6 w-6 text-red-400" />
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold text-white">
@@ -753,7 +708,7 @@ const Policies: React.FC = () => {
                         key={channel.id}
                         className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
                           monitorForm.notification_channels.includes(channel.id)
-                            ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
+                            ? 'bg-red-500/10 border-red-500/30 text-red-400'
                             : 'bg-gray-800/30 border-gray-700/50 text-gray-300 hover:border-gray-600/50'
                         }`}
                       >
@@ -795,7 +750,7 @@ const Policies: React.FC = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl hover:from-cyan-600 hover:to-purple-600 transition-colors font-medium"
+                    className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 transition-colors font-medium"
                   >
                     {editingMonitor ? 'Update' : 'Create'} Monitor
                   </button>

@@ -77,7 +77,7 @@ export const MAJOR_TOKENS: TokenInfo[] = [
     logoURI: 'https://assets.coingecko.com/coins/images/9956/small/Badge_Dai.png'
   },
 
-  // DeFi Blue Chips
+  // DeFi Major Tokens
   {
     chainId: 1,
     address: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
