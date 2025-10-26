@@ -127,7 +127,7 @@ const TokenManagement: React.FC = () => {
                     <button
                       onClick={() => handleAddToken(address as string)}
                       disabled={isAdding}
-                      className="px-3 py-1 bg-blue-600 text-white text-xs rounded-md hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-1"
+                      className="px-3 py-1 bg-red-600 text-white text-xs rounded-md hover:bg-red-700 disabled:opacity-50 flex items-center space-x-1"
                     >
                       <Plus className="h-3 w-3" />
                       <span>Add</span>
@@ -148,7 +148,7 @@ const TokenManagement: React.FC = () => {
               value={customTokenAddress}
               onChange={(e) => setCustomTokenAddress(e.target.value)}
               placeholder="0x..."
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-red-500 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -156,7 +156,7 @@ const TokenManagement: React.FC = () => {
                 setCustomTokenAddress('');
               }}
               disabled={!customTokenAddress || isAdding}
-              className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-1"
+              className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center space-x-1"
             >
               <Plus className="h-4 w-4" />
               <span>Add Token</span>
@@ -165,8 +165,8 @@ const TokenManagement: React.FC = () => {
         </div>
 
         {/* Instructions */}
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-800">
             <span className="font-medium">Note:</span> After adding tokens, users will be able to deposit them.
             Make sure the token contract is legitimate and has proper decimals/symbol information.
           </p>

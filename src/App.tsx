@@ -97,11 +97,10 @@ const App: React.FC = () => {
               toastOptions={{
                 duration: 4000,
                 style: {
-                  background: '#ffffff',
-                  color: '#0f172a',
-                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+                  background: '#1e293b',
+                  color: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #e2e8f0',
+                  border: '1px solid #334155',
                   padding: '16px',
                   fontSize: '14px',
                   fontWeight: '500',
@@ -112,18 +111,18 @@ const App: React.FC = () => {
                     secondary: '#ffffff',
                   },
                   style: {
-                    border: '1px solid #d1fae5',
-                    background: '#f0fdf4',
+                    border: '1px solid #065f46',
+                    background: '#064e3b',
                   },
                 },
                 error: {
                   iconTheme: {
-                    primary: '#ef4444',
+                    primary: '#ff4206',
                     secondary: '#ffffff',
                   },
                   style: {
-                    border: '1px solid #fecaca',
-                    background: '#fef2f2',
+                    border: '1px solid #7f1d1d',
+                    background: '#7f1d1d',
                   },
                 },
               }}

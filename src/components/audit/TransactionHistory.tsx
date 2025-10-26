@@ -62,6 +62,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions })
               <p className="text-sm text-gray-500">{formatAddress(tx.hash, 8)}</p>
             </div>
           </div>
+          
           <div className="text-right">
             <p className="text-sm font-medium text-gray-900">{getStatusText(tx.status)}</p>
             <p className="text-xs text-gray-500">{formatDate(tx.timestamp)}</p>

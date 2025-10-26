@@ -12,19 +12,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
         <div className="card text-center p-8 max-w-md w-full animate-fade-in">
-          <div className="w-16 h-16 mx-auto mb-6 bg-blue-50 rounded-2xl flex items-center justify-center">
-            <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+          <div className="w-16 h-16 mx-auto mb-6 bg-gray-900 rounded-2xl flex items-center justify-center">
+            <Loader2 className="h-8 w-8 text-blue-400 animate-spin" />
           </div>
-          <h2 className="text-2xl font-semibold text-slate-900 mb-3">
+          <h2 className="text-2xl font-semibold text-white mb-3">
             Checking Authentication
           </h2>
-          <p className="text-slate-600 mb-6">
+          <p className="text-gray-400 mb-6">
             Verifying your Vincent session...
           </p>
-          <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
-            <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
             <span>Powered by Lit Protocol</span>
           </div>
         </div>
