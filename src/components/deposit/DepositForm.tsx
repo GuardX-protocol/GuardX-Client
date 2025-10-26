@@ -330,8 +330,8 @@ const DepositForm: React.FC = () => {
       style={{ position: "relative", zIndex: 1 }}
     >
       <div className="flex items-center gap-3 mb-6">
-        <Shield className="h-6 w-6 text-cyan-400" />
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+        <Shield className="h-6 w-6 text-red-400" />
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
           Vault Operations
         </h2>
       </div>
@@ -350,7 +350,7 @@ const DepositForm: React.FC = () => {
               pointerEvents: "auto",
             }}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${mode === "deposit"
-              ? "bg-cyan-500 text-white shadow-lg"
+              ? "bg-red-500 text-white shadow-lg"
               : "text-gray-400 hover:text-white hover:bg-gray-800/50"
               }`}
           >
@@ -405,7 +405,7 @@ const DepositForm: React.FC = () => {
                 key={token.address}
                 onClick={() => setSelectedToken(token)}
                 className={`p-4 rounded-xl border transition-all ${selectedToken.address === token.address
-                  ? "border-cyan-500 bg-cyan-500/10"
+                  ? "border-red-500 bg-red-500/10"
                   : "border-gray-700 bg-gray-900/50 hover:border-gray-600"
                   }`}
               >
@@ -422,7 +422,7 @@ const DepositForm: React.FC = () => {
                     <div className="text-xs text-gray-400">{token.name}</div>
                   </div>
                   {selectedToken.address === token.address && (
-                    <Check className="h-4 w-4 text-cyan-400 ml-auto" />
+                    <Check className="h-4 w-4 text-red-400 ml-auto" />
                   )}
                 </div>
               </button>
@@ -441,7 +441,7 @@ const DepositForm: React.FC = () => {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder={`0.0 ${selectedToken.symbol}`}
-              className="w-full p-4 pr-20 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-cyan-500 focus:outline-none transition-colors"
+              className="w-full p-4 pr-20 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 focus:outline-none transition-colors"
               step="any"
               min="0"
             />
@@ -482,7 +482,7 @@ const DepositForm: React.FC = () => {
                   borderRadius: "4px",
                   backgroundColor: "rgba(34, 197, 94, 0.1)",
                 }}
-                className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                className="text-red-400 hover:text-red-300 transition-colors"
               >
                 Max
               </button>
@@ -539,7 +539,7 @@ const DepositForm: React.FC = () => {
                 pointerEvents: !canTransact || isLoading ? "none" : "auto",
                 cursor: !canTransact || isLoading ? "not-allowed" : "pointer",
               }}
-              className="w-full p-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+              className="w-full p-4 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -566,8 +566,8 @@ const DepositForm: React.FC = () => {
 
         {/* Transaction Status */}
         {(depositTx?.hash || withdrawTx?.hash) && (
-          <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-            <div className="flex items-center gap-2 text-blue-400 text-sm">
+          <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+            <div className="flex items-center gap-2 text-red-400 text-sm">
               <Loader2 className="h-4 w-4 animate-spin" />
               <span>Transaction submitted</span>
             </div>
@@ -575,7 +575,7 @@ const DepositForm: React.FC = () => {
               href={`https://sepolia.basescan.io/tx/${depositTx?.hash || withdrawTx?.hash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-blue-400 hover:text-blue-300 underline mt-1 block"
+              className="text-xs text-red-400 hover:text-red-300 underline mt-1 block"
             >
               View on Explorer
             </a>

@@ -323,14 +323,14 @@ export const VincentUserInfo: React.FC = () => {
         <div className="relative">
             <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center gap-3 px-4 py-2.5 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-md transition-all"
+                className="flex items-center gap-3 px-4 py-2.5 bg-slate-800 border border-slate-700 rounded-xl hover:border-[#ff4206] transition-all"
             >
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-[#ff4206] rounded-lg flex items-center justify-center">
                     <Shield className="h-4 w-4 text-white" />
                 </div>
                 <div className="text-left hidden sm:block">
-                    <p className="text-xs text-slate-500">Vincent PKP</p>
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-xs text-slate-400">Vincent PKP</p>
+                    <p className="text-sm font-medium text-white">
                         {formatAddress(user.pkpAddress)}
                     </p>
                 </div>
@@ -343,47 +343,43 @@ export const VincentUserInfo: React.FC = () => {
                         className="fixed inset-0 z-[60]"
                         onClick={() => setIsDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl z-[70] overflow-hidden animate-fade-in">
-                        {/* Header */}
-                        <div className="p-6 border-b border-slate-100">
+                    <div className="absolute right-0 top-full mt-2 w-72 bg-slate-800 border border-slate-700 rounded-2xl shadow-xl z-[70] overflow-hidden animate-fade-in">
+                        <div className="p-6 border-b border-slate-700">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                                    <div className="w-10 h-10 bg-[#ff4206] rounded-xl flex items-center justify-center">
                                         <Shield className="h-5 w-5 text-white" />
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-slate-900">Vincent PKP</p>
-                                        <p className="text-xs text-slate-500 font-mono">
+                                        <p className="text-sm font-medium text-white">Vincent PKP</p>
+                                        <p className="text-xs text-slate-400 font-mono">
                                             {formatAddress(user.pkpAddress)}
                                         </p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={logout}
-                                    className="p-2 hover:bg-red-50 rounded-lg transition-colors text-red-600"
+                                    className="p-2 hover:bg-[#ff4206]/20 rounded-lg transition-colors text-[#ff4206]"
                                     title="Logout"
                                 >
                                     <LogOut className="h-4 w-4" />
                                 </button>
                             </div>
-
-                            {/* Permissions */}
-                            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                            <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                                    <span className="text-xs font-medium text-green-700">Authenticated</span>
+                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                                    <span className="text-xs font-medium text-green-400">Authenticated</span>
                                 </div>
-                                <p className="text-xs text-slate-600">
+                                <p className="text-xs text-slate-400">
                                     {user.permissions.length} permissions granted
                                 </p>
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="p-4">
                             <button
                                 onClick={logout}
-                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 rounded-xl transition-colors text-red-600"
+                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-[#ff4206]/20 rounded-xl transition-colors text-[#ff4206]"
                             >
                                 <LogOut className="h-4 w-4" />
                                 <span className="text-sm font-medium">Logout</span>

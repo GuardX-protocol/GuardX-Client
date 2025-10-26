@@ -122,7 +122,7 @@ const AlertAwareWithdrawForm: React.FC<AlertAwareWithdrawFormProps> = ({
     return (
       <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
         <div className="flex items-center justify-center gap-3 py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-red-400" />
           <span className="text-white">Checking crash alerts...</span>
         </div>
       </div>

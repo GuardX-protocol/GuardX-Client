@@ -72,7 +72,7 @@ const GuardXMonitoringCard: React.FC = () => {
     return (
       <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-red-400" />
           <span className="ml-2 text-white">Loading GuardX status...</span>
         </div>
       </div>
@@ -83,13 +83,13 @@ const GuardXMonitoringCard: React.FC = () => {
     return (
       <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
         <div className="flex items-center gap-3 mb-4">
-          <Shield className="h-6 w-6 text-cyan-400" />
+          <Shield className="h-6 w-6 text-red-400" />
           <h3 className="text-lg font-semibold text-white">GuardX AI Monitoring</h3>
         </div>
         
         <div className="text-center py-6">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
-            <TrendingUp className="h-8 w-8 text-cyan-400" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+            <TrendingUp className="h-8 w-8 text-red-400" />
           </div>
           <h4 className="text-white font-medium mb-2">Enable AI Crash Detection</h4>
           <p className="text-gray-400 text-sm mb-4">
@@ -97,7 +97,7 @@ const GuardXMonitoringCard: React.FC = () => {
           </p>
           <button
             onClick={handleCreateUser}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
           >
             Enable GuardX Monitoring
           </button>
@@ -110,7 +110,7 @@ const GuardXMonitoringCard: React.FC = () => {
     <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Shield className="h-6 w-6 text-cyan-400" />
+          <Shield className="h-6 w-6 text-red-400" />
           <h3 className="text-lg font-semibold text-white">GuardX AI Monitoring</h3>
         </div>
         <div className="flex items-center gap-2">
@@ -173,12 +173,12 @@ const GuardXMonitoringCard: React.FC = () => {
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <h4 className="text-sm font-medium text-white flex items-center gap-2">
-            <Activity className="h-4 w-4 text-cyan-400" />
+            <Activity className="h-4 w-4 text-red-400" />
             Monitors ({monitors.length})
           </h4>
           <button
             onClick={() => setShowCreateForm(!showCreateForm)}
-            className="p-1 text-cyan-400 hover:text-cyan-300 transition-colors"
+            className="p-1 text-red-400 hover:text-red-300 transition-colors"
           >
             <Plus className="h-4 w-4" />
           </button>
@@ -216,7 +216,7 @@ const GuardXMonitoringCard: React.FC = () => {
               <div className="flex gap-2">
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-cyan-500 text-white rounded text-sm hover:bg-cyan-600 transition-colors"
+                  className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
                 >
                   Create
                 </button>
