@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  ArrowDown, 
-  ArrowRight, 
-  Wallet, 
-  AlertTriangle, 
-  Info, 
-  Zap, 
+import {
+  ArrowDown,
+  ArrowRight,
+  Wallet,
+  AlertTriangle,
+  Info,
+  Zap,
   Globe,
   RefreshCw
 } from 'lucide-react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useWalletModal } from '@/hooks/useWalletModal';
 import { useAllPythTokens } from '@/hooks/useAllPythTokens';
 import { useCrossChainDeposit } from '@/hooks/useCrossChainDeposit';
@@ -20,12 +20,12 @@ import { formatMinimumDeposit } from '@/config/constants';
 
 const CrossChainDepositForm: React.FC = () => {
   const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const { openWalletModal } = useWalletModal();
 
   const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);
   const [amount, setAmount] = useState('');
-  const [sourceChainId, setSourceChainId] = useState<number>(chain?.id || 421614);
+  const [sourceChainId, setSourceChainId] = useState<number>(chainId || 421614);
   const [destinationChainId, setDestinationChainId] = useState<number>(84532);
   const [recipient, setRecipient] = useState<string>('');
 
@@ -76,15 +76,15 @@ const CrossChainDepositForm: React.FC = () => {
 
   const isValidDeposit = useMemo(() => {
     if (!selectedToken || !amount || !isConnected) return false;
-    
+
     const amountNum = parseFloat(amount);
     const balanceNum = parseFloat(formattedBalance);
     const minDeposit = parseFloat(formatMinimumDeposit(selectedToken.decimals));
-    
-    return amountNum > 0 && 
-           amountNum >= minDeposit && 
-           amountNum <= balanceNum &&
-           isChainPairSupported(sourceChainId, destinationChainId);
+
+    return amountNum > 0 &&
+      amountNum >= minDeposit &&
+      amountNum <= balanceNum &&
+      isChainPairSupported(sourceChainId, destinationChainId);
   }, [selectedToken, amount, formattedBalance, isConnected, sourceChainId, destinationChainId, isChainPairSupported]);
 
   if (!isConnected) {

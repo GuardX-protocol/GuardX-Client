@@ -10,9 +10,9 @@ export const usePriceChange = (symbol: string) => {
       try {
         const now = Date.now();
         const dayAgo = now - 24 * 3600 * 1000;
-        
+
         const history = await pythSDK.getPriceHistory(symbol, dayAgo, now);
-        
+
         if (history.length >= 2) {
           const oldPrice = history[0].price;
           const newPrice = history[history.length - 1].price;

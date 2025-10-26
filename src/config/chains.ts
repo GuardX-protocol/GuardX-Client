@@ -1,4 +1,4 @@
-import { Chain } from 'wagmi';
+import type { Chain } from 'viem/chains';
 import {
   mainnet,
   polygon,
@@ -42,7 +42,7 @@ export const SUPPORTED_CHAINS: Chain[] =
 export const DEFAULT_CHAIN: Chain =
   import.meta.env.MODE === 'production'
     ? base
-    : arbitrumSepolia;
+    : baseSepolia; // Changed to Base Sepolia for testnet
 
 /**
  * Chain metadata for UI display

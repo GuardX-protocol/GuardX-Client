@@ -1,4 +1,4 @@
-import { useContractRead, useAccount, useNetwork } from 'wagmi';
+import { useReadContract, useAccount, useChainId } from 'wagmi';
 import { getContracts } from '@/config/contracts';
 import { DEFAULT_CHAIN } from '@/config/chains';
 import {
@@ -9,8 +9,8 @@ import {
 
 // Cross Chain Manager Hook
 export const useCrossChainManager = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId || DEFAULT_CHAIN.id);
   
   return {
     address: contracts.CrossChainManager as `0x${string}`,
@@ -20,8 +20,8 @@ export const useCrossChainManager = () => {
 
 // Cross Chain Emergency Coordinator Hook
 export const useCrossChainEmergencyCoordinator = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId || DEFAULT_CHAIN.id);
   
   return {
     address: contracts.CrossChainEmergencyCoordinator as `0x${string}`,
@@ -31,8 +31,8 @@ export const useCrossChainEmergencyCoordinator = () => {
 
 // Lit Protocol Integration Hook
 export const useLitProtocolIntegration = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId || DEFAULT_CHAIN.id);
   
   return {
     address: contracts.LitProtocolIntegration as `0x${string}`,
@@ -81,13 +81,13 @@ export const usePKPAuthorization = () => {
   const { address } = useAccount();
   const contract = useLitProtocolIntegration();
 
-  const { data: isAuthorized, isLoading, refetch } = useContractRead({
+  const { data: isAuthorized, isLoading, refetch } = useReadContract({
     ...contract,
     functionName: 'isPKPAuthorized',
     args: address ? [address] : undefined,
-    enabled: !!address,
-    watch: false,
-    cacheTime: 1000 * 60 * 5,
+    query: {
+      enabled: !!address,
+    },
   });
 
   return {

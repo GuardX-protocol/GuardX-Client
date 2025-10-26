@@ -1,11 +1,14 @@
 import React from 'react';
 import { Network, Info } from 'lucide-react';
-import { useNetwork } from 'wagmi';
+import { useChainId } from 'wagmi';
+import { getChainMetadata } from '@/config/chains';
 
 const NetworkBanner: React.FC = () => {
-  const { chain } = useNetwork();
+  const chainId = useChainId();
 
-  if (!chain) return null;
+  if (!chainId) return null;
+
+  const chainMetadata = getChainMetadata(chainId);
 
   return (
     <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg">
@@ -15,7 +18,7 @@ const NetworkBanner: React.FC = () => {
           <div className="flex-1">
             <p className="font-semibold">Multi-Network Support Enabled</p>
             <p className="text-sm text-white/90">
-              You can deposit assets from any supported network. Currently on: {chain.name}
+              You can deposit assets from any supported network. Currently on: {chainMetadata.name}
             </p>
           </div>
           <Info className="h-5 w-5 flex-shrink-0" />

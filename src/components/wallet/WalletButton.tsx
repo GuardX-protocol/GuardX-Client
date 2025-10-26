@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Wallet, ChevronDown, Copy, Power, Shield } from 'lucide-react';
-import { useAccount, useDisconnect, useBalance, useNetwork, useConnect } from 'wagmi';
+import { useAccount, useDisconnect, useBalance, useChainId, useConnect } from 'wagmi';
 import { formatAddress } from '@/utils/format';
 import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
@@ -13,12 +13,12 @@ const WalletButton: React.FC = () => {
 
   const { address, isConnected, connector } = useAccount();
   const { disconnect } = useDisconnect();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const { data: balance } = useBalance({ address });
-  const { connect, connectors, isLoading, pendingConnector } = useConnect();
+  const { connect, connectors, isPending } = useConnect();
 
-  const chainMetadata = chain ? getChainMetadata(chain.id) : null;
-  const isDeployed = chain ? isChainDeployed(chain.id) : false;
+  const chainMetadata = chainId ? getChainMetadata(chainId) : null;
+  const isDeployed = chainId ? isChainDeployed(chainId) : false;
 
   const handleCopy = () => {
     if (address) {
@@ -86,17 +86,17 @@ const WalletButton: React.FC = () => {
                   <button
                     key={connectorOption.id}
                     onClick={() => handleConnect(connectorOption)}
-                    disabled={isLoading}
+                    disabled={isPending}
                     className="w-full flex items-center gap-4 p-4 bg-gray-800/50 hover:bg-gray-700/50 rounded-xl border border-gray-700/50 hover:border-cyan-500/30 transition-all disabled:opacity-50"
                   >
                     <span className="text-2xl">{getConnectorIcon(connectorOption.name)}</span>
                     <div className="flex-1 text-left">
                       <div className="font-medium text-white">{connectorOption.name}</div>
                       <div className="text-sm text-gray-400">
-                        {isLoading && connectorOption.id === pendingConnector?.id ? 'Connecting...' : 'Available'}
+                        {isPending ? 'Connecting...' : 'Available'}
                       </div>
                     </div>
-                    {isLoading && connectorOption.id === pendingConnector?.id && (
+                    {isPending && (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-cyan-400"></div>
                     )}
                   </button>
@@ -193,8 +193,13 @@ const WalletButton: React.FC = () => {
                 <div className="text-center">
                   <p className="text-xs text-gray-400 mb-1">Wallet Balance</p>
                   <p className="text-lg font-bold text-white">
-                    {parseFloat(balance.formatted).toFixed(4)} {balance.symbol}
+                    {Number(balance.value) / Math.pow(10, balance.decimals)} {balance.symbol}
                   </p>
+                  {chainMetadata && (
+                    <p className="text-xs text-gray-400 mt-1">
+                      on {chainMetadata.name}
+                    </p>
+                  )}
                 </div>
               </div>
             )}

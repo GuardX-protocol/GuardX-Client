@@ -1,4 +1,4 @@
-import { useContractRead, useContractWrite, usePrepareContractWrite, useAccount } from 'wagmi';
+import { useReadContract, useWriteContract, useAccount } from 'wagmi';
 import { useCrashGuardCore } from './useContract';
 import { parseUnits } from 'viem';
 
@@ -6,20 +6,13 @@ export const useProtectionPolicy = () => {
   const { address } = useAccount();
   const contract = useCrashGuardCore();
 
-  const { data: policy, isLoading, refetch } = useContractRead({
+  const { data: policy, isLoading, refetch } = useReadContract({
     ...contract,
     functionName: 'getProtectionPolicy',
     args: address ? [address] : undefined,
-    enabled: !!address,
-    watch: false,
-    cacheTime: 1000 * 60 * 5,
-    onError: (error) => {
-      // Suppress error if it's just empty data (no policy yet)
-      if (error.message.includes('returned no data') || error.message.includes('0x')) {
-        console.log('No protection policy set yet for user');
-      } else {
-        console.error('Error fetching protection policy:', error);
-      }
+    query: {
+      enabled: !!address,
+      gcTime: 1000 * 60 * 5, // renamed from cacheTime
     },
   });
 
@@ -45,6 +38,7 @@ export const useSetProtectionPolicy = (
   stablecoinAddress: string
 ) => {
   const contract = useCrashGuardCore();
+  const { writeContract, data, isPending } = useWriteContract();
 
   const policyStruct = {
     crashThreshold: parseUnits(crashThreshold.toString(), 18),
@@ -54,19 +48,22 @@ export const useSetProtectionPolicy = (
     gasLimit: BigInt(500000), // Default gas limit
   };
 
-  const { config } = usePrepareContractWrite({
-    ...contract,
-    functionName: 'setProtectionPolicy',
-    args: [policyStruct],
-    enabled: !!stablecoinAddress && crashThreshold > 0 && maxSlippage > 0,
-  });
+  const write = () => {
+    if (!stablecoinAddress || crashThreshold <= 0 || maxSlippage <= 0) {
+      console.error('Invalid policy parameters');
+      return;
+    }
 
-  const { write, data, isLoading } = useContractWrite(config);
+    writeContract({
+      ...contract,
+      functionName: 'setProtectionPolicy',
+      args: [policyStruct],
+    });
+  };
 
   return {
     write,
     data,
-    isLoading,
-    config,
+    isLoading: isPending,
   };
 };

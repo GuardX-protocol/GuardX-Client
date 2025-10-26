@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAccount, useNetwork, useContractRead, useContractWrite } from 'wagmi';
+import { useAccount, useChainId, useReadContract, useWriteContract } from 'wagmi';
 import { Plus, AlertTriangle, CheckCircle2, Copy } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getContracts } from '@/config/contracts';
@@ -8,16 +8,18 @@ import { getCommonTokensForChain } from '@/utils/contractAdmin';
 
 const TokenManagement: React.FC = () => {
   const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
   const [customTokenAddress, setCustomTokenAddress] = useState('');
 
   // Check if current user is contract owner
-  const { data: contractOwner } = useContractRead({
+  const { data: contractOwner } = useReadContract({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
     functionName: 'owner',
-    enabled: !!contracts.CrashGuardCore,
+    query: {
+      enabled: !!contracts.CrashGuardCore,
+    },
   });
 
   const isOwner = contractOwner && address &&
@@ -25,26 +27,32 @@ const TokenManagement: React.FC = () => {
     contractOwner.toLowerCase() === address.toLowerCase();
 
   // Add token function
-  const { write: addToken, isLoading: isAdding } = useContractWrite({
-    address: contracts.CrashGuardCore as `0x${string}`,
-    abi: CrashGuardCoreABI,
-    functionName: 'addSupportedToken',
-    onSuccess: (data) => {
-      toast.success('Token added successfully!');
-      console.log('✅ Token added:', data.hash);
-    },
-    onError: (error) => {
-      toast.error(`Failed to add token: ${error.message}`);
-      console.error('❌ Add token failed:', error);
-    }
-  });
+  const { writeContract: addToken, isPending: isAdding } = useWriteContract();
 
   const handleAddToken = (tokenAddress: string) => {
     if (!tokenAddress || !isOwner) return;
-    addToken?.({ args: [tokenAddress as `0x${string}`] });
+
+    addToken(
+      {
+        address: contracts.CrashGuardCore as `0x${string}`,
+        abi: CrashGuardCoreABI,
+        functionName: 'addSupportedToken',
+        args: [tokenAddress as `0x${string}`],
+      },
+      {
+        onSuccess: (data) => {
+          toast.success('Token added successfully!');
+          console.log('✅ Token added:', data);
+        },
+        onError: (error) => {
+          toast.error(`Failed to add token: ${error.message}`);
+          console.error('❌ Add token failed:', error);
+        }
+      }
+    );
   };
 
-  const commonTokens = getCommonTokensForChain(chain?.id);
+  const commonTokens = getCommonTokensForChain(chainId);
 
   if (!isConnected) {
     return (

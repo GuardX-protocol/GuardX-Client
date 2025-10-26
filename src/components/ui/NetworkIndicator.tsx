@@ -1,26 +1,26 @@
 import React from 'react';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useChainId, useSwitchChain } from 'wagmi';
 import { CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { getChainMetadata, isSupportedChain } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
 import { SUPPORTED_CHAINS } from '@/config/chains';
 
 const NetworkIndicator: React.FC = () => {
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
   const [showDropdown, setShowDropdown] = React.useState(false);
 
-  if (!chain) {
+  if (!chainId) {
     return null;
   }
 
-  const metadata = getChainMetadata(chain.id);
-  const isSupported = isSupportedChain(chain.id);
-  const isDeployed = isChainDeployed(chain.id);
+  const metadata = getChainMetadata(chainId);
+  const isSupported = isSupportedChain(chainId);
+  const isDeployed = isChainDeployed(chainId);
 
-  const handleSwitchNetwork = (chainId: number) => {
-    if (switchNetwork) {
-      switchNetwork(chainId);
+  const handleSwitchNetwork = (targetChainId: number) => {
+    if (switchChain) {
+      switchChain({ chainId: targetChainId });
       setShowDropdown(false);
     }
   };
@@ -48,8 +48,8 @@ const NetworkIndicator: React.FC = () => {
 
       {showDropdown && (
         <>
-          <div 
-            className="fixed inset-0 z-[60]" 
+          <div
+            className="fixed inset-0 z-[60]"
             onClick={() => setShowDropdown(false)}
           />
           <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-[200px] z-[70]">
@@ -59,16 +59,15 @@ const NetworkIndicator: React.FC = () => {
             {SUPPORTED_CHAINS.map((supportedChain) => {
               const chainMeta = getChainMetadata(supportedChain.id);
               const deployed = isChainDeployed(supportedChain.id);
-              const isCurrent = chain.id === supportedChain.id;
+              const isCurrent = chainId === supportedChain.id;
 
               return (
                 <button
                   key={supportedChain.id}
                   onClick={() => handleSwitchNetwork(supportedChain.id)}
                   disabled={!deployed || isCurrent}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors ${
-                    isCurrent ? 'bg-red-50 text-red-700' : ''
-                  } ${!deployed ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors ${isCurrent ? 'bg-red-50 text-red-700' : ''
+                    } ${!deployed ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span className="flex items-center gap-2">
                     <span>{chainMeta.icon}</span>

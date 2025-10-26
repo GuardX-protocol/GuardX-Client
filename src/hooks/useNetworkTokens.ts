@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useNetwork } from 'wagmi';
+import { useChainId } from 'wagmi';
 import { useTokenList } from './useTokenList';
 import { useEnhancedTokenList, usePopularTokensEnhanced } from './useEnhancedTokenList';
 import { TokenInfo } from '@uniswap/token-lists';
@@ -33,7 +33,7 @@ const TESTNET_TOKENS: Record<number, TokenInfo[]> = {
       logoURI: 'https://tokens.1inch.io/0x6b175474e89094c44da98b954eedeac495271d0f.png'
     }
   ],
-  
+
   // Base Sepolia
   84532: [
     {
@@ -60,37 +60,36 @@ const TESTNET_TOKENS: Record<number, TokenInfo[]> = {
  * Filters tokens by current chain and provides testnet fallbacks
  */
 export const useNetworkTokens = () => {
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const { tokens: allTokens, isLoading, error } = useTokenList();
 
   const networkTokens = useMemo(() => {
-    if (!chain) return [];
+    if (!chainId) return [];
 
     // For testnets, use predefined token list
-    if (TESTNET_TOKENS[chain.id]) {
-      console.log(`✅ Using testnet tokens for chain ${chain.id}`);
-      return TESTNET_TOKENS[chain.id];
+    if (TESTNET_TOKENS[chainId]) {
+      console.log(`✅ Using testnet tokens for chain ${chainId}`);
+      return TESTNET_TOKENS[chainId];
     }
 
     // For mainnets, filter from Uniswap list
-    const filteredTokens = allTokens.filter(token => token.chainId === chain.id);
-    
+    const filteredTokens = allTokens.filter(token => token.chainId === chainId);
+
     if (filteredTokens.length > 0) {
-      console.log(`✅ Found ${filteredTokens.length} tokens for chain ${chain.id}`);
+      console.log(`✅ Found ${filteredTokens.length} tokens for chain ${chainId}`);
       return filteredTokens.slice(0, 50); // Limit to 50 tokens for performance
     }
 
     // Fallback: return empty array
-    console.warn(`⚠️ No tokens found for chain ${chain.id}`);
+    console.warn(`⚠️ No tokens found for chain ${chainId}`);
     return [];
-  }, [chain, allTokens]);
+  }, [chainId, allTokens]);
 
   return {
     tokens: networkTokens,
     isLoading,
     error,
-    chainId: chain?.id,
-    chainName: chain?.name,
+    chainId,
   };
 };
 

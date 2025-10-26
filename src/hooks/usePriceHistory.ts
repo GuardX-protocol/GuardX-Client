@@ -1,4 +1,4 @@
-import { useContractRead, useNetwork } from 'wagmi';
+import { useReadContract, useChainId } from 'wagmi';
 import { useMemo } from 'react';
 import { getContracts } from '@/config/contracts';
 import { DEFAULT_CHAIN } from '@/config/chains';
@@ -20,25 +20,18 @@ export interface HistoricalPrice {
   isValid: boolean;
 }
 
-/**
- * Fetch price history from PythPriceMonitor contract
- * Uses getPriceHistory function to get historical price data
- * 
- * @param priceId - Pyth price feed ID (bytes32)
- * @param timeRange - Time range in seconds (e.g., 3600 for 1 hour, 86400 for 1 day)
- */
 export const usePriceHistory = (priceId: string, timeRange: number = 86400) => {
-  const { chain } = useNetwork();
-  const chainContracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const chainContracts = getContracts(chainId || DEFAULT_CHAIN.id);
 
-  const { data, isLoading, isError, refetch } = useContractRead({
+  const { data, isLoading, isError, refetch } = useReadContract({
     address: chainContracts.PythPriceMonitor as `0x${string}`,
     abi: PythPriceMonitorABI,
     functionName: 'getPriceHistory',
     args: [priceId as `0x${string}`, BigInt(timeRange)],
-    enabled: !!priceId && timeRange > 0,
-    watch: false,
-    cacheTime: 60000, // Cache for 1 minute
+    query: {
+      enabled: !!priceId && timeRange > 0,
+    },
   });
 
   const priceHistory = useMemo(() => {
@@ -49,7 +42,7 @@ export const usePriceHistory = (priceId: string, timeRange: number = 86400) => {
       .map(item => {
         const actualPrice = Number(item.price) / 1e8;
         const timestamp = Number(item.timestamp);
-        
+
         return {
           price: actualPrice,
           formattedPrice: actualPrice.toFixed(2),
@@ -82,16 +75,18 @@ export const usePriceHistory = (priceId: string, timeRange: number = 86400) => {
  * @param timeRange - Time range in seconds
  */
 export const usePriceHistoryByToken = (tokenAddress: string, timeRange: number = 86400) => {
-  const { chain } = useNetwork();
-  const chainContracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const chainContracts = getContracts(chainId || DEFAULT_CHAIN.id);
 
   // First, get the price ID for this token
-  const { data: priceId } = useContractRead({
+  const { data: priceId } = useReadContract({
     address: chainContracts.PythPriceMonitor as `0x${string}`,
     abi: PythPriceMonitorABI,
     functionName: 'tokenToPriceId',
     args: [tokenAddress as `0x${string}`],
-    enabled: !!tokenAddress,
+    query: {
+      enabled: !!tokenAddress,
+    },
   });
 
   // Then fetch the price history using the price ID
