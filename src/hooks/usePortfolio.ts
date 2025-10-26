@@ -1,17 +1,17 @@
-import { useContractRead, useAccount } from 'wagmi';
+import { useReadContract, useAccount } from 'wagmi';
 import { useCrashGuardCore } from './useContract';
 
 export const usePortfolio = () => {
   const { address } = useAccount();
   const contract = useCrashGuardCore();
 
-  const { data, isLoading, refetch } = useContractRead({
+  const { data, isLoading, refetch } = useReadContract({
     ...contract,
     functionName: 'getUserPortfolio',
     args: address ? [address] : undefined,
-    enabled: !!address,
-    watch: false,
-    cacheTime: 1000 * 60 * 5,
+    query: {
+      enabled: !!address,
+    },
     onError: (error) => {
       // Suppress error if it's just empty data (no portfolio yet)
       if (error.message.includes('returned no data') || error.message.includes('0x')) {

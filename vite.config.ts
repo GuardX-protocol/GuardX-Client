@@ -22,6 +22,10 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+      include: [/node_modules/],
+    },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -33,6 +37,32 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'wagmi', 'viem'],
+    include: [
+      'react',
+      'react-dom',
+      'wagmi',
+      'viem',
+      'buffer',
+      'process',
+      'util',
+      'bn.js',
+      'bignumber.js',
+    ],
+    exclude: [
+      '@account-kit/smart-contracts',
+      '@coinbase/wallet-sdk',
+    ],
+    esbuildOptions: {
+      // Handle CommonJS modules properly
+      mainFields: ['module', 'main'],
+      conditions: ['import', 'module', 'browser', 'default'],
+    },
+    force: true,
+  },
+  define: {
+    global: 'globalThis',
+    'process.env': {},
+    'process.browser': true,
+    'Browser.T': '(() => new Uint8Array())',
   },
 });

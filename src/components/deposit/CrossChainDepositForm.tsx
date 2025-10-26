@@ -9,7 +9,7 @@ import {
   Globe,
   RefreshCw
 } from 'lucide-react';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { useWalletModal } from '@/hooks/useWalletModal';
 import { useAllPythTokens } from '@/hooks/useAllPythTokens';
 import { useCrossChainDeposit } from '@/hooks/useCrossChainDeposit';
@@ -19,8 +19,7 @@ import TokenDropdown from '@/components/ui/TokenDropdown';
 import { formatMinimumDeposit } from '@/config/constants';
 
 const CrossChainDepositForm: React.FC = () => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { address, isConnected, chain } = useAccount();
   const { openWalletModal } = useWalletModal();
 
   const [selectedToken, setSelectedToken] = useState<TokenInfo | null>(null);

@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useAccount, useNetwork, useBalance, useContractReads } from 'wagmi';
+import { useAccount, useChainId, useBalance, useReadContracts } from 'wagmi';
 import { useTokenList } from './useTokenList';
 import { useNetworkTokens } from './useNetworkTokens';
 import { TokenInfo } from '@uniswap/token-lists';
@@ -14,7 +14,7 @@ interface TokenWithBalance extends TokenInfo {
 
 export const useUserWalletTokens = () => {
     const { address, isConnected } = useAccount();
-    const { chain } = useNetwork();
+    const chainId = useChainId();
     const { tokens: uniswapTokens } = useTokenList();
     const { tokens: networkTokens } = useNetworkTokens();
     const [tokensWithBalance, setTokensWithBalance] = useState<TokenWithBalance[]>([]);
@@ -23,7 +23,9 @@ export const useUserWalletTokens = () => {
     // Get native token balance
     const { data: nativeBalance } = useBalance({
         address,
-        enabled: !!address && isConnected,
+        query: {
+            enabled: !!address && isConnected,
+        },
     });
 
     // Combine all available tokens (Uniswap + Network specific)
@@ -32,14 +34,14 @@ export const useUserWalletTokens = () => {
 
         // Add network-specific tokens first
         networkTokens.forEach(token => {
-            if (chain && token.chainId === chain.id) {
+            if (chainId && token.chainId === chainId) {
                 tokenMap.set(token.address.toLowerCase(), token);
             }
         });
 
         // Add Uniswap tokens (only if not already present)
         uniswapTokens.forEach(token => {
-            if (chain && token.chainId === chain.id) {
+            if (chainId && token.chainId === chainId) {
                 const key = token.address.toLowerCase();
                 if (!tokenMap.has(key)) {
                     tokenMap.set(key, token);
@@ -50,16 +52,16 @@ export const useUserWalletTokens = () => {
         // Only use real tokens from token lists, no fallback tokens
 
         return Array.from(tokenMap.values());
-    }, [uniswapTokens, networkTokens, chain]);
+    }, [uniswapTokens, networkTokens, chainId]);
 
     // Prepare contract calls for token balances
     const tokenContracts = useMemo(() => {
         if (!address || !allTokens.length) return [];
-        
+
         return allTokens
-            .filter(token => 
+            .filter(token =>
                 token.address !== `0x${'0'.repeat(40)}` && // Skip placeholder addresses
-                token.address.startsWith('0x') && 
+                token.address.startsWith('0x') &&
                 token.address.length === 42 &&
                 /^0x[a-fA-F0-9]{40}$/.test(token.address) // Valid hex address
             )
@@ -73,14 +75,10 @@ export const useUserWalletTokens = () => {
     }, [address, allTokens]);
 
     // Fetch token balances using batch contract reads
-    const { data: balanceResults, isLoading: isLoadingBalances } = useContractReads({
+    const { data: balanceResults, isLoading: isLoadingBalances } = useReadContracts({
         contracts: tokenContracts,
-        enabled: !!address && isConnected && tokenContracts.length > 0,
-        watch: false,
-        cacheTime: 30000, // 30 seconds
-        staleTime: 10000, // 10 seconds
-        onError: (error) => {
-            console.debug('Some token balance calls failed (expected for invalid tokens):', error);
+        query: {
+            enabled: !!address && isConnected && tokenContracts.length > 0,
         },
     });
 
@@ -89,15 +87,16 @@ export const useUserWalletTokens = () => {
         const tokensWithBalanceData: TokenWithBalance[] = [];
 
         // Add native token if we have balance data
-        if (nativeBalance && Number(nativeBalance.formatted) > 0) {
+        if (nativeBalance && nativeBalance.value > 0n) {
+            const formattedBalance = formatUnits(nativeBalance.value, nativeBalance.decimals);
             const nativeToken: TokenWithBalance = {
-                chainId: chain?.id || 0,
+                chainId: chainId || 0,
                 address: '0x0000000000000000000000000000000000000000',
                 symbol: nativeBalance.symbol,
                 name: `Native ${nativeBalance.symbol}`,
                 decimals: nativeBalance.decimals,
                 balance: nativeBalance.value.toString(),
-                formattedBalance: nativeBalance.formatted,
+                formattedBalance,
                 hasBalance: true,
             };
             tokensWithBalanceData.push(nativeToken);
@@ -110,8 +109,8 @@ export const useUserWalletTokens = () => {
                 if (!contract) return;
 
                 try {
-                    if (result.status === 'success' && result.result) {
-                        const balance = result.result as bigint;
+                    if (result && typeof result === 'bigint') {
+                        const balance = result as bigint;
                         const formattedBalance = formatUnits(balance, contract.token.decimals);
                         const hasBalance = balance > 0n;
 
@@ -124,7 +123,7 @@ export const useUserWalletTokens = () => {
                             });
                         }
                     }
-                } catch (error) {
+                } catch (error: any) {
                     // Silently skip tokens that fail to parse
                     console.debug(`Failed to process balance for ${contract.token.symbol}:`, error);
                 }
@@ -161,7 +160,7 @@ export const useUserWalletTokens = () => {
         });
 
         return tokensWithBalanceData;
-    }, [balanceResults, tokenContracts, nativeBalance, chain?.id, allTokens]);
+    }, [balanceResults, tokenContracts, nativeBalance, chainId, allTokens]);
 
     // Update state when processed tokens change
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { useContractRead, useNetwork } from 'wagmi';
+import { useReadContract, useChainId } from 'wagmi';
 import { useMemo, useState, useEffect } from 'react';
 import { getContracts } from '@/config/contracts';
 import { DEFAULT_CHAIN } from '@/config/chains';
@@ -16,8 +16,8 @@ interface PriceHistoryItem {
  * Uses deployment configuration to get the correct contract address
  */
 export const usePythPriceMonitorHistory = (symbol: string, timeRange: number) => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId || DEFAULT_CHAIN.id);
   const [priceId, setPriceId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -29,14 +29,14 @@ export const usePythPriceMonitorHistory = (symbol: string, timeRange: number) =>
   }, [symbol]);
 
   // Fetch price history from PythPriceMonitor contract
-  const { data, isLoading, isError, refetch } = useContractRead({
+  const { data, isLoading, isError, refetch } = useReadContract({
     address: contracts.PythPriceMonitor as `0x${string}`,
     abi: PythPriceMonitorABI,
     functionName: 'getPriceHistory',
     args: priceId ? [priceId as `0x${string}`, BigInt(timeRange)] : undefined,
-    enabled: !!priceId && !!contracts.PythPriceMonitor,
-    watch: false,
-    cacheTime: 30000, // Cache for 30 seconds
+    query: {
+      enabled: !!priceId && !!contracts.PythPriceMonitor,
+    },
   });
 
   const priceHistory = useMemo(() => {

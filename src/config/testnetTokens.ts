@@ -23,19 +23,43 @@ export const ARBITRUM_SEPOLIA_TOKENS: TokenInfo[] = [
     decimals: 6,
     logoURI: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png'
   },
-  // USDT on Arbitrum Sepolia
+  // ARB on Arbitrum Sepolia (Arbitrum token)
   {
     chainId: 421614,
-    address: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    name: 'Tether USD',
-    symbol: 'USDT',
-    decimals: 6,
-    logoURI: 'https://assets.coingecko.com/coins/images/325/small/Tether.png'
+    address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+    name: 'Arbitrum',
+    symbol: 'ARB',
+    decimals: 18,
+    logoURI: 'https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg'
   },
   // WETH on Arbitrum Sepolia
   {
     chainId: 421614,
     address: '0x980B62Da83eFf3D4576C647993b0c1D7faf17c73',
+    name: 'Wrapped Ether',
+    symbol: 'WETH',
+    decimals: 18,
+    logoURI: 'https://assets.coingecko.com/coins/images/2518/small/weth.png'
+  }
+];
+
+/**
+ * Base Sepolia testnet tokens
+ */
+export const BASE_SEPOLIA_TOKENS: TokenInfo[] = [
+  // Native ETH (zero address)
+  {
+    chainId: 84532,
+    address: '0x0000000000000000000000000000000000000000',
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+    logoURI: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png'
+  },
+  // WETH on Base Sepolia
+  {
+    chainId: 84532,
+    address: '0x4200000000000000000000000000000000000006',
     name: 'Wrapped Ether',
     symbol: 'WETH',
     decimals: 18,
@@ -50,6 +74,8 @@ export const getTestnetTokens = (chainId: number): TokenInfo[] => {
   switch (chainId) {
     case 421614: // Arbitrum Sepolia
       return ARBITRUM_SEPOLIA_TOKENS;
+    case 84532: // Base Sepolia
+      return BASE_SEPOLIA_TOKENS;
     default:
       return [];
   }

@@ -1,4 +1,4 @@
-import { useContractRead, useNetwork } from 'wagmi';
+import { useReadContract, useChainId } from 'wagmi';
 import { useMemo } from 'react';
 import { getContracts } from '@/config/contracts';
 import { DEFAULT_CHAIN } from '@/config/chains';
@@ -48,25 +48,29 @@ export const useConfiguredPriceFeeds = () => {
  * Check if a specific token has a price feed configured
  */
 export const useTokenPriceFeed = (tokenAddress: string) => {
-  const { chain } = useNetwork();
-  const chainContracts = getContracts(chain?.id || DEFAULT_CHAIN.id);
+  const chainId = useChainId();
+  const chainContracts = getContracts(chainId || DEFAULT_CHAIN.id);
 
   // Get the price ID for this token
-  const { data: priceId, isLoading: isLoadingPriceId } = useContractRead({
+  const { data: priceId, isLoading: isLoadingPriceId } = useReadContract({
     address: chainContracts.PythPriceMonitor as `0x${string}`,
     abi: PythPriceMonitorABI,
     functionName: 'tokenToPriceId',
     args: [tokenAddress as `0x${string}`],
-    enabled: !!tokenAddress,
+    query: {
+      enabled: !!tokenAddress,
+    },
   });
 
   // Check if this token has a valid price
-  const { data: priceData, isLoading: isLoadingPrice } = useContractRead({
+  const { data: priceData, isLoading: isLoadingPrice } = useReadContract({
     address: chainContracts.PythPriceMonitor as `0x${string}`,
     abi: PythPriceMonitorABI,
     functionName: 'getPriceByToken',
     args: [tokenAddress as `0x${string}`],
-    enabled: !!tokenAddress && !!priceId,
+    query: {
+      enabled: !!tokenAddress && !!priceId,
+    },
   });
 
   const isConfigured = useMemo(() => {

@@ -1,4 +1,4 @@
-import { useContractRead, useContractWrite, usePrepareContractWrite, useAccount } from 'wagmi';
+import { useReadContract, useWriteContract, useSimulateContract, useAccount } from 'wagmi';
 import { useCrashGuardCore } from './useContract';
 import { parseUnits } from 'viem';
 
@@ -6,13 +6,13 @@ export const useProtectionPolicy = () => {
   const { address } = useAccount();
   const contract = useCrashGuardCore();
 
-  const { data: policy, isLoading, refetch } = useContractRead({
+  const { data: policy, isLoading, refetch } = useReadContract({
     ...contract,
     functionName: 'getProtectionPolicy',
     args: address ? [address] : undefined,
-    enabled: !!address,
-    watch: false,
-    cacheTime: 1000 * 60 * 5,
+    query: {
+      enabled: !!address,
+    },
     onError: (error) => {
       // Suppress error if it's just empty data (no policy yet)
       if (error.message.includes('returned no data') || error.message.includes('0x')) {
@@ -54,19 +54,21 @@ export const useSetProtectionPolicy = (
     gasLimit: BigInt(500000), // Default gas limit
   };
 
-  const { config } = usePrepareContractWrite({
-    ...contract,
-    functionName: 'setProtectionPolicy',
-    args: [policyStruct],
-    enabled: !!stablecoinAddress && crashThreshold > 0 && maxSlippage > 0,
-  });
+  const { writeContract, data, isPending } = useWriteContract();
 
-  const { write, data, isLoading } = useContractWrite(config);
+  const write = () => {
+    if (!stablecoinAddress || crashThreshold <= 0 || maxSlippage <= 0) return;
+    
+    writeContract({
+      ...contract,
+      functionName: 'setProtectionPolicy',
+      args: [policyStruct],
+    });
+  };
 
   return {
     write,
     data,
-    isLoading,
-    config,
+    isLoading: isPending,
   };
 };

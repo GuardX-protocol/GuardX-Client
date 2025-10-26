@@ -2,21 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { FileText, Search, Activity, AlertTriangle, DollarSign, ExternalLink, ArrowUpRight, ArrowDownCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import EmergencyHistory from '@/components/audit/EmergencyHistory';
 import TransactionHistory from '@/components/audit/TransactionHistory';
-import { useAccount, useNetwork } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { useGuardXAlerts } from '@/hooks/useGuardX';
 import { formatUnits } from 'viem';
 
 const Audit: React.FC = () => {
   const { isConnected, address } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTab, setSelectedTab] = useState<'transactions' | 'alerts' | 'emergency'>('transactions');
-  
+
   const { alerts } = useGuardXAlerts();
-  
+
   // Mock transaction data - in real app, fetch from contract events
   const [transactions, setTransactions] = useState<any[]>([]);
-  
+
   useEffect(() => {
     // Mock some transaction data
     if (isConnected && address) {
@@ -62,8 +62,8 @@ const Audit: React.FC = () => {
   }, 0);
 
   const getExplorerUrl = (hash: string) => {
-    if (chain?.id === 421614) return `https://sepolia.arbiscan.io/tx/${hash}`;
-    if (chain?.id === 84532) return `https://sepolia.basescan.org/tx/${hash}`;
+    if (chainId === 421614) return `https://sepolia.arbiscan.io/tx/${hash}`;
+    if (chainId === 84532) return `https://sepolia.basescan.org/tx/${hash}`;
     return `https://etherscan.io/tx/${hash}`;
   };
 
@@ -142,33 +142,30 @@ const Audit: React.FC = () => {
         <div className="flex p-1 bg-gray-900/50 rounded-xl border border-gray-700">
           <button
             onClick={() => setSelectedTab('transactions')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              selectedTab === 'transactions'
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${selectedTab === 'transactions'
                 ? 'bg-cyan-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-            }`}
+              }`}
           >
             <Activity className="h-4 w-4" />
             Transactions
           </button>
           <button
             onClick={() => setSelectedTab('alerts')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              selectedTab === 'alerts'
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${selectedTab === 'alerts'
                 ? 'bg-yellow-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-            }`}
+              }`}
           >
             <AlertTriangle className="h-4 w-4" />
             AI Alerts
           </button>
           <button
             onClick={() => setSelectedTab('emergency')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
-              selectedTab === 'emergency'
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${selectedTab === 'emergency'
                 ? 'bg-red-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-            }`}
+              }`}
           >
             <XCircle className="h-4 w-4" />
             Emergency
@@ -207,11 +204,10 @@ const Audit: React.FC = () => {
                   <div key={tx.id} className="p-4 bg-gray-900/50 rounded-xl border border-gray-800/50">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          tx.type === 'deposit' 
-                            ? 'bg-green-500/20 text-green-400' 
+                        <div className={`p-2 rounded-lg ${tx.type === 'deposit'
+                            ? 'bg-green-500/20 text-green-400'
                             : 'bg-orange-500/20 text-orange-400'
-                        }`}>
+                          }`}>
                           {tx.type === 'deposit' ? (
                             <ArrowDownCircle className="h-4 w-4" />
                           ) : (
@@ -279,11 +275,10 @@ const Audit: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className={`px-2 py-1 rounded text-xs mb-1 ${
-                          alert.confidence_level === 'very_high' ? 'bg-red-500/20 text-red-400' :
-                          alert.confidence_level === 'high' ? 'bg-orange-500/20 text-orange-400' :
-                          'bg-yellow-500/20 text-yellow-400'
-                        }`}>
+                        <div className={`px-2 py-1 rounded text-xs mb-1 ${alert.confidence_level === 'very_high' ? 'bg-red-500/20 text-red-400' :
+                            alert.confidence_level === 'high' ? 'bg-orange-500/20 text-orange-400' :
+                              'bg-yellow-500/20 text-yellow-400'
+                          }`}>
                           {alert.confidence_level.replace('_', ' ')} confidence
                         </div>
                         <div className="text-xs text-gray-400">

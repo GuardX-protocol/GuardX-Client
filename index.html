@@ -14,6 +14,36 @@
     href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
     rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script>
+    // Set up global polyfills before any modules load
+    window.global = window.globalThis = globalThis;
+    
+    // Mock Browser object that brotli expects
+    window.Browser = {
+      name: 'chrome',
+      version: '120.0.0',
+      platform: 'browser',
+      // Mock the T function that brotli is trying to call
+      T: function() { return new Uint8Array(); },
+      // Add other potential brotli functions
+      compress: function(input) { 
+        return typeof input === 'string' ? new TextEncoder().encode(input) : input || new Uint8Array(); 
+      },
+      decompress: function(input) { 
+        return typeof input === 'string' ? input : new TextDecoder().decode(input || new Uint8Array()); 
+      }
+    };
+    
+    window.process = {
+      env: {},
+      browser: true,
+      version: '',
+      versions: {},
+      nextTick: function(fn) { setTimeout(fn, 0); },
+      cwd: function() { return '/'; },
+      platform: 'browser'
+    };
+  </script>
 </head>
 
 <body>

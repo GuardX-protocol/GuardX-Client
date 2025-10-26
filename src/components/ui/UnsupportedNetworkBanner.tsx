@@ -1,12 +1,12 @@
 import React from 'react';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { AlertTriangle } from 'lucide-react';
 import { isSupportedChain, getChainMetadata, DEFAULT_CHAIN } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
 
 const UnsupportedNetworkBanner: React.FC = () => {
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { chain } = useAccount();
+  const { switchChain } = useSwitchChain();
 
   if (!chain) return null;
 
@@ -18,8 +18,8 @@ const UnsupportedNetworkBanner: React.FC = () => {
   if (isSupported && isDeployed) return null;
 
   const handleSwitch = () => {
-    if (switchNetwork) {
-      switchNetwork(DEFAULT_CHAIN.id);
+    if (switchChain) {
+      switchChain({ chainId: DEFAULT_CHAIN.id });
     }
   };
 
@@ -44,7 +44,7 @@ const UnsupportedNetworkBanner: React.FC = () => {
               </>
             )}
           </p>
-          {switchNetwork && (
+          {switchChain && (
             <button
               onClick={handleSwitch}
               className="px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors"

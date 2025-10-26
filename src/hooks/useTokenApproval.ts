@@ -1,4 +1,4 @@
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi';
+import { useWriteContract, useSimulateContract, useWaitForTransactionReceipt } from 'wagmi';
 import { ERC20_ABI } from '@/config/abis/ERC20';
 import { parseUnits } from 'viem';
 import toast from 'react-hot-toast';
@@ -17,7 +17,9 @@ export const useTokenApproval = (
       spenderAddress as `0x${string}`,
       amount ? parseUnits(amount, decimals) : BigInt(0),
     ],
-    enabled: !!tokenAddress && !!spenderAddress && !!amount && parseFloat(amount) > 0,
+    query: {
+      enabled: !!tokenAddress && !!spenderAddress && !!amount && parseFloat(amount) > 0,
+    },
   });
 
   const { write, data, isLoading } = useContractWrite(config);

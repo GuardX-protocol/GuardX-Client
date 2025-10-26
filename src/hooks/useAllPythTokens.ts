@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { TokenInfo } from '@uniswap/token-lists';
 import { pythService } from '@/services/pythService';
 import { getMajorTokens, getMajorTokenBySymbol } from '@/config/majorTokens';
-import { useNetwork } from 'wagmi';
+import { useChainId } from 'wagmi';
 
 interface PythTokenInfo extends TokenInfo {
   pythFeedId?: string;
@@ -15,7 +15,7 @@ interface PythTokenInfo extends TokenInfo {
  * This provides a comprehensive list of tokens for deposit/trading
  */
 export const useAllPythTokens = () => {
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [pythTokens, setPythTokens] = useState<PythTokenInfo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

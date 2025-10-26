@@ -1,21 +1,22 @@
-import { useContractRead, useNetwork } from "wagmi";
+import { useReadContract, useChainId } from "wagmi";
 import { useMemo } from "react";
 import { formatUnits } from "viem";
 import { getContracts } from "@/config/contracts";
 import { CrashGuardCoreABI } from "@/config/abis/CrashGuardCore";
 
 export const useVaultBalances = (address?: `0x${string}`) => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   // Get user portfolio from CrashGuardCore
-  const { data: portfolio, refetch: refetchPortfolio } = useContractRead({
+  const { data: portfolio, refetch: refetchPortfolio } = useReadContract({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
     functionName: "getUserPortfolio",
     args: [address!],
-    enabled: !!address && !!contracts.CrashGuardCore,
-    watch: true,
+    query: {
+      enabled: !!address && !!contracts.CrashGuardCore,
+    },
   });
 
   const vaultAssets = useMemo(() => {

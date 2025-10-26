@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiConfig } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { Toaster } from 'react-hot-toast';
 import { wagmiConfig } from '@/config/wagmi';
 import { VincentAuthProvider } from '@/components/auth/VincentAuth';
@@ -12,6 +12,7 @@ import WagmiTest from '@/components/debug/WagmiTest';
 import Home from '@/pages/Home';
 import Dashboard from '@/pages/Dashboard';
 import Deposit from '@/pages/Deposit';
+import Withdraw from '@/pages/Withdraw';
 import Policies from '@/pages/Policies';
 import Audit from '@/pages/Audit';
 import Prices from '@/pages/Prices';
@@ -61,7 +62,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <WagmiConfig config={wagmiConfig}>
+        <WagmiProvider config={wagmiConfig}>
           <VincentAuthProvider>
             <Router>
               <Routes>
@@ -77,6 +78,7 @@ const App: React.FC = () => {
                   <Route index element={<Navigate to="/app/dashboard" replace />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="deposit" element={<Deposit />} />
+                  <Route path="withdraw" element={<Withdraw />} />
                   <Route path="prices" element={<Prices />} />
                   <Route path="policies" element={<Policies />} />
                   <Route path="audit" element={<Audit />} />
@@ -86,6 +88,7 @@ const App: React.FC = () => {
                 {/* Legacy redirects */}
                 <Route path="/dashboard" element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="/deposit" element={<Navigate to="/app/deposit" replace />} />
+                <Route path="/withdraw" element={<Navigate to="/app/withdraw" replace />} />
                 <Route path="/prices" element={<Navigate to="/app/prices" replace />} />
                 <Route path="/policies" element={<Navigate to="/app/policies" replace />} />
                 <Route path="/audit" element={<Navigate to="/app/audit" replace />} />
@@ -131,7 +134,7 @@ const App: React.FC = () => {
             {/* <VincentDebug /> */}
             {/* <WagmiTest /> */}
           </VincentAuthProvider>
-        </WagmiConfig>
+        </WagmiProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );

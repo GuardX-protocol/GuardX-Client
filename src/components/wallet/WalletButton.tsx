@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Wallet, ChevronDown, Copy, Power, Shield } from 'lucide-react';
-import { useAccount, useDisconnect, useBalance, useNetwork, useConnect } from 'wagmi';
+import { useAccount, useDisconnect, useBalance, useChainId, useConnect } from 'wagmi';
 import { formatAddress } from '@/utils/format';
 import { getChainMetadata } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
@@ -11,9 +11,9 @@ const WalletButton: React.FC = () => {
   const [copied, setCopied] = useState(false);
   const [showConnectModal, setShowConnectModal] = useState(false);
 
-  const { address, isConnected, connector } = useAccount();
+  const { address, isConnected, connector, chain } = useAccount();
   const { disconnect } = useDisconnect();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const { data: balance } = useBalance({ address });
   const { connect, connectors, isLoading, pendingConnector } = useConnect();
 

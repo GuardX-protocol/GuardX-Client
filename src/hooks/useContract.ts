@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { useContractRead } from 'wagmi';
-import { useNetwork } from 'wagmi';
+import { useReadContract } from 'wagmi';
+import { useChainId } from 'wagmi';
 import { getContracts } from '@/config/contracts';
 import {
   CrashGuardCoreABI,
@@ -12,8 +12,8 @@ import {
 import toast from 'react-hot-toast';
 
 export const useCrashGuardCore = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   return useMemo(() => ({
     address: contracts.CrashGuardCore as `0x${string}`,
@@ -22,8 +22,8 @@ export const useCrashGuardCore = () => {
 };
 
 export const useEmergencyExecutor = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   return useMemo(() => ({
     address: contracts.EmergencyExecutor as `0x${string}`,
@@ -32,8 +32,8 @@ export const useEmergencyExecutor = () => {
 };
 
 export const usePythPriceMonitor = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   return useMemo(() => ({
     address: contracts.PythPriceMonitor as `0x${string}`,
@@ -42,8 +42,8 @@ export const usePythPriceMonitor = () => {
 };
 
 export const useDEXAggregator = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   return useMemo(() => ({
     address: contracts.DEXAggregator as `0x${string}`,
@@ -52,8 +52,8 @@ export const useDEXAggregator = () => {
 };
 
 export const usePortfolioRebalancer = () => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
   return useMemo(() => ({
     address: contracts.PortfolioRebalancer as `0x${string}`,
@@ -62,19 +62,19 @@ export const usePortfolioRebalancer = () => {
 };
 
 export const useDeposit = () => {
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const depositToken = async (tokenAddress: string, amount: string, decimals: number) => {
-    if (!chain?.id) return;
+    if (!chainId) return;
 
     setIsLoading(true);
     toast.loading('Processing deposit...', { id: 'deposit' });
 
     try {
       const { contractService } = await import('@/services/contractService');
-      const hash = await contractService.depositAsset(tokenAddress, amount, decimals, chain.id);
+      const hash = await contractService.depositAsset(tokenAddress, amount, decimals, chainId);
 
       setTxHash(hash);
       toast.dismiss('deposit');
@@ -91,19 +91,19 @@ export const useDeposit = () => {
 };
 
 export const useWithdraw = () => {
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const [isLoading, setIsLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const withdrawToken = async (tokenAddress: string, amount: string, decimals: number) => {
-    if (!chain?.id) return;
+    if (!chainId) return;
 
     setIsLoading(true);
     toast.loading('Processing withdrawal...', { id: 'withdraw' });
 
     try {
       const { contractService } = await import('@/services/contractService');
-      const hash = await contractService.withdrawAsset(tokenAddress, amount, decimals, chain.id);
+      const hash = await contractService.withdrawAsset(tokenAddress, amount, decimals, chainId);
 
       setTxHash(hash);
       toast.dismiss('withdraw');
@@ -120,32 +120,34 @@ export const useWithdraw = () => {
 };
 
 export const usePortfolioData = (userAddress?: string) => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
-  const { data: portfolio, isLoading, refetch } = useContractRead({
+  const { data: portfolio, isLoading, refetch } = useReadContract({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
     functionName: 'getUserPortfolio',
     args: userAddress ? [userAddress as `0x${string}`] : undefined,
-    enabled: !!userAddress,
-    watch: false,
+    query: {
+      enabled: !!userAddress,
+    },
   });
 
   return { portfolio, isLoading, refetch };
 };
 
 export const usePolicyData = (userAddress?: string) => {
-  const { chain } = useNetwork();
-  const contracts = getContracts(chain?.id);
+  const chainId = useChainId();
+  const contracts = getContracts(chainId);
 
-  const { data: policy, isLoading, refetch } = useContractRead({
+  const { data: policy, isLoading, refetch } = useReadContract({
     address: contracts.CrashGuardCore as `0x${string}`,
     abi: CrashGuardCoreABI,
     functionName: 'getProtectionPolicy',
     args: userAddress ? [userAddress as `0x${string}`] : undefined,
-    enabled: !!userAddress,
-    watch: false,
+    query: {
+      enabled: !!userAddress,
+    },
   });
 
   return { policy, isLoading, refetch };

@@ -46,7 +46,7 @@ const Policies: React.FC = () => {
 
   const handleCreateMonitor = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!monitorForm.name.trim() || monitorForm.symbols.length === 0) {
       toast.error('Please fill in all required fields');
       return;
@@ -60,7 +60,7 @@ const Policies: React.FC = () => {
         enabled: true,
         notification_channels: monitorForm.notification_channels,
       });
-      
+
       setShowCreateMonitor(false);
       resetForm();
     } catch (error) {
@@ -70,7 +70,7 @@ const Policies: React.FC = () => {
 
   const handleUpdateMonitor = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!editingMonitor || !monitorForm.name.trim()) {
       return;
     }
@@ -82,7 +82,7 @@ const Policies: React.FC = () => {
         crash_threshold: monitorForm.crash_threshold,
         notification_channels: monitorForm.notification_channels,
       });
-      
+
       setEditingMonitor(null);
       setShowCreateMonitor(false);
       resetForm();
@@ -152,10 +152,10 @@ const Policies: React.FC = () => {
   // Filter monitors based on search and status
   const filteredMonitors = monitors.filter(monitor => {
     const matchesSearch = monitor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         monitor.symbols.some(symbol => symbol.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = filterStatus === 'all' || 
-                         (filterStatus === 'active' && monitor.enabled) ||
-                         (filterStatus === 'inactive' && !monitor.enabled);
+      monitor.symbols.some(symbol => symbol.toLowerCase().includes(searchQuery.toLowerCase()));
+    const matchesStatus = filterStatus === 'all' ||
+      (filterStatus === 'active' && monitor.enabled) ||
+      (filterStatus === 'inactive' && !monitor.enabled);
     return matchesSearch && matchesStatus;
   });
 
@@ -215,7 +215,7 @@ const Policies: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
+
               {/* Stats Overview */}
               <div className="grid grid-cols-3 gap-4 lg:gap-6">
                 <div className="text-center">
@@ -244,7 +244,7 @@ const Policies: React.FC = () => {
                 <Filter className="h-5 w-5 text-red-400" />
                 Filters
               </h3>
-              
+
               {/* Search */}
               <div className="mb-4">
                 <div className="relative">
@@ -271,11 +271,10 @@ const Policies: React.FC = () => {
                     <button
                       key={filter.id}
                       onClick={() => setFilterStatus(filter.id as any)}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
-                        filterStatus === filter.id
-                          ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                      }`}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${filterStatus === filter.id
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                        : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
+                        }`}
                     >
                       <span>{filter.label}</span>
                       <span className="text-xs">{filter.count}</span>
@@ -308,7 +307,7 @@ const Policies: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">No Monitors Found</h3>
                 <p className="text-gray-400 mb-6">
-                  {searchQuery || filterStatus !== 'all' 
+                  {searchQuery || filterStatus !== 'all'
                     ? 'Try adjusting your search or filters'
                     : 'Create your first monitor to start protecting your assets'
                   }
@@ -331,28 +330,25 @@ const Policies: React.FC = () => {
                 {filteredMonitors.map((monitor, index) => (
                   <div
                     key={index}
-                    className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] ${
-                      monitor.enabled
-                        ? 'bg-green-500/5 border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.1)]'
-                        : 'bg-gray-900/50 border-gray-700/50'
-                    }`}
+                    className={`p-6 rounded-2xl border backdrop-blur-sm transition-all duration-200 hover:scale-[1.02] ${monitor.enabled
+                      ? 'bg-green-500/5 border-green-500/30 shadow-[0_0_20px_rgba(34,197,94,0.1)]'
+                      : 'bg-gray-900/50 border-gray-700/50'
+                      }`}
                   >
                     {/* Monitor Header */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-3 h-3 rounded-full ${
-                          monitor.enabled ? 'bg-green-400 animate-pulse' : 'bg-gray-500'
-                        }`} />
+                        <div className={`w-3 h-3 rounded-full ${monitor.enabled ? 'bg-green-400 animate-pulse' : 'bg-gray-500'
+                          }`} />
                         <h3 className="font-semibold text-white text-lg">{monitor.name}</h3>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => toggleMonitor(monitor.id || monitor.name)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            monitor.enabled 
-                              ? 'text-green-400 hover:bg-green-500/20' 
-                              : 'text-gray-500 hover:bg-gray-700/50'
-                          }`}
+                          className={`p-2 rounded-lg transition-colors ${monitor.enabled
+                            ? 'text-green-400 hover:bg-green-500/20'
+                            : 'text-gray-500 hover:bg-gray-700/50'
+                            }`}
                         >
                           {monitor.enabled ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                         </button>
@@ -394,11 +390,10 @@ const Policies: React.FC = () => {
                             return (
                               <div
                                 key={symbol}
-                                className={`px-3 py-1 rounded-lg text-xs font-medium border ${
-                                  priceInfo?.change >= 0
-                                    ? 'bg-green-500/10 text-green-400 border-green-500/30'
-                                    : 'bg-red-500/10 text-red-400 border-red-500/30'
-                                }`}
+                                className={`px-3 py-1 rounded-lg text-xs font-medium border ${priceInfo?.change >= 0
+                                  ? 'bg-green-500/10 text-green-400 border-green-500/30'
+                                  : 'bg-red-500/10 text-red-400 border-red-500/30'
+                                  }`}
                               >
                                 <div className="flex items-center gap-1">
                                   <span>{symbol}</span>
@@ -451,315 +446,312 @@ const Policies: React.FC = () => {
           </div>
         )}
 
-          {/* AI Monitoring Section */}
-          <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <TrendingDown className="h-5 w-5 text-red-400" />
-                AI Crash Monitoring
-              </h3>
-              {user && (
-                <button
-                  onClick={() => setShowCreateMonitor(true)}
-                  className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            {!user ? (
-              <div className="text-center py-6">
-                <AlertTriangle className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 mb-4">Enable AI monitoring to get crash alerts</p>
-                <button
-                  onClick={handleCreateUser}
-                  className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
-                >
-                  Enable AI Monitoring
-                </button>
-              </div>
-            ) : (
-              <div>
-                {/* Monitor Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white">{monitors.filter(m => m.enabled).length}</div>
-                    <div className="text-xs text-gray-400">Active</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white">{monitors.reduce((acc, m) => acc + m.symbols.length, 0)}</div>
-                    <div className="text-xs text-gray-400">Symbols</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-xl font-bold text-white">{alerts.length}</div>
-                    <div className="text-xs text-gray-400">Alerts</div>
-                  </div>
-                </div>
-
-                {/* Monitors List */}
-                <div className="space-y-3 max-h-64 overflow-y-auto">
-                  {monitors.map((monitor, index) => (
-                    <div key={index} className="p-3 bg-gray-900/50 rounded-lg border border-gray-800/50">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-2 h-2 rounded-full ${monitor.enabled ? 'bg-green-400' : 'bg-gray-500'}`} />
-                          <span className="font-medium text-white text-sm">{monitor.name}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => toggleMonitor(monitor.id || monitor.name)}
-                            className={`p-1 rounded transition-colors ${
-                              monitor.enabled 
-                                ? 'text-green-400 hover:text-green-300' 
-                                : 'text-gray-500 hover:text-gray-400'
-                            }`}
-                          >
-                            {monitor.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
-                          </button>
-                          <button
-                            onClick={() => handleEditMonitor(monitor)}
-                            className="p-1 text-gray-400 hover:text-white transition-colors"
-                          >
-                            <Edit className="h-3 w-3" />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteMonitor(monitor.id || monitor.name)}
-                            className="p-1 text-gray-400 hover:text-red-400 transition-colors"
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="text-xs text-gray-400 space-y-1">
-                        <div>{monitor.symbols.join(', ')} • {monitor.crash_threshold}% threshold</div>
-                        <div className="flex gap-2 flex-wrap">
-                          {monitor.symbols.slice(0, 3).map((symbol: string) => {
-                            const priceInfo = getTokenPrice(symbol);
-                            return priceInfo ? (
-                              <span key={symbol} className={`text-xs px-2 py-1 rounded ${ 
-                                priceInfo.change >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                              }`}>
-                                {symbol}: ${priceInfo.price.toFixed(2)} ({priceInfo.change >= 0 ? '+' : ''}{priceInfo.change.toFixed(1)}%)
-                              </span>
-                            ) : (
-                              <span key={symbol} className="text-xs px-2 py-1 rounded bg-gray-500/20 text-gray-400">
-                                {symbol}: Loading...
-                              </span>
-                            );
-                          })}
-                          {monitor.symbols.length > 3 && (
-                            <span className="text-xs text-gray-500">
-                              +{monitor.symbols.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {monitors.length === 0 && (
-                    <div className="text-center py-4">
-                      <p className="text-gray-400 text-sm">No monitors created yet</p>
-                    </div>
-                  )}
-                </div>
-              </div>
+        {/* AI Monitoring Section */}
+        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+              <TrendingDown className="h-5 w-5 text-red-400" />
+              AI Crash Monitoring
+            </h3>
+            {user && (
+              <button
+                onClick={() => setShowCreateMonitor(true)}
+                className="p-2 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
             )}
           </div>
-        </div>
 
-        {/* Create/Edit Monitor Modal */}
-        {showCreateMonitor && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6 max-w-md w-full">
-              <h3 className="text-lg font-bold text-white mb-4">
-                {editingMonitor ? 'Edit Monitor' : 'Create New Monitor'}
-              </h3>
-              <form onSubmit={editingMonitor ? handleUpdateMonitor : handleCreateMonitor} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Monitor Name</label>
-                  <input
-                    type="text"
-                    value={monitorForm.name}
-                    onChange={(e) => setMonitorForm({ ...monitorForm, name: e.target.value })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
-                    placeholder="My Crypto Monitor"
-                    required
-                  />
+          {!user ? (
+            <div className="text-center py-6">
+              <AlertTriangle className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400 mb-4">Enable AI monitoring to get crash alerts</p>
+              <button
+                onClick={handleCreateUser}
+                className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
+              >
+                Enable AI Monitoring
+              </button>
+            </div>
+          ) : (
+            <div>
+              {/* Monitor Stats */}
+              <div className="grid grid-cols-3 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{monitors.filter(m => m.enabled).length}</div>
+                  <div className="text-xs text-gray-400">Active</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{monitors.reduce((acc, m) => acc + m.symbols.length, 0)}</div>
+                  <div className="text-xs text-gray-400">Symbols</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{alerts.length}</div>
+                  <div className="text-xs text-gray-400">Alerts</div>
+                </div>
+              </div>
+
+              {/* Monitors List */}
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {monitors.map((monitor, index) => (
+                  <div key={index} className="p-3 bg-gray-900/50 rounded-lg border border-gray-800/50">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${monitor.enabled ? 'bg-green-400' : 'bg-gray-500'}`} />
+                        <span className="font-medium text-white text-sm">{monitor.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => toggleMonitor(monitor.id || monitor.name)}
+                          className={`p-1 rounded transition-colors ${monitor.enabled
+                            ? 'text-green-400 hover:text-green-300'
+                            : 'text-gray-500 hover:text-gray-400'
+                            }`}
+                        >
+                          {monitor.enabled ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+                        </button>
+                        <button
+                          onClick={() => handleEditMonitor(monitor)}
+                          className="p-1 text-gray-400 hover:text-white transition-colors"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteMonitor(monitor.id || monitor.name)}
+                          className="p-1 text-gray-400 hover:text-red-400 transition-colors"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 space-y-1">
+                      <div>{monitor.symbols.join(', ')} • {monitor.crash_threshold}% threshold</div>
+                      <div className="flex gap-2 flex-wrap">
+                        {monitor.symbols.slice(0, 3).map((symbol: string) => {
+                          const priceInfo = getTokenPrice(symbol);
+                          return priceInfo ? (
+                            <span key={symbol} className={`text-xs px-2 py-1 rounded ${priceInfo.change >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                              }`}>
+                              {symbol}: ${priceInfo.price.toFixed(2)} ({priceInfo.change >= 0 ? '+' : ''}{priceInfo.change.toFixed(1)}%)
+                            </span>
+                          ) : (
+                            <span key={symbol} className="text-xs px-2 py-1 rounded bg-gray-500/20 text-gray-400">
+                              {symbol}: Loading...
+                            </span>
+                          );
+                        })}
+                        {monitor.symbols.length > 3 && (
+                          <span className="text-xs text-gray-500">
+                            +{monitor.symbols.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+
+                {monitors.length === 0 && (
+                  <div className="text-center py-4">
+                    <p className="text-gray-400 text-sm">No monitors created yet</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Create/Edit Monitor Modal */}
+      {showCreateMonitor && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-2xl border border-gray-800 p-6 max-w-md w-full">
+            <h3 className="text-lg font-bold text-white mb-4">
+              {editingMonitor ? 'Edit Monitor' : 'Create New Monitor'}
+            </h3>
+            <form onSubmit={editingMonitor ? handleUpdateMonitor : handleCreateMonitor} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Monitor Name</label>
+                <input
+                  type="text"
+                  value={monitorForm.name}
+                  onChange={(e) => setMonitorForm({ ...monitorForm, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
+                  placeholder="My Crypto Monitor"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Select Tokens to Monitor</label>
+                <TokenSelector
+                  selectedTokens={monitorForm.symbols}
+                  onTokensChange={(tokens) => setMonitorForm({ ...monitorForm, symbols: tokens })}
+                  placeholder="Select tokens to monitor"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Crash Threshold (%)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="50"
+                  value={monitorForm.crash_threshold}
+                  onChange={(e) => setMonitorForm({ ...monitorForm, crash_threshold: Number(e.target.value) })}
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateMonitor(false);
+                    setEditingMonitor(null);
+                    resetForm();
+                  }}
+                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
+                >
+                  {editingMonitor ? 'Update' : 'Create'} Monitor
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Create/Edit Monitor Modal */}
+      {showCreateMonitor && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-red-500/30 p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
+                  <Target className="h-6 w-6 text-red-400" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Select Tokens to Monitor</label>
-                  <TokenSelector
-                    selectedTokens={monitorForm.symbols}
-                    onTokensChange={(tokens) => setMonitorForm({ ...monitorForm, symbols: tokens })}
-                    placeholder="Select tokens to monitor"
-                  />
+                  <h3 className="text-2xl font-bold text-white">
+                    {editingMonitor ? 'Edit Monitor' : 'Create Monitor'}
+                  </h3>
+                  <p className="text-gray-400 text-sm">Configure AI-powered crash detection</p>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Crash Threshold (%)</label>
+              </div>
+              <button
+                onClick={() => setShowCreateMonitor(false)}
+                className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={editingMonitor ? handleUpdateMonitor : handleCreateMonitor} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Monitor Name</label>
+                <input
+                  type="text"
+                  value={monitorForm.name}
+                  onChange={(e) => setMonitorForm({ ...monitorForm, name: e.target.value })}
+                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
+                  placeholder="My Crypto Monitor"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Select Tokens to Monitor</label>
+                <TokenSelector
+                  selectedTokens={monitorForm.symbols}
+                  onTokensChange={(tokens) => setMonitorForm({ ...monitorForm, symbols: tokens })}
+                  placeholder="Select tokens to monitor"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Crash Threshold ({monitorForm.crash_threshold}%)
+                </label>
+                <div className="space-y-3">
                   <input
-                    type="number"
+                    type="range"
                     min="1"
                     max="50"
                     value={monitorForm.crash_threshold}
-                    onChange={(e) => setMonitorForm({ ...monitorForm, crash_threshold: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white"
+                    onChange={(e) => setMonitorForm({ ...monitorForm, crash_threshold: parseInt(e.target.value) })}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
                   />
-                </div>
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowCreateMonitor(false);
-                      setEditingMonitor(null);
-                      resetForm();
-                    }}
-                    className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
-                  >
-                    {editingMonitor ? 'Update' : 'Create'} Monitor
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-        {/* Create/Edit Monitor Modal */}
-        {showCreateMonitor && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-red-500/30 p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
-                    <Target className="h-6 w-6 text-red-400" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-white">
-                      {editingMonitor ? 'Edit Monitor' : 'Create Monitor'}
-                    </h3>
-                    <p className="text-gray-400 text-sm">Configure AI-powered crash detection</p>
+                  <div className="flex justify-between text-xs text-gray-400">
+                    <span>1% (Very Sensitive)</span>
+                    <span>50% (Less Sensitive)</span>
                   </div>
                 </div>
-                <button
-                  onClick={() => setShowCreateMonitor(false)}
-                  className="p-2 text-gray-400 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
-                >
-                  ✕
-                </button>
               </div>
 
-              <form onSubmit={editingMonitor ? handleUpdateMonitor : handleCreateMonitor} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Monitor Name</label>
-                  <input
-                    type="text"
-                    value={monitorForm.name}
-                    onChange={(e) => setMonitorForm({ ...monitorForm, name: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white focus:outline-none focus:border-cyan-500/50 transition-colors"
-                    placeholder="My Crypto Monitor"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Select Tokens to Monitor</label>
-                  <TokenSelector
-                    selectedTokens={monitorForm.symbols}
-                    onTokensChange={(tokens) => setMonitorForm({ ...monitorForm, symbols: tokens })}
-                    placeholder="Select tokens to monitor"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Crash Threshold ({monitorForm.crash_threshold}%)
-                  </label>
-                  <div className="space-y-3">
-                    <input
-                      type="range"
-                      min="1"
-                      max="50"
-                      value={monitorForm.crash_threshold}
-                      onChange={(e) => setMonitorForm({ ...monitorForm, crash_threshold: parseInt(e.target.value) })}
-                      className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
-                    />
-                    <div className="flex justify-between text-xs text-gray-400">
-                      <span>1% (Very Sensitive)</span>
-                      <span>50% (Less Sensitive)</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">Notification Channels</label>
-                  <div className="grid grid-cols-1 gap-3">
-                    {[
-                      { id: 'telegram', name: 'Telegram', icon: '📱' },
-                      { id: 'email', name: 'Email', icon: '📧' },
-                      { id: 'webhook', name: 'Webhook', icon: '🔗' },
-                    ].map((channel) => (
-                      <label
-                        key={channel.id}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                          monitorForm.notification_channels.includes(channel.id)
-                            ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                            : 'bg-gray-800/30 border-gray-700/50 text-gray-300 hover:border-gray-600/50'
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">Notification Channels</label>
+                <div className="grid grid-cols-1 gap-3">
+                  {[
+                    { id: 'telegram', name: 'Telegram', icon: '📱' },
+                    { id: 'email', name: 'Email', icon: '📧' },
+                    { id: 'webhook', name: 'Webhook', icon: '🔗' },
+                  ].map((channel) => (
+                    <label
+                      key={channel.id}
+                      className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${monitorForm.notification_channels.includes(channel.id)
+                        ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                        : 'bg-gray-800/30 border-gray-700/50 text-gray-300 hover:border-gray-600/50'
                         }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={monitorForm.notification_channels.includes(channel.id)}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setMonitorForm({
-                                ...monitorForm,
-                                notification_channels: [...monitorForm.notification_channels, channel.id]
-                              });
-                            } else {
-                              setMonitorForm({
-                                ...monitorForm,
-                                notification_channels: monitorForm.notification_channels.filter(c => c !== channel.id)
-                              });
-                            }
-                          }}
-                          className="sr-only"
-                        />
-                        <span className="text-xl">{channel.icon}</span>
-                        <span className="font-medium">{channel.name}</span>
-                        {monitorForm.notification_channels.includes(channel.id) && (
-                          <CheckCircle className="h-4 w-4 ml-auto" />
-                        )}
-                      </label>
-                    ))}
-                  </div>
+                    >
+                      <input
+                        type="checkbox"
+                        checked={monitorForm.notification_channels.includes(channel.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setMonitorForm({
+                              ...monitorForm,
+                              notification_channels: [...monitorForm.notification_channels, channel.id]
+                            });
+                          } else {
+                            setMonitorForm({
+                              ...monitorForm,
+                              notification_channels: monitorForm.notification_channels.filter(c => c !== channel.id)
+                            });
+                          }
+                        }}
+                        className="sr-only"
+                      />
+                      <span className="text-xl">{channel.icon}</span>
+                      <span className="font-medium">{channel.name}</span>
+                      {monitorForm.notification_channels.includes(channel.id) && (
+                        <CheckCircle className="h-4 w-4 ml-auto" />
+                      )}
+                    </label>
+                  ))}
                 </div>
+              </div>
 
-                <div className="flex gap-4 pt-6">
-                  <button
-                    type="button"
-                    onClick={() => setShowCreateMonitor(false)}
-                    className="flex-1 px-6 py-3 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-800/50 transition-colors font-medium"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 transition-colors font-medium"
-                  >
-                    {editingMonitor ? 'Update' : 'Create'} Monitor
-                  </button>
-                </div>
-              </form>
-            </div>
+              <div className="flex gap-4 pt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowCreateMonitor(false)}
+                  className="flex-1 px-6 py-3 border border-gray-600/50 text-gray-300 rounded-xl hover:bg-gray-800/50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 transition-colors font-medium"
+                >
+                  {editingMonitor ? 'Update' : 'Create'} Monitor
+                </button>
+              </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+    </div>
   );
 };
 

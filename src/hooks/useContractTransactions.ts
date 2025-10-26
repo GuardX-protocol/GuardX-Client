@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAccount, useNetwork, usePublicClient } from 'wagmi';
+import { useAccount, useChainId, usePublicClient } from 'wagmi';
 import { getContracts } from '@/config/contracts';
 import { formatUnits } from 'viem';
 
@@ -20,16 +20,16 @@ export interface Transaction {
 
 const useContractTransactions = () => {
   const { address } = useAccount();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const publicClient = usePublicClient();
-  const contracts = getContracts(chain?.id) || {};
+  const contracts = getContracts(chainId) || {};
   
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Early return if not connected or no address
-  const isConnected = !!address && !!chain && !!publicClient;
+  const isConnected = !!address && !!chainId && !!publicClient;
 
   const getTokenSymbol = (tokenAddress: string) => {
     const addr = tokenAddress?.toLowerCase();
@@ -162,7 +162,7 @@ const useContractTransactions = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [address, publicClient, contracts, chain]);
+  }, [address, publicClient, contracts, chainId]);
 
   useEffect(() => {
     if (isConnected && contracts && contracts.CrashGuardCore) {

@@ -6,22 +6,28 @@ import {
   Activity,
   DollarSign,
 } from "lucide-react";
-import DepositForm from "@/components/deposit/DepositForm";
-import { useAccount } from "wagmi";
+import UnifiedAutomatedFlow from "@/components/deposit/UnifiedAutomatedFlow";
+import VincentAbilitiesTest from "@/components/debug/VincentAbilitiesTest";
+import TestnetTokenFaucet from "@/components/debug/TestnetTokenFaucet";
+import { useUnifiedAuth } from "@/hooks/useUnifiedAuth";
 
 import useVaultBalances from "@/hooks/useVaultBalances";
 
 const Deposit: React.FC = () => {
-  const { isConnected, address } = useAccount();
+  const unifiedAuth = useUnifiedAuth();
+
+  // Use unified auth state
+  const effectiveAddress = unifiedAuth.address;
+  const isEffectivelyConnected = unifiedAuth.isConnected;
 
   // Get vault balances from CrashGuardCore
   const {
     assets: vaultAssets,
     totalValue: vaultTotalValue,
     isLoading: vaultLoading,
-  } = useVaultBalances(address as `0x${string}`);
+  } = useVaultBalances(effectiveAddress as `0x${string}`);
 
-  if (!isConnected) {
+  if (!isEffectivelyConnected) {
     return (
       <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
         {/* Animated Background Particles */}
@@ -39,13 +45,14 @@ const Deposit: React.FC = () => {
               <ArrowDownCircle className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3">
-              Connect Wallet
+              Connect Wallet or Vincent
             </h2>
             <p className="text-gray-400 mb-6 text-sm sm:text-base">
-              Connect your wallet to start depositing assets
+              Connect your wallet or authenticate with Vincent to start depositing assets
             </p>
-            <div className="text-xs sm:text-sm text-gray-500">
-              Click "Connect Wallet" in the header
+            <div className="text-xs sm:text-sm text-gray-500 space-y-2">
+              <div>Click "Connect Wallet" in the header for traditional wallet</div>
+              <div>Or authenticate with Vincent for cross-chain deposits</div>
             </div>
           </div>
         </div>
@@ -76,11 +83,11 @@ const Deposit: React.FC = () => {
                 </div>
                 <div>
                   <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">
-                    Deposit Risky Assets
+                    Vault Operations
                   </h1>
                   <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
                     <Shield className="h-4 w-4 text-cyan-400" />
-                    Protect your volatile crypto with GuardX crash detection
+                    Deposit & withdraw assets with GuardX crash protection
                   </p>
                 </div>
               </div>
@@ -88,9 +95,15 @@ const Deposit: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Deposit Form */}
-            <div className="lg:col-span-2">
-              <DepositForm />
+            {/* Unified Automated Flow */}
+            <div className="lg:col-span-2 space-y-8">
+              <UnifiedAutomatedFlow />
+
+              {/* Testnet Token Faucet - Help users get tokens */}
+              {/* <TestnetTokenFaucet /> */}
+
+              {/* Vincent Abilities Test - Debug Component */}
+              {/* <VincentAbilitiesTest /> */}
             </div>
 
             {/* Portfolio Sidebar */}

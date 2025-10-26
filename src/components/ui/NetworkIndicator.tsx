@@ -1,13 +1,13 @@
 import React from 'react';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { CheckCircle, AlertCircle, ChevronDown } from 'lucide-react';
 import { getChainMetadata, isSupportedChain } from '@/config/chains';
 import { isChainDeployed } from '@/config/deployments';
 import { SUPPORTED_CHAINS } from '@/config/chains';
 
 const NetworkIndicator: React.FC = () => {
-  const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
+  const { chain } = useAccount();
+  const { switchChain } = useSwitchChain();
   const [showDropdown, setShowDropdown] = React.useState(false);
 
   if (!chain) {
@@ -19,8 +19,8 @@ const NetworkIndicator: React.FC = () => {
   const isDeployed = isChainDeployed(chain.id);
 
   const handleSwitchNetwork = (chainId: number) => {
-    if (switchNetwork) {
-      switchNetwork(chainId);
+    if (switchChain) {
+      switchChain({ chainId });
       setShowDropdown(false);
     }
   };

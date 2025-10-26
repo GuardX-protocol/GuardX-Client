@@ -1,9 +1,9 @@
 import React from 'react';
 import { Network, Info } from 'lucide-react';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 
 const NetworkBanner: React.FC = () => {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   if (!chain) return null;
 

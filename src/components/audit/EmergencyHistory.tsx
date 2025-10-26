@@ -1,7 +1,7 @@
 import React from 'react';
 import { AlertTriangle, TrendingDown } from 'lucide-react';
 import { useEmergencyExecutor } from '@/hooks/useContract';
-import { useContractRead, useAccount } from 'wagmi';
+import { useReadContract, useAccount } from 'wagmi';
 import { formatUnits } from 'viem';
 import { formatCurrency, formatDate } from '@/utils/format';
 
@@ -9,7 +9,7 @@ const EmergencyHistory: React.FC = () => {
   const { address } = useAccount();
   const contract = useEmergencyExecutor();
 
-  const { isLoading } = useContractRead({
+  const { isLoading } = useReadContract({
     ...contract,
     functionName: 'owner', // Placeholder - getEmergencyHistory not in ABI
     // args: address ? [address] : undefined,

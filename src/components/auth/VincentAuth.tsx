@@ -2,7 +2,8 @@ import React, { useEffect, useState, createContext, useContext, useMemo } from '
 import { getWebAuthClient } from '@lit-protocol/vincent-app-sdk/webAuthClient';
 import { isExpired, VincentJWTAppUser } from '@lit-protocol/vincent-app-sdk/jwt';
 import { jwtDecode } from 'jwt-decode';
-import { Shield, LogOut } from 'lucide-react';
+import { Shield, LogOut, Wallet, AlertTriangle, CheckCircle } from 'lucide-react';
+import { useWeb3Auth } from '@/hooks/useWeb3Auth';
 import toast from 'react-hot-toast';
 
 // Vincent Auth Context
@@ -16,6 +17,8 @@ interface VincentAuthContextType {
     logout: () => void;
     isLoading: boolean;
     initiateAuth: () => void;
+    requiresWalletFirst: boolean;
+    canAuthenticateVincent: boolean;
 }
 
 const VincentAuthContext = createContext<VincentAuthContextType | null>(null);
@@ -82,6 +85,9 @@ export const VincentAuthProvider: React.FC<VincentAuthProviderProps> = ({ childr
     const [user, setUser] = useState<{ pkpAddress: string; permissions: string[] } | null>(null);
     const [jwt, setJwt] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    
+    // Get Web3 wallet state to enforce wallet-first flow
+    const { isConnected: isWalletConnected, walletAddress } = useWeb3Auth();
 
     // Initialize Vincent client with proper App ID
     const vincentAppClient = useMemo(() => {
@@ -108,14 +114,22 @@ export const VincentAuthProvider: React.FC<VincentAuthProviderProps> = ({ childr
     };
 
     const initiateAuth = () => {
+        // Enforce wallet-first authentication flow
+        if (!isWalletConnected) {
+            toast.error('Please connect your Web3 wallet first before authenticating Vincent');
+            return;
+        }
+
         // Clear any existing JWT to ensure fresh authentication
         localStorage.removeItem('vincent_jwt');
 
         const redirectUri = getRedirectUri();
-        console.log('Initiating Vincent auth with:', {
+        console.log('Initiating Vincent auth with wallet connected:', {
             appId: MY_APP_ID,
             redirectUri,
-            currentUrl: window.location.href
+            currentUrl: window.location.href,
+            walletAddress,
+            walletConnected: isWalletConnected
         });
 
         vincentAppClient.redirectToConnectPage({
@@ -298,6 +312,8 @@ export const VincentAuthProvider: React.FC<VincentAuthProviderProps> = ({ childr
         logout,
         isLoading,
         initiateAuth,
+        requiresWalletFirst: !isWalletConnected,
+        canAuthenticateVincent: isWalletConnected,
     };
 
     // Always render children with context - ProtectedRoute handles auth screens

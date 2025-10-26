@@ -1,4 +1,4 @@
-import { useContractWrite, usePrepareContractWrite, useAccount } from 'wagmi';
+import { useWriteContract, useAccount } from 'wagmi';
 import { parseUnits } from 'viem';
 import { CONTRACTS } from '@/config/contracts';
 import { DEXAggregatorABI } from '@/config/abis';
@@ -18,24 +18,27 @@ export const useDEXSwap = (
     // Calculate max slippage in basis points (0.5% = 50 basis points)
     const maxSlippage = BigInt(Math.floor(slippageTolerance * 100));
 
-    const { config } = usePrepareContractWrite({
-        address: CONTRACTS.DEXAggregator as `0x${string}`,
-        abi: DEXAggregatorABI,
-        functionName: 'swapTokens',
-        args: [
-            tokenIn as `0x${string}`,
-            tokenOut as `0x${string}`,
-            parseUnits(amountIn || '0', decimalsIn),
-            maxSlippage,
-            BigInt(deadline),
-        ],
-        enabled: !!tokenIn && !!tokenOut && !!amountIn && parseFloat(amountIn) > 0 && !!userAddress,
-    });
+    const { writeContract, data, isPending: isLoading, isSuccess, isError, error } = useWriteContract();
 
-    const { write, data, isLoading, isSuccess, isError, error } = useContractWrite(config);
+    const swap = () => {
+        if (!tokenIn || !tokenOut || !amountIn || parseFloat(amountIn) <= 0 || !userAddress) return;
+
+        writeContract({
+            address: CONTRACTS.DEXAggregator as `0x${string}`,
+            abi: DEXAggregatorABI,
+            functionName: 'swapTokens',
+            args: [
+                tokenIn as `0x${string}`,
+                tokenOut as `0x${string}`,
+                parseUnits(amountIn || '0', decimalsIn),
+                maxSlippage,
+                BigInt(deadline),
+            ],
+        });
+    };
 
     return {
-        swap: write,
+        swap,
         transaction: data,
         isLoading,
         isSuccess,

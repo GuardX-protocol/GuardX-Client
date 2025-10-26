@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Shield, Menu, X, Home, DollarSign, Settings, BarChart3, FileText } from 'lucide-react';
-import { VincentUserInfo } from '@/components/auth/VincentAuth';
-import NetworkIndicator from '@/components/ui/NetworkIndicator';
+import UnifiedAuthButton from '@/components/auth/UnifiedAuthButton';
 
 const Header: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -10,7 +9,7 @@ const Header: React.FC = () => {
 
   const navigation = [
     { name: 'Dashboard', path: '/app/dashboard', icon: Home },
-    { name: 'Deposit', path: '/app/deposit', icon: DollarSign },
+    { name: 'Vault', path: '/app/deposit', icon: DollarSign },
     { name: 'Policies', path: '/app/policies', icon: Settings },
     { name: 'Prices', path: '/app/prices', icon: BarChart3 },
     { name: 'Audit', path: '/app/audit', icon: FileText },
@@ -61,11 +60,7 @@ const Header: React.FC = () => {
 
             {/* Right Side */}
             <div className="flex items-center gap-4">
-              {/* Temporarily disabled NetworkIndicator to fix Wagmi config issue */}
-              {/* <div className="hidden md:block">
-                <NetworkIndicator />
-              </div> */}
-              <VincentUserInfo />
+              <UnifiedAuthButton />
               
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
