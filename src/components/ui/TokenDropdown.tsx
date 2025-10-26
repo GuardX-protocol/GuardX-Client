@@ -61,7 +61,7 @@ const TokenDropdown: React.FC<TokenDropdownProps> = ({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-left hover:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 backdrop-blur-sm"
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-800/50 border border-gray-600 rounded-xl text-left hover:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200 backdrop-blur-sm"
       >
         <div className="flex items-center gap-3">
           {selectedToken ? (
@@ -95,7 +95,7 @@ const TokenDropdown: React.FC<TokenDropdownProps> = ({
                 placeholder="Search tokens..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ const TokenDropdown: React.FC<TokenDropdownProps> = ({
                         className="w-8 h-8 rounded-full"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
                         <span className="text-white font-bold text-xs">
                           {token.symbol.slice(0, 2)}
                         </span>
@@ -134,7 +134,7 @@ const TokenDropdown: React.FC<TokenDropdownProps> = ({
                           <div className="font-semibold text-gray-100">{token.symbol}</div>
                           <div className="text-sm text-gray-400 truncate">{token.name}</div>
                           {showBalances && tokenWithBalance.hasBalance && (
-                            <div className="text-xs text-blue-400">
+                            <div className="text-xs text-orange-400">
                               Balance: {tokenWithBalance.formattedBalance}
                             </div>
                           )}

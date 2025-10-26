@@ -210,7 +210,7 @@ const Audit: React.FC = () => {
                         <div className={`p-2 rounded-lg ${
                           tx.type === 'deposit' 
                             ? 'bg-green-500/20 text-green-400' 
-                            : 'bg-blue-500/20 text-blue-400'
+                            : 'bg-orange-500/20 text-orange-400'
                         }`}>
                           {tx.type === 'deposit' ? (
                             <ArrowDownCircle className="h-4 w-4" />

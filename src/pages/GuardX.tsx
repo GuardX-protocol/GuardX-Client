@@ -173,8 +173,8 @@ const GuardX: React.FC = () => {
         return (
             <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
                 <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
-                    <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                        <Shield className="h-16 w-16 mx-auto mb-4 text-cyan-400" />
+                    <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(255,66,6,0.3)]">
+                        <Shield className="h-16 w-16 mx-auto mb-4 text-red-400" />
                         <h2 className="text-2xl font-bold text-white mb-3">Connect Wallet</h2>
                         <p className="text-gray-400">Connect your wallet to access GuardX AI monitoring</p>
                     </div>
@@ -188,7 +188,7 @@ const GuardX: React.FC = () => {
             <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
                 <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
                     <div className="flex items-center gap-3">
-                        <Loader2 className="h-8 w-8 animate-spin text-cyan-400" />
+                        <Loader2 className="h-8 w-8 animate-spin text-red-400" />
                         <span className="text-xl text-white">Loading GuardX...</span>
                     </div>
                 </div>
@@ -202,8 +202,8 @@ const GuardX: React.FC = () => {
                 <div className="relative z-10 p-6">
                     <div className="max-w-4xl mx-auto">
                         <div className="text-center py-12">
-                            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
-                                <Shield className="h-12 w-12 text-cyan-400" />
+                            <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+                                <Shield className="h-12 w-12 text-red-400" />
                             </div>
                             <h1 className="text-3xl font-bold text-white mb-4">Welcome to GuardX AI</h1>
                             <p className="text-gray-400 mb-8 max-w-md mx-auto">
@@ -211,7 +211,7 @@ const GuardX: React.FC = () => {
                             </p>
                             <button
                                 onClick={handleCreateUser}
-                                className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-xl hover:from-cyan-600 hover:to-purple-600 transition-colors font-medium"
+                                className="px-8 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:from-red-600 hover:to-orange-600 transition-colors font-medium"
                             >
                                 Enable GuardX Monitoring
                             </button>
@@ -232,8 +232,8 @@ const GuardX: React.FC = () => {
                     {/* Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div className="flex items-center gap-4">
-                            <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
-                                <Shield className="h-8 w-8 text-cyan-400" />
+                            <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
+                                <Shield className="h-8 w-8 text-red-400" />
                             </div>
                             <div>
                                 <h1 className="text-3xl font-bold text-white">GuardX AI Monitoring</h1>
@@ -249,7 +249,7 @@ const GuardX: React.FC = () => {
                             </button>
                             <button
                                 onClick={() => setShowCreateForm(true)}
-                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
                             >
                                 <Plus className="h-4 w-4" />
                                 New Monitor
@@ -261,7 +261,7 @@ const GuardX: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                         <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
                             <div className="flex items-center gap-3 mb-2">
-                                <Activity className="h-5 w-5 text-cyan-400" />
+                                <Activity className="h-5 w-5 text-red-400" />
                                 <span className="text-sm text-gray-400">Active Monitors</span>
                             </div>
                             <div className="text-2xl font-bold text-white">{activeMonitors.length}</div>
@@ -301,7 +301,7 @@ const GuardX: React.FC = () => {
                             {monitorsLoading ? (
                                 <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
                                     <div className="flex items-center justify-center py-8">
-                                        <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+                                        <Loader2 className="h-6 w-6 animate-spin text-red-400" />
                                         <span className="ml-2 text-white">Loading monitors...</span>
                                     </div>
                                 </div>
@@ -311,7 +311,7 @@ const GuardX: React.FC = () => {
                                     <p className="text-gray-400 mb-4">No monitors created yet</p>
                                     <button
                                         onClick={() => setShowCreateForm(true)}
-                                        className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors"
+                                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                                     >
                                         Create Your First Monitor
                                     </button>
@@ -371,7 +371,7 @@ const GuardX: React.FC = () => {
                             {alertsLoading ? (
                                 <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
                                     <div className="flex items-center justify-center py-8">
-                                        <Loader2 className="h-6 w-6 animate-spin text-cyan-400" />
+                                        <Loader2 className="h-6 w-6 animate-spin text-red-400" />
                                         <span className="ml-2 text-white">Loading alerts...</span>
                                     </div>
                                 </div>
@@ -485,7 +485,7 @@ const GuardX: React.FC = () => {
                                             }}
                                             className="rounded"
                                         />
-                                        <MessageSquare className="h-4 w-4 text-blue-400" />
+                                        <MessageSquare className="h-4 w-4 text-orange-400" />
                                         <span className="text-sm text-gray-300">Telegram</span>
                                     </label>
                                     <label className="flex items-center gap-2">
@@ -524,7 +524,7 @@ const GuardX: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                                    className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
                                 >
                                     {editingMonitor ? 'Update' : 'Create'} Monitor
                                 </button>
@@ -586,7 +586,7 @@ const GuardX: React.FC = () => {
                                             })}
                                             className="rounded"
                                         />
-                                        <MessageSquare className="h-4 w-4 text-blue-400" />
+                                        <MessageSquare className="h-4 w-4 text-orange-400" />
                                         <span className="text-sm text-gray-300">Telegram Alerts</span>
                                     </label>
                                     <label className="flex items-center gap-2">
@@ -617,7 +617,7 @@ const GuardX: React.FC = () => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+                                    className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
                                 >
                                     Save Settings
                                 </button>
