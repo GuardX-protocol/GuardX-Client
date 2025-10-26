@@ -31,6 +31,7 @@ import { CrashGuardCoreABI } from "@/config/abis/CrashGuardCore";
 import { ERC20_ABI } from "@/config/abis/ERC20";
 import { getContracts } from "@/config/contracts";
 import { usePortfolioData } from "@/hooks";
+import { useVincentAbilities } from "@/hooks/useVincentAbilities";
 
 const DepositForm: React.FC = () => {
   const { address, isConnected } = useAccount();
@@ -46,6 +47,9 @@ const DepositForm: React.FC = () => {
 
   // Get portfolio data for withdrawals
   const { portfolio, refetch: refetchPortfolio } = usePortfolioData(address);
+
+  // Vincent abilities for secure transactions
+  useVincentAbilities();
 
   // Contract interactions using CrashGuardCore
   const {
@@ -568,7 +572,7 @@ const DepositForm: React.FC = () => {
               <span>Transaction submitted</span>
             </div>
             <a
-              href={`https://sepolia.arbiscan.io/tx/${depositTx?.hash || withdrawTx?.hash}`}
+              href={`https://sepolia.basescan.io/tx/${depositTx?.hash || withdrawTx?.hash}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs text-blue-400 hover:text-blue-300 underline mt-1 block"
