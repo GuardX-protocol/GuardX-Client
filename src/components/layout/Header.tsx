@@ -21,27 +21,27 @@ const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-50">
       <div className="relative">
-        {/* Clean background with subtle border */}
-        <div className="absolute inset-0 bg-white/95 backdrop-blur-xl border-b border-slate-200"></div>
+        {/* Dark background with subtle border */}
+        <div className="absolute inset-0 bg-black/95 backdrop-blur-xl border-b border-gray-800"></div>
         
         <div className="relative max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <div className="p-2.5 bg-blue-600 rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
+              <div className="p-2.5 bg-blue-700 rounded-xl shadow-sm group-hover:shadow-md transition-shadow">
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-semibold text-slate-900">
+                <span className="text-xl font-semibold text-white">
                   GuardX
                 </span>
-                <span className="text-xs text-slate-500 -mt-0.5">Crash Protection</span>
+                <span className="text-xs text-gray-400 -mt-0.5">Crash Protection</span>
               </div>
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center">
-              <div className="flex items-center bg-slate-50 rounded-xl p-1 border border-slate-200">
+              <div className="flex items-center bg-gray-900 rounded-xl p-1 border border-gray-700">
                 {navigation.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -50,8 +50,8 @@ const Header: React.FC = () => {
                       to={item.path}
                       className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
                         isActive(item.path)
-                          ? 'bg-white text-blue-600 shadow-sm'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                          ? 'bg-gray-800 text-blue-400 shadow-sm'
+                          : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                       }`}
                     >
                       <Icon className="h-4 w-4" />
@@ -73,7 +73,7 @@ const Header: React.FC = () => {
               {/* Mobile menu button */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden p-2.5 text-slate-600 hover:text-slate-900 transition-colors rounded-xl hover:bg-slate-100"
+                className="lg:hidden p-2.5 text-gray-400 hover:text-white transition-colors rounded-xl hover:bg-gray-800"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
