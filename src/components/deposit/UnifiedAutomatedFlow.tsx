@@ -2,8 +2,9 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { ArrowDownCircle, ArrowUpCircle, Loader2, AlertTriangle, Shield, Zap, CheckCircle } from 'lucide-react';
 import { parseUnits, formatUnits } from 'viem';
 import toast from 'react-hot-toast';
-import { useWeb3Auth } from '@/hooks/useWeb3Auth';
+import { useAccount, useWalletClient, useChainId } from 'wagmi';
 import { useVincentAuth } from '@/components/auth/VincentAuth';
+import { walletClientToSigner } from '@/utils/ethers';
 import { usePKPOperations } from '@/hooks/usePKPWallet';
 import { useFlexibleTokenBalance } from '@/hooks/useFlexibleTokenBalance';
 import { useRealDeposit } from '@/hooks/useRealDeposit';
@@ -60,9 +61,14 @@ interface AutomationStep {
 type OperationMode = 'deposit' | 'withdraw';
 
 const UnifiedAutomatedFlow: React.FC = () => {
-    const { signer, walletAddress, isConnected: isWalletConnected, chainId } = useWeb3Auth();
-    const { isAuthenticated, user, initiateAuth } = useVincentAuth();
+    const { address: walletAddress, isConnected: isWalletConnected } = useAccount();
+    const chainId = useChainId();
+    const { data: walletClient } = useWalletClient();
+    const { isAuthenticated, user, initiateAuth, jwt } = useVincentAuth();
     const realDeposit = useRealDeposit();
+
+    // Convert wallet client to ethers signer
+    const signer = walletClient ? walletClientToSigner(walletClient) : null;
     const [mode, setMode] = useState<OperationMode>('deposit');
     const [selectedToken, setSelectedToken] = useState<TokenOption | null>(null);
     const [selectedVaultAsset, setSelectedVaultAsset] = useState<VaultAsset | null>(null);
@@ -295,6 +301,13 @@ const UnifiedAutomatedFlow: React.FC = () => {
 
     // Execute automated operation
     const handleAutomatedOperation = async () => {
+        // CRITICAL: Check Vincent JWT before executing
+        if (!jwt) {
+            toast.error('Vincent authorization required. Please authenticate with Vincent first.');
+            console.error('No JWT found. User must authorize Vincent.');
+            return;
+        }
+
         if (!isWalletConnected || !isAuthenticated || !hasValidAmount || !signer || !user?.pkpAddress) {
             toast.error('Please check your connection and selection');
             return;
@@ -496,7 +509,7 @@ const UnifiedAutomatedFlow: React.FC = () => {
                 updateStep('swap-token', 'processing');
 
                 console.log('🔄 Swapping token to ETH using real DEX transaction');
-                
+
                 // Use real DEX swap instead of simulated Vincent abilities
                 const realSwapTxHash = await realDeposit.executeRealTokenSwap({
                     tokenIn: selectedToken.address as `0x${string}`,
@@ -505,7 +518,7 @@ const UnifiedAutomatedFlow: React.FC = () => {
                     recipient: user!.pkpAddress as `0x${string}`,
                     chainId: sourceChain,
                 });
-                
+
                 swapResult = {
                     transactionHash: realSwapTxHash,
                     swapTransactionHash: realSwapTxHash,
@@ -534,7 +547,7 @@ const UnifiedAutomatedFlow: React.FC = () => {
             updateStep('bridge-token', 'processing');
 
             console.log('🌉 Bridging to Base Sepolia using real bridge transaction');
-            
+
             // Use real cross-chain bridge instead of simulated
             const realBridgeTxHash = await realDeposit.executeRealCrossChainBridge({
                 fromChain: sourceChain,
@@ -543,7 +556,7 @@ const UnifiedAutomatedFlow: React.FC = () => {
                 amount: parseUnits(amount, 18).toString(),
                 recipient: user!.pkpAddress as `0x${string}`,
             });
-            
+
             bridgeTxHash = realBridgeTxHash;
             bridgeResult = {
                 transactionHash: realBridgeTxHash,
@@ -582,7 +595,7 @@ const UnifiedAutomatedFlow: React.FC = () => {
         updateStep('deposit-vault', 'processing');
 
         console.log('🏦 Depositing to vault using real vault transaction');
-        
+
         // Use real vault deposit instead of simulated
         const depositResult = await realDeposit.executeRealVaultDeposit({
             token: '0x0000000000000000000000000000000000000000' as `0x${string}`, // ETH

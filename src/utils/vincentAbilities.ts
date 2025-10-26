@@ -170,6 +170,14 @@ export const executeDebridge = async (vincentApp: VincentApp, params: {
 }) => {
   console.log('🌉 Executing deBridge via Vincent:', params);
 
+  // CRITICAL: Verify JWT is provided
+  if (!vincentApp.jwt) {
+    throw new Error(
+      'No JWT provided. User must authorize Vincent first. ' +
+      'Please redirect to Vincent Connect Page to grant permissions.'
+    );
+  }
+
   // Validate and prepare PKP
   const { isValid, ethAddress } = await validateAndPreparePKP(vincentApp.pkpAddress, params.sourceChain);
   if (!isValid) {
@@ -227,11 +235,22 @@ export const executeDebridge = async (vincentApp: VincentApp, params: {
     
     if (error.message?.includes('not permitted to execute Vincent Ability')) {
       const appId = vincentApp.appId || import.meta.env.VITE_VINCENT_APP_ID;
-      throw new Error(`Permission denied: PKP ${vincentApp.pkpAddress} is not authorized to execute deBridge ability for App ID ${appId}. Please check your Vincent Dashboard configuration and ensure the PKP has the required permissions.`);
+      throw new Error(
+        `Permission denied: PKP ${vincentApp.pkpAddress} is not authorized to execute deBridge ability for App ID ${appId}.\n\n` +
+        `To fix this:\n` +
+        `1. Visit https://app.heyvincent.ai/connect/${appId}\n` +
+        `2. Connect your wallet\n` +
+        `3. Grant deBridge permissions to your PKP\n` +
+        `4. Return here and try again`
+      );
     }
     
-    if (error.message?.includes('App Delegatee')) {
-      throw new Error(`Vincent authorization failed. Please ensure your PKP is properly registered in the Vincent Dashboard with the correct permissions for deBridge operations.`);
+    if (error.message?.includes('App Delegatee') || error.message?.includes('authorization failed')) {
+      const appId = vincentApp.appId || import.meta.env.VITE_VINCENT_APP_ID;
+      throw new Error(
+        `Vincent authorization failed. User must authorize Vincent first.\n\n` +
+        `Please visit https://app.heyvincent.ai/connect/${appId} to grant permissions.`
+      );
     }
     
     throw error;

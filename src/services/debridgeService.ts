@@ -9,9 +9,9 @@ import { ethers } from 'ethers';
 
 // Note: These would be real Vincent ERC20 transfer ability imports
 // For now, we'll create placeholder functions that match the expected API
-const createTransferClient = (signer: ethers.Signer) => ({
-    precheck: async (params: any) => ({ success: true, result: {} }),
-    execute: async (params: any) => ({ success: true, result: { txHash: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('') } })
+const createTransferClient = (_signer: ethers.Signer) => ({
+    precheck: async (_params: any) => ({ success: true, result: {} }),
+    execute: async (_params: any) => ({ success: true, result: { txHash: '0x' + Array.from({ length: 64 }, () => Math.floor(Math.random() * 16).toString(16)).join('') } })
 });
 
 interface DeBridgeParams {
@@ -112,7 +112,7 @@ export class DeBridgeService {
             // Use type assertion to bypass complex Vincent SDK type inference
             const deBridgeClient = getVincentAbilityClient({
                 bundledVincentAbility: deBridgeAbility as any,
-                ethersSigner: pkpWallet,
+                ethersSigner: pkpWallet as any, // Type assertion for ethers v6 compatibility
             });
 
             // Map parameters to Vincent deBridge format
@@ -144,9 +144,9 @@ export class DeBridgeService {
             }
 
             // Extract quote details from precheck result
-            const quoteData = precheckResult.result?.data || {};
+            const quoteData = (precheckResult.result as any)?.data || {};
             console.log('✅ deBridge quote received:', quoteData);
-            
+
             return {
                 valid: true,
                 quote: {
@@ -158,7 +158,7 @@ export class DeBridgeService {
             };
         } catch (error: any) {
             console.error('❌ Failed to get deBridge quote:', error);
-            
+
             // Provide more helpful error messages
             let errorMessage = error.message || 'Unknown error';
             if (error.message?.includes('PKP')) {
@@ -166,7 +166,7 @@ export class DeBridgeService {
             } else if (error.message?.includes('RPC')) {
                 errorMessage = 'RPC connection failed. Please check your network connection.';
             }
-            
+
             return {
                 valid: false,
                 errors: [errorMessage],
@@ -203,7 +203,7 @@ export class DeBridgeService {
                 sourceToken: params.fromTokenAddress,
                 destinationToken: params.toTokenAddress,
                 amount: params.amount,
-            });
+            }) as { txHash?: string; transactionHash?: string; orderId?: string };
 
             // Validate bridge result
             if (!bridgeResult || typeof bridgeResult !== 'object') {
@@ -225,12 +225,12 @@ export class DeBridgeService {
                 throw new Error(`Bridge tx reverted: Status ${receipt?.status || 'null'}`);
             }
 
-            console.log('✅ Bridge executed successfully:', { 
-                txHash, 
+            console.log('✅ Bridge executed successfully:', {
+                txHash,
                 orderId,
-                blockNumber: receipt.blockNumber 
+                blockNumber: receipt.blockNumber
             });
-            
+
             return {
                 transactionHash: txHash,
                 bridgeOrderId: orderId,
@@ -240,7 +240,7 @@ export class DeBridgeService {
             };
         } catch (error: any) {
             console.error('❌ Bridge execution failed:', error);
-            
+
             // Provide more helpful error messages
             if (error.message?.includes('PKP')) {
                 throw new Error('PKP authentication failed. Please ensure your PKP is properly configured and has the required permissions.');
@@ -249,7 +249,7 @@ export class DeBridgeService {
             } else if (error.message?.includes('user rejected')) {
                 throw new Error('Transaction was rejected by user.');
             }
-            
+
             throw error;
         }
     }
@@ -355,7 +355,7 @@ export const isNativeToken = (tokenAddress: string): boolean => {
     return tokenAddress === NATIVE_TOKEN || tokenAddress === '0x0000000000000000000000000000000000000000';
 };
 
-export const getTokenMapping = (fromChain: number, toChain: number, tokenAddress: string): string => {
+export const getTokenMapping = (_fromChain: number, toChain: number, tokenAddress: string): string => {
     if (isNativeToken(tokenAddress)) return NATIVE_TOKEN;
 
     const tokenMappings: Record<string, Record<number, string>> = {
