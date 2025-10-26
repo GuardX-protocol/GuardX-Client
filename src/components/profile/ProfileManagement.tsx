@@ -182,7 +182,7 @@ const ProfileManagement: React.FC = () => {
               <button
                 type="button"
                 onClick={handleTelegramSetup}
-                className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors text-sm"
+                className="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-sm"
               >
                 Setup
               </button>
@@ -208,7 +208,7 @@ const ProfileManagement: React.FC = () => {
                   })}
                   className="rounded"
                 />
-                <MessageSquare className="h-4 w-4 text-blue-400" />
+                <MessageSquare className="h-4 w-4 text-orange-400" />
                 <span className="text-sm text-gray-300">Telegram Alerts</span>
               </label>
               <label className="flex items-center gap-2">
@@ -294,7 +294,7 @@ const ProfileManagement: React.FC = () => {
               {!user.telegramId && (
                 <button
                   onClick={handleTelegramSetup}
-                  className="flex items-center gap-1 px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+                  className="flex items-center gap-1 px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors"
                 >
                   <ExternalLink className="h-3 w-3" />
                   Setup

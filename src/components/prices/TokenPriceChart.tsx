@@ -125,7 +125,7 @@ const TokenPriceChart: React.FC<TokenPriceChartProps> = ({ token, onClose }) => 
             label: 'Data Points',
             value: `${historicalData.length}`,
             icon: BarChart3,
-            color: 'text-blue-600',
+            color: 'text-orange-600',
         },
         {
             label: 'Current Price',
