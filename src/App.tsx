@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { WagmiConfig } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'react-hot-toast';
-import { wagmiConfig } from '@/config/wagmi';
+import { VincentAuthProvider } from '@/components/auth/VincentAuth';
 import Layout from '@/components/layout/Layout';
 import Home from '@/pages/Home';
 import Dashboard from '@/pages/Dashboard';
@@ -12,7 +11,6 @@ import Policies from '@/pages/Policies';
 import Audit from '@/pages/Audit';
 import Prices from '@/pages/Prices';
 import Admin from '@/pages/Admin';
-import GlobalWalletModal from '@/components/wallet/GlobalWalletModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 
@@ -58,13 +56,13 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <WagmiConfig config={wagmiConfig}>
+        <VincentAuthProvider>
           <Router>
             <Routes>
               {/* Home page without layout */}
               <Route path="/" element={<Home />} />
               
-              {/* App pages with layout */}
+              {/* App pages with layout - Vincent handles authentication */}
               <Route path="/app" element={<Layout />}>
                 <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
@@ -84,7 +82,6 @@ const App: React.FC = () => {
               <Route path="/admin" element={<Navigate to="/app/admin" replace />} />
             </Routes>
           </Router>
-          <GlobalWalletModal />
           <Toaster
             position="top-right"
             toastOptions={{
@@ -112,7 +109,7 @@ const App: React.FC = () => {
               },
             }}
           />
-        </WagmiConfig>
+        </VincentAuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
