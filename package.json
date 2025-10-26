@@ -15,6 +15,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@lit-protocol/vincent-ability-sdk": "^2.3.1",
     "@lit-protocol/vincent-app-sdk": "^2.2.3",
     "@pythnetwork/hermes-client": "^2.0.0",
     "@pythnetwork/pyth-evm-js": "2.0.0-alpha2",
