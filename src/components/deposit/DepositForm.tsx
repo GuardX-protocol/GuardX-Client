@@ -21,6 +21,7 @@ import {
   formatUnits,
 } from "viem";
 import toast from "react-hot-toast";
+import AlertAwareWithdrawForm from "./AlertAwareWithdrawForm";
 
 import {
   SUPPORTED_TOKENS,
@@ -521,52 +522,42 @@ const DepositForm: React.FC = () => {
             </button>
           )}
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              console.log(`${mode} button clicked!`, {
-                canTransact,
-                isLoading,
-                address,
-                hasValidAmount,
-                selectedToken,
-                amount,
-                parsedAmount: parsedAmount.toString(),
-                mode,
-              });
-              mode === "deposit" ? handleDeposit() : handleWithdraw();
-            }}
-            disabled={!canTransact || isLoading}
-            style={{
-              opacity: !canTransact || isLoading ? 0.5 : 1,
-              pointerEvents: !canTransact || isLoading ? "none" : "auto",
-              cursor: !canTransact || isLoading ? "not-allowed" : "pointer",
-            }}
-            className={`w-full p-4 ${mode === "deposit"
-              ? "bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
-              : "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              } text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2`}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                {isDepositConfirming || isWithdrawConfirming
-                  ? `${mode === "deposit" ? "Depositing" : "Withdrawing"}...`
-                  : "Processing..."}
-              </>
-            ) : (
-              <>
-                {mode === "deposit" ? (
+          {mode === "deposit" ? (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleDeposit();
+              }}
+              disabled={!canTransact || isLoading}
+              style={{
+                opacity: !canTransact || isLoading ? 0.5 : 1,
+                pointerEvents: !canTransact || isLoading ? "none" : "auto",
+                cursor: !canTransact || isLoading ? "not-allowed" : "pointer",
+              }}
+              className="w-full p-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {isDepositConfirming ? "Depositing..." : "Processing..."}
+                </>
+              ) : (
+                <>
                   <ArrowDownCircle className="h-4 w-4" />
-                ) : (
-                  <ArrowUpCircle className="h-4 w-4" />
-                )}
-                {mode === "deposit" ? "Deposit" : "Withdraw"}{" "}
-                {selectedToken.symbol}
-              </>
-            )}
-          </button>
+                  Deposit {selectedToken.symbol}
+                </>
+              )}
+            </button>
+          ) : (
+            <AlertAwareWithdrawForm
+              selectedToken={selectedToken}
+              amount={amount}
+              onWithdraw={handleWithdraw}
+              isLoading={isLoading}
+              disabled={!canTransact}
+            />
+          )}
         </div>
 
         {/* Transaction Status */}
