@@ -1,7 +1,7 @@
 // Vincent Configuration
 export const VINCENT_CONFIG = {
   // App ID from Vincent Dashboard
-  APP_ID: import.meta.env.VITE_VINCENT_APP_ID || 'guardx-crash-protection',
+  APP_ID: import.meta.env.VITE_VINCENT_APP_ID || '5245122686',
   
   // Redirect URIs (must be registered in Vincent Dashboard)
   REDIRECT_URIS: {
@@ -18,8 +18,10 @@ export const VINCENT_CONFIG = {
   // Abilities that your app will request
   REQUESTED_ABILITIES: [
     'uniswap-swap',
-    'token-transfer',
+    'token-transfer', 
     'contract-interaction',
+    'lit-action-execution', // For custom Lit Actions
+    'pkp-signing', // For PKP signing operations
   ],
 } as const;
 
