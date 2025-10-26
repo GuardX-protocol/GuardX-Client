@@ -67,14 +67,14 @@ const NetworkIndicator: React.FC = () => {
                   onClick={() => handleSwitchNetwork(supportedChain.id)}
                   disabled={!deployed || isCurrent}
                   className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 flex items-center justify-between gap-2 transition-colors ${
-                    isCurrent ? 'bg-blue-50 text-blue-700' : ''
+                    isCurrent ? 'bg-red-50 text-red-700' : ''
                   } ${!deployed ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   <span className="flex items-center gap-2">
                     <span>{chainMeta.icon}</span>
                     <span className="font-medium">{chainMeta.name}</span>
                   </span>
-                  {isCurrent && <CheckCircle className="h-4 w-4 text-blue-600" />}
+                  {isCurrent && <CheckCircle className="h-4 w-4 text-red-600" />}
                   {!deployed && <span className="text-xs text-gray-400">(Not deployed)</span>}
                 </button>
               );

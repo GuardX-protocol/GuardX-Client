@@ -56,8 +56,8 @@ const ContractInfo: React.FC = () => {
           </div>
         ))}
       </div>
-      <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-        <p className="text-xs text-blue-800">
+      <div className="mt-4 p-3 bg-red-50 rounded-lg">
+        <p className="text-xs text-red-800">
           <span className="font-medium">Network:</span> {NETWORK_CONFIG.network} (Chain ID: {NETWORK_CONFIG.chainId})
         </p>
       </div>

@@ -13,14 +13,19 @@
   --bg-quaternary: #1f2937;
   --bg-hover: #252a3a;
   
-  /* Red Accent Colors - No Blue */
-  --red-primary: rgb(255, 66, 6);
-  --red-secondary: #dc2626;
-  --red-tertiary: #f87171;
-  --red-quaternary: #fca5a5;
-  --accent-red: rgb(255, 66, 6);
+  /* Primary Orange Colors */
+  --orange-primary: #f97316;
+  --orange-secondary: #ea580c;
+  --orange-tertiary: #fb923c;
+  --orange-quaternary: #fdba74;
+  --primary: #f97316;
+  --primary-dark: #ea580c;
+  --primary-light: #fb923c;
+  
+  /* Accent Red Colors */
+  --accent-red: #ef4444;
   --accent-red-dark: #dc2626;
-  --accent-red-light: #ff6633;
+  --accent-red-light: #f87171;
   
   /* Orange/Amber Accents */
   --orange-primary: #f97316;
@@ -55,7 +60,7 @@
   --card-hover: var(--bg-tertiary);
   --input-bg: var(--bg-tertiary);
   --input-focus: var(--bg-quaternary);
-  --button-primary: var(--red-primary);
+  --button-primary: var(--primary);
   --button-secondary: var(--bg-tertiary);
   --button-ghost: transparent;
   

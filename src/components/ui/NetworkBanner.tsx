@@ -8,7 +8,7 @@ const NetworkBanner: React.FC = () => {
   if (!chain) return null;
 
   return (
-    <div className="bg-gradient-to-r from-blue-500 to-primary-500 text-white shadow-lg">
+    <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center gap-3">
           <Network className="h-5 w-5 flex-shrink-0" />
