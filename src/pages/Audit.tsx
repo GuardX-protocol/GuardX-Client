@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { FileText, Search, Activity, AlertTriangle, DollarSign, ExternalLink, ArrowUpRight, ArrowDownCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { FileText, Search, Activity, AlertTriangle, DollarSign, ExternalLink, ArrowUpRight, ArrowDownCircle, CheckCircle, XCircle } from 'lucide-react';
 import EmergencyHistory from '@/components/audit/EmergencyHistory';
-import TransactionHistory from '@/components/audit/TransactionHistory';
 import { useAccount, useNetwork } from 'wagmi';
 import { useGuardXAlerts } from '@/hooks/useGuardX';
-import { formatUnits } from 'viem';
 
 const Audit: React.FC = () => {
   const { isConnected, address } = useAccount();
@@ -84,13 +82,13 @@ const Audit: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
           <div className="relative z-10 flex items-center justify-between p-8">
             <div className="flex items-center gap-6">
-              <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-cyan-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                <FileText className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl backdrop-blur-sm border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                <FileText className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">Audit Trail</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(239,68,68,0.3)] mb-2">Audit Trail</h1>
                 <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-cyan-400" />
+                  <Activity className="h-4 w-4 text-red-400" />
                   Complete transaction and emergency history
                 </p>
               </div>
@@ -99,21 +97,21 @@ const Audit: React.FC = () => {
         </div>
 
         {!isConnected && (
-          <div className="p-6 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+          <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
             <p className="text-gray-300">Connect your wallet to view audit trail</p>
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-cyan-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] text-center">
+          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-red-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 glow-border text-center">
             <div className="flex items-center justify-center mb-3">
-              <Activity className="h-6 w-6 text-cyan-400" />
+              <Activity className="h-6 w-6 text-red-400" />
             </div>
             <h3 className="text-sm font-medium text-gray-400 mb-2">Total Transactions</h3>
-            <p className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">{transactions.length}</p>
+            <p className="text-3xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">{transactions.length}</p>
           </div>
 
-          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-cyan-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] text-center">
+          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-red-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 glow-border text-center">
             <div className="flex items-center justify-center mb-3">
               <AlertTriangle className="h-6 w-6 text-yellow-400" />
             </div>
@@ -121,7 +119,7 @@ const Audit: React.FC = () => {
             <p className="text-3xl font-bold text-yellow-400">{alerts.length}</p>
           </div>
 
-          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-cyan-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] text-center">
+          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-red-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 glow-border text-center">
             <div className="flex items-center justify-center mb-3">
               <DollarSign className="h-6 w-6 text-green-400" />
             </div>
@@ -129,7 +127,7 @@ const Audit: React.FC = () => {
             <p className="text-3xl font-bold text-green-400">${totalVolume.toLocaleString()}</p>
           </div>
 
-          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-cyan-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 shadow-[0_0_10px_rgba(34,197,94,0.1)] hover:shadow-[0_0_20px_rgba(34,197,94,0.3)] text-center">
+          <div className="group p-6 bg-black/50 rounded-2xl border border-gray-800/50 hover:border-red-500/70 transition-all duration-300 backdrop-blur-sm hover:bg-black/70 glow-border text-center">
             <div className="flex items-center justify-center mb-3">
               <CheckCircle className="h-6 w-6 text-green-400" />
             </div>
@@ -144,7 +142,7 @@ const Audit: React.FC = () => {
             onClick={() => setSelectedTab('transactions')}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               selectedTab === 'transactions'
-                ? 'bg-cyan-500 text-white shadow-lg'
+                ? 'bg-red-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
             }`}
           >
@@ -155,7 +153,7 @@ const Audit: React.FC = () => {
             onClick={() => setSelectedTab('alerts')}
             className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 ${
               selectedTab === 'alerts'
-                ? 'bg-yellow-500 text-white shadow-lg'
+                ? 'bg-orange-500 text-white shadow-lg'
                 : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
             }`}
           >
@@ -176,7 +174,7 @@ const Audit: React.FC = () => {
         </div>
 
         {/* Tab Content */}
-        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-semibold text-white">
               {selectedTab === 'transactions' && 'Transaction History'}
@@ -190,7 +188,7 @@ const Audit: React.FC = () => {
                 placeholder={`Search ${selectedTab}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           </div>

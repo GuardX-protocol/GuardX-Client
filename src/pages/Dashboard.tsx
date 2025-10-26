@@ -118,11 +118,11 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-              <Shield className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+              <Shield className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3">Connect Wallet</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-3">Connect Wallet</h2>
             <p className="text-gray-400 mb-6 text-sm sm:text-base">Connect your wallet to access GuardX protection</p>
             <div className="text-xs sm:text-sm text-gray-500">Click "Connect Wallet" in the header</div>
           </div>
@@ -147,11 +147,11 @@ const Dashboard: React.FC = () => {
         {!isFullyOnboarded && (
           <div className="relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-purple-500/10 to-transparent"></div>
-            <div className="relative p-6 bg-gray-900/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm">
+            <div className="relative p-6 bg-gray-900/50 rounded-2xl border border-red-500/30 backdrop-blur-sm">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
-                    <User className="h-6 w-6 text-cyan-400" />
+                  <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
+                    <User className="h-6 w-6 text-red-400" />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold text-white">Welcome to GuardX</h2>
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-cyan-400">{completedSteps}/{onboardingSteps.length}</div>
+                  <div className="text-2xl font-bold text-red-400">{completedSteps}/{onboardingSteps.length}</div>
                   <div className="text-xs text-gray-400">Steps Complete</div>
                 </div>
               </div>
@@ -170,7 +170,7 @@ const Dashboard: React.FC = () => {
                     key={step.id}
                     className={`p-4 rounded-xl border transition-all duration-200 ${step.completed
                       ? 'bg-green-500/10 border-green-500/30'
-                      : 'bg-gray-800/50 border-gray-700/50 hover:border-cyan-500/30'
+                      : 'bg-gray-800/50 border-gray-700/50 hover:border-red-500/30'
                       }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -194,7 +194,7 @@ const Dashboard: React.FC = () => {
                         {typeof step.action === 'string' ? (
                           <Link
                             to={step.action}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-xs hover:bg-cyan-500/30 transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-xs hover:bg-red-500/30 transition-colors"
                           >
                             Complete
                             <ArrowUpRight className="h-3 w-3" />
@@ -203,7 +203,7 @@ const Dashboard: React.FC = () => {
                           <button
                             onClick={step.action}
                             disabled={userLoading}
-                            className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-500/20 text-cyan-400 rounded-lg text-xs hover:bg-cyan-500/30 transition-colors disabled:opacity-50"
+                            className="inline-flex items-center gap-1 px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-xs hover:bg-red-500/30 transition-colors disabled:opacity-50"
                           >
                             {userLoading ? (
                               <>
@@ -229,13 +229,13 @@ const Dashboard: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-8">
             <div className="flex items-center gap-6">
-              <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-cyan-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                <BarChart3 className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl backdrop-blur-sm border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                <BarChart3 className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">Portfolio Dashboard</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(239,68,68,0.3)] mb-2">Portfolio Dashboard</h1>
                 <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-cyan-400" />
+                  <Activity className="h-4 w-4 text-red-400" />
                   Real-time protection monitoring
                 </p>
               </div>
@@ -327,15 +327,15 @@ const Dashboard: React.FC = () => {
             {/* Portfolio Stats */}
             <div className="lg:col-span-2 space-y-6">
               {/* Portfolio Value */}
-              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <DollarSign className="h-6 w-6 text-cyan-400" />
+                    <DollarSign className="h-6 w-6 text-red-400" />
                     <h3 className="text-lg font-semibold text-white">Portfolio Value</h3>
                   </div>
                   <Link
                     to="/app/deposit"
-                    className="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-xl text-cyan-400 hover:bg-cyan-500/30 transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 hover:bg-red-500/30 transition-colors"
                   >
                     <span className="text-sm">Deposit</span>
                     <ArrowUpRight className="h-4 w-4" />
@@ -349,7 +349,7 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <p className="text-3xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       ${totalValue.toFixed(2)}
                     </p>
                     <p className="text-sm text-gray-400">
@@ -360,9 +360,9 @@ const Dashboard: React.FC = () => {
               </div>
 
               {/* Assets List */}
-              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Wallet className="h-5 w-5 text-cyan-400" />
+                  <Wallet className="h-5 w-5 text-red-400" />
                   Your Assets
                 </h3>
 
@@ -414,8 +414,8 @@ const Dashboard: React.FC = () => {
                       return (
                         <div key={`${tokenAddress}-${index}`} className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
-                              <span className="text-xs font-bold text-cyan-400">{tokenInfo.symbol.slice(0, 2)}</span>
+                            <div className="w-10 h-10 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+                              <span className="text-xs font-bold text-red-400">{tokenInfo.symbol.slice(0, 2)}</span>
                             </div>
                             <div>
                               <p className="font-medium text-white">{tokenInfo.symbol}</p>
@@ -431,7 +431,7 @@ const Dashboard: React.FC = () => {
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                            <p className="font-medium bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                               ${parseFloat(formattedValue).toFixed(2)}
                             </p>
                             <p className="text-xs text-gray-500">
@@ -449,7 +449,7 @@ const Dashboard: React.FC = () => {
                     <p className="text-sm text-gray-500 mb-4">Start by depositing your first asset</p>
                     <Link
                       to="/app/deposit"
-                      className="inline-block px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors text-sm"
+                      className="inline-block px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors text-sm"
                     >
                       Deposit Now
                     </Link>
@@ -461,9 +461,9 @@ const Dashboard: React.FC = () => {
             {/* Protection Status */}
             <div className="space-y-6">
               {/* Protection Policy */}
-              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center gap-3 mb-4">
-                  <Shield className="h-6 w-6 text-cyan-400" />
+                  <Shield className="h-6 w-6 text-red-400" />
                   <h3 className="text-lg font-semibold text-white">Protection Status</h3>
                 </div>
 
@@ -509,42 +509,42 @@ const Dashboard: React.FC = () => {
               <GuardXMonitoringCard />
 
               {/* Quick Actions */}
-              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+              <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
                 <div className="space-y-3">
                   <Link
                     to="/app/deposit"
-                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-cyan-500/50 transition-colors group"
+                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-red-500/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <DollarSign className="h-5 w-5 text-cyan-400" />
-                      <span className="text-white group-hover:text-cyan-400 transition-colors">Deposit Assets</span>
+                      <DollarSign className="h-5 w-5 text-red-400" />
+                      <span className="text-white group-hover:text-red-400 transition-colors">Deposit Assets</span>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-red-400 transition-colors" />
                   </Link>
 
                   <Link
                     to="/app/policies"
-                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-cyan-500/50 transition-colors group"
+                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-red-500/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-cyan-400" />
-                      <span className="text-white group-hover:text-cyan-400 transition-colors">Protection Policies</span>
+                      <Shield className="h-5 w-5 text-red-400" />
+                      <span className="text-white group-hover:text-red-400 transition-colors">Protection Policies</span>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-red-400 transition-colors" />
                   </Link>
 
 
 
                   <Link
                     to="/app/audit"
-                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-cyan-500/50 transition-colors group"
+                    className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50 hover:border-red-500/50 transition-colors group"
                   >
                     <div className="flex items-center gap-3">
-                      <Activity className="h-5 w-5 text-cyan-400" />
-                      <span className="text-white group-hover:text-cyan-400 transition-colors">View History</span>
+                      <Activity className="h-5 w-5 text-red-400" />
+                      <span className="text-white group-hover:text-red-400 transition-colors">View History</span>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-cyan-400 transition-colors" />
+                    <ArrowUpRight className="h-4 w-4 text-gray-400 group-hover:text-red-400 transition-colors" />
                   </Link>
                 </div>
               </div>

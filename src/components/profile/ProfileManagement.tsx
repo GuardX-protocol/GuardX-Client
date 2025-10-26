@@ -94,13 +94,13 @@ const ProfileManagement: React.FC = () => {
     return (
       <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
         <div className="flex items-center gap-3 mb-4">
-          <User className="h-6 w-6 text-cyan-400" />
+          <User className="h-6 w-6 text-red-400" />
           <h3 className="text-lg font-semibold text-white">Profile Setup</h3>
         </div>
         
         <div className="text-center py-6">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30">
-            <User className="h-8 w-8 text-cyan-400" />
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+            <User className="h-8 w-8 text-red-400" />
           </div>
           <h4 className="text-white font-medium mb-2">Create Your Profile</h4>
           <p className="text-gray-400 text-sm mb-4">
@@ -108,7 +108,7 @@ const ProfileManagement: React.FC = () => {
           </p>
           <button
             onClick={handleCreateProfile}
-            className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
+            className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-cyan-600 hover:to-purple-600 transition-colors"
           >
             Create Profile
           </button>
