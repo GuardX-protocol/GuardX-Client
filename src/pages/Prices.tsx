@@ -116,31 +116,31 @@ const Prices: React.FC = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
           <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-8">
             <div className="flex items-center gap-6">
-              <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-cyan-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                <DollarSign className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+              <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl backdrop-blur-sm border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                <DollarSign className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
               </div>
               <div>
-                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">Market Prices</h1>
+                <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(239,68,68,0.3)] mb-2">Market Prices</h1>
                 <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
-                  <Network className="h-4 w-4 text-cyan-400" />
+                  <Network className="h-4 w-4 text-red-400" />
                   Real-time oracle data from Pyth Network
                 </p>
               </div>
             </div>
             <button
               onClick={handleRefresh}
-              className="px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-xl font-medium hover:from-cyan-400/30 hover:to-purple-500/30 transition-all duration-300 backdrop-blur-sm flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-xl font-medium hover:from-red-400/30 hover:to-orange-500/30 transition-all duration-300 backdrop-blur-sm flex items-center gap-2"
             >
-              <RefreshCw className={`h-4 w-4 ${isLoadingPrices ? 'animate-spin' : ''} text-cyan-400`} />
+              <RefreshCw className={`h-4 w-4 ${isLoadingPrices ? 'animate-spin' : ''} text-red-400`} />
               <span className="text-sm font-medium text-white">Refresh Data</span>
             </button>
           </div>
         </div>
 
-        <div className="p-6 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
           <div className="flex items-start gap-3">
-            <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-xl border border-cyan-500/30">
-              <Network className="h-5 w-5 text-cyan-400" />
+            <div className="p-3 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-xl border border-red-500/30">
+              <Network className="h-5 w-5 text-red-400" />
             </div>
             <div>
               <h3 className="font-semibold text-white mb-1">Real-Time Oracle Data</h3>
@@ -152,7 +152,7 @@ const Prices: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm">
+        <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
           <div className="space-y-4">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -161,7 +161,7 @@ const Prices: React.FC = () => {
                 placeholder="Search tokens by name or symbol..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 backdrop-blur-sm"
+                className="w-full pl-10 pr-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:border-red-500/50 backdrop-blur-sm"
               />
             </div>
 
@@ -171,8 +171,8 @@ const Prices: React.FC = () => {
                 key={cat}
                 onClick={() => setCategory(cat)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${category === cat
-                  ? 'bg-primary-600 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30 text-white backdrop-blur-sm'
+                  : 'bg-gray-900/50 text-gray-300 hover:bg-gray-800/50 border border-gray-800/50'
                   }`}
               >
                 {cat === 'layer1' ? 'Layer 1' : cat}
@@ -185,12 +185,12 @@ const Prices: React.FC = () => {
       {isLoadingTokens ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 12 }).map((_, i) => (
-            <div key={i} className="card animate-pulse">
+            <div key={i} className="p-6 bg-black/50 rounded-2xl border border-red-800/50 backdrop-blur-sm glow-border animate-pulse">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+                <div className="w-10 h-10 bg-gray-800 rounded-full"></div>
                 <div className="flex-1">
-                  <div className="h-4 bg-gray-200 rounded w-20 mb-2"></div>
-                  <div className="h-3 bg-gray-200 rounded w-32"></div>
+                  <div className="h-4 bg-gray-800 rounded w-20 mb-2"></div>
+                  <div className="h-3 bg-gray-800 rounded w-32"></div>
                 </div>
               </div>
             </div>
@@ -220,16 +220,16 @@ const Prices: React.FC = () => {
           </div>
 
           {filteredTokens.length === 0 && (
-            <div className="card text-center py-12">
-              <DollarSign className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500">No tokens found</p>
-              <p className="text-sm text-gray-400 mt-2">Try adjusting your search or filter</p>
+            <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border text-center py-12">
+              <DollarSign className="h-12 w-12 mx-auto mb-4 text-gray-600" />
+              <p className="text-gray-400">No tokens found</p>
+              <p className="text-sm text-gray-500 mt-2">Try adjusting your search or filter</p>
             </div>
           )}
 
-          <div className="text-center text-sm text-gray-500">
+          <div className="text-center text-sm text-gray-400">
             Showing {filteredTokens?.length || 0} of {tokens?.length || 0} tokens
-            {isLoadingPrices && <span className="ml-2">(Loading prices...)</span>}
+            {isLoadingPrices && <span className="ml-2 bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">(Loading prices...)</span>}
           </div>
         </>
       )}

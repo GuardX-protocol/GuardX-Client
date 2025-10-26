@@ -34,11 +34,11 @@ const Deposit: React.FC = () => {
         </div>
 
         <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-full flex items-center justify-center border border-cyan-500/30 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
-              <ArrowDownCircle className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+              <ArrowDownCircle className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3">
+            <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-3">
               Connect Wallet
             </h2>
             <p className="text-gray-400 mb-6 text-sm sm:text-base">
@@ -71,15 +71,15 @@ const Deposit: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80"></div>
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center gap-4 p-8">
               <div className="flex items-center gap-6">
-                <div className="p-4 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 rounded-2xl backdrop-blur-sm border border-cyan-500/30 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
-                  <ArrowDownCircle className="h-10 w-10 text-cyan-400 drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+                <div className="p-4 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl backdrop-blur-sm border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+                  <ArrowDownCircle className="h-10 w-10 text-red-400 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
                 </div>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-white to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(34,197,94,0.3)] mb-2">
+                  <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-400 via-white to-orange-400 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(239,68,68,0.3)] mb-2">
                     Deposit Risky Assets
                   </h1>
                   <p className="text-gray-300 text-sm sm:text-base flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-cyan-400" />
+                    <Shield className="h-4 w-4 text-red-400" />
                     Protect your volatile crypto with GuardX crash detection
                   </p>
                 </div>
@@ -98,7 +98,7 @@ const Deposit: React.FC = () => {
               {/* Current Portfolio */}
               <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center gap-3 mb-4">
-                  <DollarSign className="h-5 w-5 text-cyan-400" />
+                  <DollarSign className="h-5 w-5 text-red-400" />
                   <h3 className="text-lg font-semibold text-white">
                     Your Vault Portfolio
                   </h3>
@@ -111,7 +111,7 @@ const Deposit: React.FC = () => {
                   </div>
                 ) : (
                   <div>
-                    <p className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <p className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       {vaultTotalValue.toFixed(4)} ETH
                     </p>
                     <p className="text-sm text-gray-400">
@@ -125,7 +125,7 @@ const Deposit: React.FC = () => {
               {/* Deposited Assets */}
               <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center gap-3 mb-4">
-                  <Wallet className="h-5 w-5 text-cyan-400" />
+                  <Wallet className="h-5 w-5 text-red-400" />
                   <h3 className="text-lg font-semibold text-white">
                     Vault Assets
                   </h3>
@@ -154,7 +154,7 @@ const Deposit: React.FC = () => {
                         className="flex items-center justify-between p-3 bg-gray-900/50 rounded-xl border border-gray-800/50"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-gradient-to-br from-cyan-500 to-purple-500 rounded-full flex items-center justify-center border border-gray-700">
+                          <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center border border-gray-700">
                             <span className="text-xs font-bold text-white">
                               {asset.symbol.slice(0, 2)}
                             </span>
@@ -195,7 +195,7 @@ const Deposit: React.FC = () => {
               {/* Protection Info */}
               <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center gap-3 mb-4">
-                  <Shield className="h-5 w-5 text-cyan-400" />
+                  <Shield className="h-5 w-5 text-red-400" />
                   <h3 className="text-lg font-semibold text-white">
                     Protection Features
                   </h3>
@@ -203,25 +203,25 @@ const Deposit: React.FC = () => {
 
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                     <span className="text-sm text-gray-300">
                       AI-Powered Monitoring
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                     <span className="text-sm text-gray-300">
                       Automated Emergency Response
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                     <span className="text-sm text-gray-300">
                       Cross-Chain Support
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
                     <span className="text-sm text-gray-300">
                       Real-Time Price Feeds
                     </span>
@@ -232,7 +232,7 @@ const Deposit: React.FC = () => {
               {/* Stats */}
               <div className="p-6 bg-black/50 rounded-2xl border border-gray-800/50 backdrop-blur-sm glow-border">
                 <div className="flex items-center gap-3 mb-4">
-                  <Activity className="h-5 w-5 text-cyan-400" />
+                  <Activity className="h-5 w-5 text-red-400" />
                   <h3 className="text-lg font-semibold text-white">
                     Platform Stats
                   </h3>
@@ -243,13 +243,13 @@ const Deposit: React.FC = () => {
                     <span className="text-sm text-gray-400">
                       Total Value Locked
                     </span>
-                    <span className="text-sm font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-sm font-medium bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       $2.4M
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-400">Active Users</span>
-                    <span className="text-sm font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-sm font-medium bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       1,247
                     </span>
                   </div>
@@ -257,13 +257,13 @@ const Deposit: React.FC = () => {
                     <span className="text-sm text-gray-400">
                       Protected Assets
                     </span>
-                    <span className="text-sm font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-sm font-medium bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       847
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-400">Uptime</span>
-                    <span className="text-sm font-medium bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    <span className="text-sm font-medium bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent">
                       99.9%
                     </span>
                   </div>

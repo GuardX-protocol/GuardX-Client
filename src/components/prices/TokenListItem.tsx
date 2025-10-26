@@ -40,7 +40,7 @@ const TokenListItem: React.FC<TokenListItemProps> = ({ token, onClick, priceData
   return (
     <button
       onClick={onClick}
-      className="w-full p-4 bg-black/50 border border-cyan-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)] rounded-lg hover:shadow-md transition-all duration-200 text-left group"
+      className="w-full p-4 bg-black/50 border border-red-500/30 backdrop-blur-sm shadow-[0_0_15px_rgba(34,197,94,0.2)] rounded-lg hover:shadow-md transition-all duration-200 text-left group"
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1 min-w-0">
