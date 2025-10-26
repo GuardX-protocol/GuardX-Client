@@ -97,31 +97,40 @@ const App: React.FC = () => {
               toastOptions={{
                 duration: 4000,
                 style: {
-                  background: 'rgba(31, 41, 55, 0.95)',
-                  color: '#f9fafb',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                  background: '#ffffff',
+                  color: '#0f172a',
+                  boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
                   borderRadius: '12px',
-                  border: '1px solid rgba(75, 85, 99, 0.3)',
+                  border: '1px solid #e2e8f0',
                   padding: '16px',
-                  backdropFilter: 'blur(16px)',
+                  fontSize: '14px',
+                  fontWeight: '500',
                 },
                 success: {
                   iconTheme: {
                     primary: '#10b981',
-                    secondary: '#fff',
+                    secondary: '#ffffff',
+                  },
+                  style: {
+                    border: '1px solid #d1fae5',
+                    background: '#f0fdf4',
                   },
                 },
                 error: {
                   iconTheme: {
                     primary: '#ef4444',
-                    secondary: '#fff',
+                    secondary: '#ffffff',
+                  },
+                  style: {
+                    border: '1px solid #fecaca',
+                    background: '#fef2f2',
                   },
                 },
               }}
             />
             {/* Temporarily disabled VincentDebug to check Wagmi config */}
             {/* <VincentDebug /> */}
-            <WagmiTest />
+            {/* <WagmiTest /> */}
           </VincentAuthProvider>
         </WagmiConfig>
       </QueryClientProvider>
