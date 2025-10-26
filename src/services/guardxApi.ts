@@ -33,6 +33,7 @@ export interface User {
 }
 
 export interface Monitor {
+  id?: string;
   name: string;
   userId: string;
   symbols: string[];
@@ -163,24 +164,24 @@ class GuardXApiService {
   }
 
   async updateMonitor(
-    monitorId: string,
+    monitorName: string,
     userId: string,
     monitorData: Partial<Monitor>
   ): Promise<Monitor> {
-    return this.request<Monitor>(`/monitors/${monitorId}?user_id=${userId}`, {
+    return this.request<Monitor>(`/monitors/${encodeURIComponent(monitorName)}?user_id=${userId}`, {
       method: 'PATCH',
       body: JSON.stringify(monitorData),
     });
   }
 
-  async deleteMonitor(monitorId: string, userId: string): Promise<void> {
-    return this.request(`/monitors/${monitorId}?user_id=${userId}`, {
+  async deleteMonitor(monitorName: string, userId: string): Promise<void> {
+    return this.request(`/monitors/${encodeURIComponent(monitorName)}?user_id=${userId}`, {
       method: 'DELETE',
     });
   }
 
-  async toggleMonitor(monitorId: string, userId: string) {
-    return this.request(`/monitors/${monitorId}/toggle?user_id=${userId}`, {
+  async toggleMonitor(monitorName: string, userId: string) {
+    return this.request(`/monitors/${encodeURIComponent(monitorName)}/toggle?user_id=${userId}`, {
       method: 'POST',
     });
   }
