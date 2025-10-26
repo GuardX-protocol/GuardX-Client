@@ -160,29 +160,29 @@ const Policies: React.FC = () => {
   });
 
   // Require user to be onboarded before creating monitors
-  if (!user && isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
-        <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
-          <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm">
-            <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
-              <Shield className="h-10 w-10 text-red-400" />
-            </div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-3">
-              Complete Profile Setup
-            </h2>
-            <p className="text-gray-400 mb-6">Create your GuardX profile to start monitoring</p>
-            <button
-              onClick={handleCreateUser}
-              className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-medium hover:from-red-600 hover:to-orange-600 transition-colors"
-            >
-              Create Profile
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (!user && isAuthenticated) {
+  //   return (
+  //     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">
+  //       <div className="relative z-10 min-h-[80vh] flex items-center justify-center p-4">
+  //         <div className="max-w-md w-full text-center p-8 bg-black/50 rounded-2xl border border-red-500/30 backdrop-blur-sm">
+  //           <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+  //             <Shield className="h-10 w-10 text-red-400" />
+  //           </div>
+  //           <h2 className="text-2xl font-bold bg-gradient-to-r from-red-400 to-orange-400 bg-clip-text text-transparent mb-3">
+  //             Complete Profile Setup
+  //           </h2>
+  //           <p className="text-gray-400 mb-6">Create your GuardX profile to start monitoring</p>
+  //           <button
+  //             onClick={handleCreateUser}
+  //             className="px-6 py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl font-medium hover:from-red-600 hover:to-orange-600 transition-colors"
+  //           >
+  //             Create Profile
+  //           </button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gray-900 via-black to-gray-900 text-white overflow-x-hidden">

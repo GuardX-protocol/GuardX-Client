@@ -106,12 +106,12 @@ const ProfileManagement: React.FC = () => {
           <p className="text-gray-400 text-sm mb-4">
             Set up your profile to enable notifications and personalized features
           </p>
-          <button
+          {/* <button
             onClick={handleCreateProfile}
             className="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-lg hover:from-red-600 hover:to-orange-600 transition-colors"
           >
             Create Profile
-          </button>
+          </button> */}
         </div>
       </div>
     );

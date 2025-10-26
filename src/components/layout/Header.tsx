@@ -62,9 +62,9 @@ const Header: React.FC = () => {
             {/* Right Side */}
             <div className="flex items-center gap-4">
               {/* Temporarily disabled NetworkIndicator to fix Wagmi config issue */}
-              {/* <div className="hidden md:block">
+              <div className="hidden md:block">
                 <NetworkIndicator />
-              </div> */}
+              </div>
               <VincentUserInfo />
               
               <button
@@ -101,6 +101,9 @@ const Header: React.FC = () => {
                     </Link>
                   );
                 })}
+              </div>
+              <div className='pt-5'>
+                <NetworkIndicator />
               </div>
             </div>
           </div>

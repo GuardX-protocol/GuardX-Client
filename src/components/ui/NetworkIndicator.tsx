@@ -40,11 +40,11 @@ const NetworkIndicator: React.FC = () => {
         <ChevronDown className="h-3 w-3" />
       </button>
 
-      {!isDeployed && isSupported && (
+      {/* {!isDeployed && isSupported && (
         <div className="absolute top-full mt-1 left-0 right-0 text-xs text-orange-600 bg-orange-50 px-2 py-1 rounded border border-orange-200 z-[55]">
           Contracts not deployed
         </div>
-      )}
+      )} */}
 
       {showDropdown && (
         <>
