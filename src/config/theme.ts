@@ -1,11 +1,11 @@
-// GuardX Theme Configuration - Inspired by Lit Protocol Vincent
+// GuardX Theme Configuration - Dark-First, Inspired by Lit Protocol Vincent Dashboard
 export const theme = {
   colors: {
-    // Primary - Main brand blue
+    // Primary - Darkened blue for dark mode contrast
     primary: {
-      DEFAULT: '#2563eb',
-      dark: '#1d4ed8',
-      light: '#3b82f6',
+      DEFAULT: '#1e40af',  // Darker blue default for dark UI
+      dark: '#1e3a8a',
+      light: '#2563eb',
       50: '#eff6ff',
       100: '#dbeafe',
       200: '#bfdbfe',
@@ -17,12 +17,12 @@ export const theme = {
       800: '#1e40af',
       900: '#1e3a8a',
     },
-    
-    // Secondary - Neutral grays
+
+    // Secondary - Dark grays for nav/borders in dark theme
     secondary: {
-      DEFAULT: '#64748b',
-      dark: '#475569',
-      light: '#94a3b8',
+      DEFAULT: '#334155',  // Darker gray default for dark UI
+      dark: '#0f172a',
+      light: '#64748b',
       50: '#f8fafc',
       100: '#f1f5f9',
       200: '#e2e8f0',
@@ -34,48 +34,67 @@ export const theme = {
       800: '#1e293b',
       900: '#0f172a',
     },
-    
-    // Accent - Warm amber
+
+    // Accent - Orange-red for highlights (e.g., Help button)
     accent: {
-      DEFAULT: '#f59e0b',
-      dark: '#d97706',
-      light: '#fbbf24',
-      50: '#fffbeb',
-      100: '#fef3c7',
-      200: '#fde68a',
-      300: '#fcd34d',
-      400: '#fbbf24',
-      500: '#f59e0b',
-      600: '#d97706',
-      700: '#b45309',
-      800: '#92400e',
-      900: '#78350f',
+      DEFAULT: '#f97316', 
+      dark: '#ea580c',
+      light: '#fb923c',
+      50: '#ffedd5',
+      100: '#fed7aa',
+      200: '#fdba74',
+      300: '#fb923c',
+      400: '#f97316',
+      500: '#ea580c',
+      600: '#c2410c',
+      700: '#9a3412',
+      800: '#7c2d12',
+      900: '#652f1b',
     },
-    
-    // Background
+
+    // New: Red for actions
+    red: {
+      DEFAULT: '#ef4444',
+      dark: '#dc2626',
+      light: '#f87171',
+      50: '#fef2f2',
+      100: '#fee2e2',
+      200: '#fecaca',
+      300: '#fca5a5',
+      400: '#f87171',
+      500: '#ef4444',
+      600: '#dc2626',
+      700: '#b91c1c',
+      800: '#991b1b',
+      900: '#7f1d1d',
+    },
+
+    // Background - Dark black/gray for dashboard-like UI
     background: {
-      DEFAULT: '#f8fafc',
-      dark: '#1e293b',
-      card: '#ffffff',
-      'card-dark': '#334155',
+      DEFAULT: '#0a0a0a',  // Near-black default for dark theme
+      dark: '#000000',
+      light: '#f8fafc',
+      card: '#1a1a1a',     // Darker for cards/sections
+      'card-dark': '#111111',
+      'card-light': '#ffffff',
     },
-    
-    // Text
+
+    // Text - White primary for dark mode readability
     text: {
-      DEFAULT: '#0f172a',
-      light: '#64748b',
-      muted: '#94a3b8',
-      inverse: '#ffffff',
+      DEFAULT: '#ffffff',  // White default for dark UI
+      light: '#a0a0a0',    // Light gray for muted (matching secondary labels)
+      muted: '#71717a',
+      inverse: '#000000',  // Black for light mode
     },
-    
-    // Status colors
+
+    // Status colors (adjusted for dark contrast)
     success: '#10b981',
-    warning: '#f59e0b',
-    error: '#ef4444',
-    info: '#3b82f6',
+    warning: '#f97316',  // Matches accent for warnings
+    error: '#ef4444',    // Matches red for errors/deletes
+    info: '#1e40af',     // Dark blue for info
   },
-  
-  // Spacing scale
+
+  // Spacing scale (unchanged)
   spacing: {
     xs: '0.5rem',   // 8px
     sm: '0.75rem',  // 12px
@@ -85,8 +104,8 @@ export const theme = {
     '2xl': '3rem',  // 48px
     '3xl': '4rem',  // 64px
   },
-  
-  // Border radius
+
+  // Border radius (unchanged)
   radius: {
     sm: '0.375rem',  // 6px
     md: '0.5rem',    // 8px
@@ -95,16 +114,16 @@ export const theme = {
     '2xl': '1.5rem', // 24px
     full: '9999px',
   },
-  
-  // Shadows
+
+  // Shadows (slightly adjusted for dark mode subtlety)
   shadows: {
-    sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-    md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-    lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-    xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+    sm: '0 1px 2px 0 rgb(0 0 0 / 0.3)',  // Darker drop for black BGs
+    md: '0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3)',
+    lg: '0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3)',
+    xl: '0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3)',
   },
-  
-  // Typography
+
+  // Typography (unchanged; Inter for modern dashboard feel)
   typography: {
     fontFamily: {
       sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -123,9 +142,10 @@ export const theme = {
   },
 } as const;
 
-// CSS custom properties for dynamic theming
+// CSS custom properties for dynamic theming (dark-first defaults)
 export const cssVariables = `
   :root {
+    /* Dark defaults */
     --color-primary: ${theme.colors.primary.DEFAULT};
     --color-primary-dark: ${theme.colors.primary.dark};
     --color-primary-light: ${theme.colors.primary.light};
@@ -138,8 +158,13 @@ export const cssVariables = `
     --color-accent-dark: ${theme.colors.accent.dark};
     --color-accent-light: ${theme.colors.accent.light};
     
+    --color-red: ${theme.colors.red.DEFAULT};
+    --color-red-dark: ${theme.colors.red.dark};
+    --color-red-light: ${theme.colors.red.light};
+    
     --color-background: ${theme.colors.background.DEFAULT};
     --color-background-dark: ${theme.colors.background.dark};
+    --color-background-light: ${theme.colors.background.light};
     --color-background-card: ${theme.colors.background.card};
     
     --color-text: ${theme.colors.text.DEFAULT};
@@ -155,6 +180,19 @@ export const cssVariables = `
     --shadow-md: ${theme.shadows.md};
     --shadow-lg: ${theme.shadows.lg};
     --shadow-xl: ${theme.shadows.xl};
+  }
+
+  /* Light mode override (toggle via class) */
+  .light {
+    --color-primary: ${theme.colors.primary.light};
+    --color-secondary: ${theme.colors.secondary.light};
+    --color-accent: ${theme.colors.accent.light};
+    --color-red: ${theme.colors.red.light};
+    --color-background: ${theme.colors.background.light};
+    --color-background-card: ${theme.colors.background['card-light']};
+    --color-text: ${theme.colors.text.inverse};
+    --color-text-light: ${theme.colors.text.DEFAULT};
+    --color-text-muted: ${theme.colors.text.light};
   }
 `;
 

@@ -9,37 +9,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
-/* Theme CSS Variables */
+/* Theme CSS Variables - Dark First */
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #3b82f6;
+  /* Dark defaults */
+  --color-primary: #1e40af;
+  --color-primary-dark: #1e3a8a;
+  --color-primary-light: #2563eb;
   
-  --color-secondary: #64748b;
-  --color-secondary-dark: #475569;
-  --color-secondary-light: #94a3b8;
+  --color-secondary: #334155;
+  --color-secondary-dark: #0f172a;
+  --color-secondary-light: #64748b;
   
-  --color-accent: #f59e0b;
-  --color-accent-dark: #d97706;
-  --color-accent-light: #fbbf24;
+  --color-accent: #f97316;
+  --color-accent-dark: #ea580c;
+  --color-accent-light: #fb923c;
   
-  --color-background: #f8fafc;
-  --color-background-dark: #1e293b;
-  --color-background-card: #ffffff;
+  --color-red: #ef4444;
+  --color-red-dark: #dc2626;
+  --color-red-light: #f87171;
   
-  --color-text: #0f172a;
-  --color-text-light: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-background: #0a0a0a;
+  --color-background-dark: #000000;
+  --color-background-light: #f8fafc;
+  --color-background-card: #1a1a1a;
+  
+  --color-text: #ffffff;
+  --color-text-light: #a0a0a0;
+  --color-text-muted: #71717a;
   
   --color-success: #10b981;
-  --color-warning: #f59e0b;
+  --color-warning: #f97316;
   --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-info: #1e40af;
   
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.4), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+}
+
+/* Light mode override */
+.light {
+  --color-primary: #2563eb;
+  --color-secondary: #64748b;
+  --color-accent: #fb923c;
+  --color-red: #f87171;
+  --color-background: #f8fafc;
+  --color-background-card: #ffffff;
+  --color-text: #000000;
+  --color-text-light: #ffffff;
+  --color-text-muted: #a0a0a0;
 }
 
 /* Base styles */
@@ -61,24 +80,24 @@ body {
   line-height: 1.6;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Dark theme */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #1a1a1a;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #334155;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #475569;
 }
 
 /* Focus styles */
@@ -114,7 +133,7 @@ button:focus,
   background: var(--color-background-card);
   border-radius: 12px;
   box-shadow: var(--shadow-md);
-  border: 1px solid #e2e8f0;
+  border: 1px solid #334155;
 }
 
 .card-hover {
@@ -159,7 +178,7 @@ button:focus,
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #334155;
   border-top: 2px solid var(--color-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;

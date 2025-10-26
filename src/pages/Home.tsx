@@ -13,7 +13,7 @@ import {
 
 const Home: React.FC = () => {
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 overflow-x-hidden">
+        <div className="min-h-screen bg-black text-white overflow-x-hidden">
             {/* Animated Background Particles - CSS-only for perf */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 <div className="absolute inset-0 opacity-30 animate-pulse">
@@ -28,17 +28,17 @@ const Home: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-6 py-20">
                     <div className="text-center">
                         <div className="flex items-center justify-center mb-8">
-                            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-200">
-                                <Shield className="h-12 w-12 text-blue-600" />
+                            <div className="p-4 bg-gray-900 rounded-2xl border border-gray-700">
+                                <Shield className="h-12 w-12 text-blue-400" />
                             </div>
                         </div>
-                        <h1 className="text-6xl font-bold mb-6 text-slate-900">
+                        <h1 className="text-6xl font-bold mb-6 text-white">
                             GuardX
                         </h1>
-                        <p className="text-2xl text-slate-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+                        <p className="text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
                             Advanced DeFi Protection Platform
                         </p>
-                        <p className="text-lg text-slate-600 mb-12 max-w-4xl mx-auto leading-relaxed card p-6">
+                        <p className="text-lg text-gray-400 mb-12 max-w-4xl mx-auto leading-relaxed card p-6">
                             Protect your crypto assets with AI-powered monitoring, automated emergency responses,
                             and cross-chain portfolio management. GuardX provides institutional-grade security
                             for your DeFi investments.
@@ -46,14 +46,14 @@ const Home: React.FC = () => {
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
                                 to="/app/deposit"
-                                className="group px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                                className="group px-8 py-4 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
                             >
                                 Get Started
                                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>
                             <Link
                                 to="/app/dashboard"
-                                className="px-8 py-4 border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-xl font-semibold transition-all duration-300"
+                                className="px-8 py-4 border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white rounded-xl font-semibold transition-all duration-300"
                             >
                                 View Dashboard
                             </Link>
